@@ -1,10 +1,7 @@
 package com.shounakmulay.flutter_sms
 
 import android.content.Context
-import android.os.Build
-import android.util.Log
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
@@ -12,8 +9,6 @@ import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.PluginRegistry.Registrar
-import java.sql.Time
-import java.time.Instant
 
 private const val CHANNEL_QUERY_SMS = "plugins.shounakmulay.com/querySMS"
 private const val CHANNEL_SEND_SMS = "plugins.shounakmulay.com/sendSMS"

@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Build
 import androidx.annotation.RequiresApi
-import com.shounakmulay.flutter_sms.utils.Constants
 
 class PermissionsController(private var activity: Activity) {
 

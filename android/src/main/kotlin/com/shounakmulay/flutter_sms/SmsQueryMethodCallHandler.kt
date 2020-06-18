@@ -3,29 +3,43 @@ package com.shounakmulay.flutter_sms
 import android.content.Context
 import android.os.Build
 import com.shounakmulay.flutter_sms.utils.Constants.DEFAULT_PROJECTION
+import com.shounakmulay.flutter_sms.utils.Constants.FAILED_FETCH
 import com.shounakmulay.flutter_sms.utils.Constants.PERMISSION_DENIED
 import com.shounakmulay.flutter_sms.utils.Constants.PERMISSION_DENIED_MESSAGE
 import com.shounakmulay.flutter_sms.utils.Constants.PROJECTION
 import com.shounakmulay.flutter_sms.utils.Constants.RETURN_TYPE
+import com.shounakmulay.flutter_sms.utils.Constants.SELECTION
+import com.shounakmulay.flutter_sms.utils.Constants.SELECTION_ARGS
 import com.shounakmulay.flutter_sms.utils.Constants.SMS_QUERY_REQUEST_CODE
+import com.shounakmulay.flutter_sms.utils.Constants.SORT_ORDER
 import com.shounakmulay.flutter_sms.utils.enums.ContentUri
 import com.shounakmulay.flutter_sms.utils.enums.ReturnType
 import com.shounakmulay.flutter_sms.utils.enums.SmsQuery
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import org.json.JSONArray
+import java.lang.RuntimeException
 
 class SmsQueryMethodCallHandler(context: Context) : MethodChannel.MethodCallHandler, IMethodCallHandler(SMS_QUERY_REQUEST_CODE) {
   private val smsController: SmsController = SmsController(context)
-  private lateinit var returnType: ReturnType
+
   private lateinit var result: MethodChannel.Result
+
+  private lateinit var returnType: ReturnType
   private lateinit var projection: List<String>
+  private var selection: String? = null
+  private var selectionArgs: List<String>? = null
+  private var sortOrder: String? = null
 
 
   override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
-    returnType = ReturnType.fromString(call.argument(RETURN_TYPE))
-    projection = call.argument<List<String>>(PROJECTION) ?: DEFAULT_PROJECTION
     this.result = result
+
+    returnType = ReturnType.fromString(call.argument(RETURN_TYPE))
+    projection = call.argument(PROJECTION) ?: DEFAULT_PROJECTION
+    selection = call.argument(SELECTION)
+    selectionArgs = call.argument(SELECTION_ARGS)
+    sortOrder = call.argument(SORT_ORDER)
 
     when (SmsQuery.fromMethod(call.method)) {
       SmsQuery.GET_INBOX -> handleMethod(ContentUri.INBOX)
@@ -47,12 +61,29 @@ class SmsQueryMethodCallHandler(context: Context) : MethodChannel.MethodCallHand
   }
 
   private fun returnMessagesInReturnType(contentUri: ContentUri) {
-    val messages = smsController.getMessages(contentUri, projection)
-    if (returnType == ReturnType.JSON) {
-      result.success(JSONArray(messages).toString())
-      return
+    try {
+      if (returnType == ReturnType.JSON) {
+        val messagesJSON = smsController.getMessagesInJSON(
+            contentUri,
+            projection,
+            selection,
+            selectionArgs,
+            sortOrder
+        )
+        result.success(JSONArray(messagesJSON))
+      } else {
+        val messages = smsController.getMessages(
+            contentUri,
+            projection,
+            selection,
+            selectionArgs,
+            sortOrder
+        )
+        result.success(messages)
+      }
+    } catch (e: RuntimeException) {
+      result.error(FAILED_FETCH, e.message, null)
     }
-    result.success(messages[0])
   }
 
   override fun onPermissionGranted(contentUri: ContentUri) {
