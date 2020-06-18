@@ -1,20 +1,29 @@
 package com.shounakmulay.flutter_sms
 
 import android.content.Context
+import android.os.Build
+import android.util.Log
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin
+import io.flutter.embedding.engine.plugins.activity.ActivityAware
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.PluginRegistry.Registrar
+import java.sql.Time
+import java.time.Instant
 
 private const val CHANNEL_QUERY_SMS = "plugins.shounakmulay.com/querySMS"
+private const val CHANNEL_SEND_SMS = "plugins.shounakmulay.com/sendSMS"
 
-class FlutterSmsPlugin : FlutterPlugin {
+class FlutterSmsPlugin : FlutterPlugin, ActivityAware {
 
   private lateinit var smsQueryChannel: MethodChannel
+  private lateinit var smsSendChannel: MethodChannel
   private lateinit var smsQueryMethodCallHandler: SmsQueryMethodCallHandler
-  private lateinit var smsController: SmsController
+  private lateinit var smsSendMethodCallHandler: SmsSendMethodCallHandler
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     setupPlugin(flutterPluginBinding.applicationContext, flutterPluginBinding.binaryMessenger)
@@ -28,15 +37,38 @@ class FlutterSmsPlugin : FlutterPlugin {
   }
 
   private fun setupPlugin(context: Context, messenger: BinaryMessenger) {
-
-    smsController = SmsController(context)
-    smsQueryMethodCallHandler = SmsQueryMethodCallHandler(smsController)
+    smsQueryMethodCallHandler = SmsQueryMethodCallHandler(context)
+    smsSendMethodCallHandler = SmsSendMethodCallHandler(context)
 
     smsQueryChannel = MethodChannel(messenger, CHANNEL_QUERY_SMS)
     smsQueryChannel.setMethodCallHandler(smsQueryMethodCallHandler)
+    
+    smsSendChannel = MethodChannel(messenger, CHANNEL_SEND_SMS)
+    smsSendChannel.setMethodCallHandler(smsSendMethodCallHandler)
+  }
+
+  private fun tearDownPlugin() {
+    smsQueryChannel.setMethodCallHandler(null)
   }
 
   override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
-    smsQueryChannel.setMethodCallHandler(null)
+    tearDownPlugin()
+  }
+
+  override fun onDetachedFromActivity() {
+    tearDownPlugin()
+  }
+
+  override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
+    onAttachedToActivity(binding)
+  }
+
+  override fun onAttachedToActivity(binding: ActivityPluginBinding) {
+    smsQueryMethodCallHandler.setActivity(binding.activity)
+    binding.addRequestPermissionsResultListener(smsQueryMethodCallHandler)
+  }
+
+  override fun onDetachedFromActivityForConfigChanges() {
+    onDetachedFromActivity()
   }
 }

@@ -1,29 +1,19 @@
 package com.shounakmulay.flutter_sms
 
 import android.content.Context
-import com.shounakmulay.flutter_sms.enums.SmsUri
+import com.shounakmulay.flutter_sms.utils.enums.ContentUri
 
-private val DEFAULT_PROJECTION =  listOf("subject", "body", "_id", "address")
 
 class SmsController(private val context: Context): ISmsController {
 
-  override fun getInbox(projectionList: List<String>?): List<HashMap<String, String>> {
-    return getMessages(SmsUri.INBOX, projectionList)
+  override fun sendSms(destinationAddress: String?, messageBody: String) {
+    TODO("Not yet implemented")
   }
 
-  override fun getSent(projectionList: List<String>?): List<Map<String, Any>> {
-    return getMessages(SmsUri.SENT, projectionList)
-  }
-
-  override fun getDraft(projectionList: List<String>?): List<Map<String, Any>> {
-    return getMessages(SmsUri.DRAFT, projectionList)
-  }
-  
-  private fun getMessages(queryUri: SmsUri, projectionList: List<String>? = null): MutableList<HashMap<String, String>> {
-    val projection = projectionList ?: DEFAULT_PROJECTION
+  override fun getMessages(contentUri: ContentUri, projection: List<String>): List<HashMap<String, String>> {
     val messages = mutableListOf<HashMap<String, String>>()
 
-    val cursor = context.contentResolver.query(queryUri.toUri(), projection.toTypedArray(), null, null, null)
+    val cursor = context.contentResolver.query(contentUri.toUri(), projection.toTypedArray(), null, null, null)
 
     while (cursor != null && cursor.moveToNext()) {
       val map: HashMap<String, String> = HashMap(projection.size)
@@ -37,4 +27,5 @@ class SmsController(private val context: Context): ISmsController {
     return messages
   }
 
+  
 }

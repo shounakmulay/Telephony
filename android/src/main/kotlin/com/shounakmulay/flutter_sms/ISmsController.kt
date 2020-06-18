@@ -1,7 +1,13 @@
 package com.shounakmulay.flutter_sms
 
+import com.shounakmulay.flutter_sms.utils.Constants.DEFAULT_PROJECTION
+import com.shounakmulay.flutter_sms.utils.enums.ContentUri
+
+
+
 interface ISmsController {
-  fun getInbox( projectionList: List<String>? = null): List<Map<String, Any>>
-  fun getSent(projectionList: List<String>? = null): List<Map<String, Any>>
-  fun getDraft(projectionList: List<String>? = null): List<Map<String, Any>>
+  
+  fun getMessages(contentUri: ContentUri, projection: List<String> = DEFAULT_PROJECTION): List<HashMap<String, String>>
+
+  fun sendSms(destinationAddress: String?, messageBody: String = "")
 }
