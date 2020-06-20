@@ -4,10 +4,10 @@ import 'package:flutter/services.dart';
 
 class FlutterSms {
   static const MethodChannel _channel =
-      const MethodChannel('flutter_sms');
+      const MethodChannel('plugins.shounakmulay.com/querySMS');
 
   static Future<String> get platformVersion async {
-    final List messages = await _channel.invokeMethod('getAllInboxSms');
+    final dynamic messages = await _channel.invokeMethod('getAllConversations');
     print(messages.toString());
     return messages.toString();
   }

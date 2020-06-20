@@ -1,5 +1,6 @@
 package com.shounakmulay.flutter_sms.utils
 
+import android.Manifest.permission_group.SMS
 import android.provider.Telephony
 
 object Constants {
@@ -20,10 +21,9 @@ object Constants {
   const val SELECTION_ARGS = "selection_args"
   const val SORT_ORDER = "sort_order"
 
-  const val JSON = "json"
-  const val MAP = "map"
-
-  val DEFAULT_PROJECTION = listOf(Telephony.Sms.ADDRESS, Telephony.Sms.BODY, Telephony.Sms.DATE)
+  val DEFAULT_SMS_PROJECTION = listOf(Telephony.Sms._ID, Telephony.Sms.ADDRESS, Telephony.Sms.BODY, Telephony.Sms.DATE)
+  val DEFAULT_CONVERSATION_PROJECTION = listOf(Telephony.Sms.Conversations.THREAD_ID ,Telephony.Sms.Conversations.SNIPPET, Telephony.Sms.Conversations.MESSAGE_COUNT)
+  
 
   const val PERMISSION_DENIED = "permission_denied"
   const val PERMISSION_DENIED_MESSAGE = "Permission Request Denied By User"

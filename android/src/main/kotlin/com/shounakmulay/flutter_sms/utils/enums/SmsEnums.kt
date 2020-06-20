@@ -1,11 +1,14 @@
 package com.shounakmulay.flutter_sms.utils.enums
 
 import android.net.Uri
+import android.provider.Telephony
+import android.telecom.TelecomManager
 
 enum class SmsQuery(private val methodName : String) {
   GET_INBOX("getAllInboxSms"),
   GET_SENT("getAllSentSms"),
   GET_DRAFT("getAllDraftSms"),
+  GET_CONVERSATIONS("getAllConversations"),
   NO_SUCH_METHOD("noSuchMethod");
 
  companion object {
@@ -14,6 +17,7 @@ enum class SmsQuery(private val methodName : String) {
        GET_INBOX.methodName -> GET_INBOX
        GET_SENT.methodName -> GET_SENT
        GET_DRAFT.methodName -> GET_DRAFT
+       GET_CONVERSATIONS.methodName -> GET_CONVERSATIONS
        else -> NO_SUCH_METHOD
      }
    }
@@ -34,16 +38,9 @@ enum class SmsSend(val methodName: String) {
   }
 }
 
-enum class ContentUri(private val uri: String) {
-  INBOX("content://sms/inbox"),
-  SENT("content://sms/sent"),
-  DRAFT("content://sms/draft");
-
-  fun toUri(): Uri {
-    return when (this) {
-      INBOX -> Uri.parse(INBOX.uri)
-      SENT -> Uri.parse(SENT.uri)
-      DRAFT -> Uri.parse(DRAFT.uri)
-    }
-  }
+enum class ContentUri(val uri: Uri) {
+  INBOX(Telephony.Sms.Inbox.CONTENT_URI),
+  SENT(Telephony.Sms.Sent.CONTENT_URI),
+  DRAFT(Telephony.Sms.Draft.CONTENT_URI),
+  CONVERSATIONS(Telephony.Sms.Conversations.CONTENT_URI);
 }

@@ -30,7 +30,8 @@ abstract class IMethodCallHandler(private val requestCode: Int) : PluginRegistry
       when (contentUri) {
         ContentUri.INBOX,
         ContentUri.SENT,
-        ContentUri.DRAFT -> {
+        ContentUri.DRAFT,
+        ContentUri.CONVERSATIONS-> {
           permissionsController.apply {
             if (!hasRequiredPermissions(READ_SMS)) {
               permissionsController.requestPermissions(READ_SMS, requestCode)
