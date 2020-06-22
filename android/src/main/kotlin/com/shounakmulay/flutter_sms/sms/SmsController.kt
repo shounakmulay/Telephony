@@ -72,9 +72,9 @@ class SmsController(private val context: Context) : ISmsController {
   }
 
   // SEND SMS
-  override fun sendSms(destinationAddress: String, messageBody: String, listen: Boolean) {
+  override fun sendSms(destinationAddress: String, messageBody: String, listenStatus: Boolean) {
     val smsManager = getSmsManager()
-    if (listen) {
+    if (listenStatus) {
       val pendingIntents = getPendingIntents()
       smsManager.sendTextMessage(destinationAddress, null, messageBody, pendingIntents.first, pendingIntents.second)
     } else {
@@ -82,10 +82,10 @@ class SmsController(private val context: Context) : ISmsController {
     }
   }
 
-  override fun sendMultipartSms(destinationAddress: String, messageBody: String, listen: Boolean) {
+  override fun sendMultipartSms(destinationAddress: String, messageBody: String, listenStatus: Boolean) {
     val smsManager = getSmsManager()
     val messageParts = smsManager.divideMessage(messageBody)
-    if (listen) {
+    if (listenStatus) {
       val pendingIntents = getMultiplePendingIntents(messageParts.size)
       smsManager.sendMultipartTextMessage(destinationAddress, null, messageParts, pendingIntents.first, pendingIntents.second)
     } else {
@@ -108,19 +108,22 @@ class SmsController(private val context: Context) : ISmsController {
     val intent = Intent(Intent.ACTION_SENDTO).apply {
       data = Uri.parse(SMS_TO + destinationAddress)
       putExtra(SMS_BODY, messageBody)
+      flags = Intent.FLAG_ACTIVITY_NEW_TASK
     }
     if (intent.resolveActivity(context.packageManager) != null) {
-      context.startActivity(intent)
+      context.applicationContext.startActivity(intent)
     }
   }
 
   private fun getPendingIntents(): Pair<PendingIntent, PendingIntent> {
-    val sentIntent = Intent(ACTION_SMS_SENT, null, context.applicationContext, SmsSendStreamHandler::class.java).apply {
+    val sentIntent = Intent(ACTION_SMS_SENT).apply {
+      `package` = context.applicationContext.packageName
       flags = Intent.FLAG_RECEIVER_REGISTERED_ONLY
     }
     val sentPendingIntent = PendingIntent.getBroadcast(context, SMS_SENT_BROADCAST_REQUEST_CODE, sentIntent, PendingIntent.FLAG_ONE_SHOT)
 
-    val deliveredIntent = Intent(ACTION_SMS_DELIVERED, null, context.applicationContext, SmsSendStreamHandler::class.java).apply {
+    val deliveredIntent = Intent(ACTION_SMS_DELIVERED).apply {
+      `package` = context.applicationContext.packageName
       flags = Intent.FLAG_RECEIVER_REGISTERED_ONLY
     }
     val deliveredPendingIntent = PendingIntent.getBroadcast(context, SMS_DELIVERED_BROADCAST_REQUEST_CODE, deliveredIntent, PendingIntent.FLAG_ONE_SHOT)

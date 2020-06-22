@@ -7,11 +7,15 @@ object Constants {
   // Channels
   const val CHANNEL_QUERY_SMS = "plugins.shounakmulay.com/querySMS"
   const val CHANNEL_SEND_SMS = "plugins.shounakmulay.com/sendSMS"
-  const val STREAM_CHANNEL_SEND_SMS = "plugins.shounakmulay.com/streamSendSms"
+  const val CHANNEL_SEND_SMS_STREAM = "plugins.shounakmulay.com/sendSmsStream"
+  const val CHANNEL_RECEIVE_SMS_STREAM = "plugins.shounakmula.com/receiveSmsStream"
 
   // Intent Actions
   const val ACTION_SMS_SENT = "plugins.shounakmulay.intent.ACTION_SMS_SENT"
   const val ACTION_SMS_DELIVERED = "plugins.shounakmulay.intent.ACTION_SMS_DELIVERED"
+
+  const val SMS_SENT = "SMS_SENT"
+  const val SMS_DELIVERED = "SMS_DELIVERED"
 
   // Permissions
   const val PERMISSION_READ_SMS = android.Manifest.permission.READ_SMS

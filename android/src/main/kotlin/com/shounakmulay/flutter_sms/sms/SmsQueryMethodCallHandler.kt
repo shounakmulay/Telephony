@@ -1,7 +1,6 @@
 package com.shounakmulay.flutter_sms.sms
 
-import android.os.Build
-import com.shounakmulay.flutter_sms.IMethodCallHandler
+import com.shounakmulay.flutter_sms.BaseMethodCallHandler
 import com.shounakmulay.flutter_sms.utils.Constants.DEFAULT_CONVERSATION_PROJECTION
 import com.shounakmulay.flutter_sms.utils.Constants.DEFAULT_SMS_PROJECTION
 import com.shounakmulay.flutter_sms.utils.Constants.FAILED_FETCH
@@ -21,7 +20,8 @@ import io.flutter.plugin.common.MethodChannel
 import java.lang.IllegalArgumentException
 import java.lang.RuntimeException
 
-class SmsQueryMethodCallHandler(private val smsController: SmsController) : MethodChannel.MethodCallHandler, IMethodCallHandler(SMS_QUERY_REQUEST_CODE) {
+class SmsQueryMethodCallHandler(private val smsController: SmsController)
+  : BaseMethodCallHandler(SMS_QUERY_REQUEST_CODE), BaseMethodCallHandler.OnPermissionDeniedListener {
 
   private lateinit var result: MethodChannel.Result
 
@@ -30,6 +30,9 @@ class SmsQueryMethodCallHandler(private val smsController: SmsController) : Meth
   private var selectionArgs: List<String>? = null
   private var sortOrder: String? = null
 
+  init {
+    setOnPermissionDeniedListener(this)
+  }
 
   override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
     this.result = result
@@ -48,15 +51,13 @@ class SmsQueryMethodCallHandler(private val smsController: SmsController) : Meth
     }
   }
 
-  override fun handleMethod(smsAction: SmsAction) {
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || checkOrRequestPermission(smsAction)) {
-      try {
-        returnMessagesInReturnType(smsAction)
-      } catch (e: IllegalArgumentException) {
-        result.error(ILLEGAL_ARGUMENT, WRONG_METHOD_TYPE, null)
-      } catch (e: RuntimeException) {
-        result.error(FAILED_FETCH, e.message, null)
-      }
+  override fun execute(smsAction: SmsAction) {
+    try {
+      returnMessagesInReturnType(smsAction)
+    } catch (e: IllegalArgumentException) {
+      result.error(ILLEGAL_ARGUMENT, WRONG_METHOD_TYPE, null)
+    } catch (e: RuntimeException) {
+      result.error(FAILED_FETCH, e.message, null)
     }
   }
 
@@ -74,10 +75,6 @@ class SmsQueryMethodCallHandler(private val smsController: SmsController) : Meth
     }
     val messages = smsController.getMessages(contentUri, projection!!, selection, selectionArgs, sortOrder)
     result.success(messages)
-  }
-
-  override fun onPermissionGranted(action: SmsAction) {
-    returnMessagesInReturnType(action)
   }
 
   override fun onPermissionDenied(deniedPermissions: List<String>) {

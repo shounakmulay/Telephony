@@ -1,6 +1,6 @@
 package com.shounakmulay.flutter_sms.sms
 
-import com.shounakmulay.flutter_sms.IMethodCallHandler
+import com.shounakmulay.flutter_sms.BaseMethodCallHandler
 import com.shounakmulay.flutter_sms.utils.Constants
 import com.shounakmulay.flutter_sms.utils.Constants.ADDRESS
 import com.shounakmulay.flutter_sms.utils.Constants.FAILED_FETCH
@@ -16,13 +16,18 @@ import io.flutter.plugin.common.MethodChannel
 import java.lang.IllegalArgumentException
 import java.lang.RuntimeException
 
-class SmsSendMethodCallHandler(private val smsController: SmsController) : MethodChannel.MethodCallHandler, IMethodCallHandler(SMS_SEND_REQUEST_CODE) {
+class SmsSendMethodCallHandler(private val smsController: SmsController)
+  : MethodChannel.MethodCallHandler, BaseMethodCallHandler.OnPermissionDeniedListener, BaseMethodCallHandler(SMS_SEND_REQUEST_CODE) {
   
   private lateinit var result: MethodChannel.Result
 
   private lateinit var messageBody: String
   private lateinit var address: String
   private var listenStatus: Boolean = false
+
+  init {
+    setOnPermissionDeniedListener(this)
+  }
 
   override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
 
@@ -54,7 +59,7 @@ class SmsSendMethodCallHandler(private val smsController: SmsController) : Metho
 
   }
 
-  override fun handleMethod(smsAction: SmsAction) {
+  override fun execute(smsAction: SmsAction) {
     try {
       when (smsAction) {
         SmsAction.SEND_SMS -> smsController.sendSms(address, messageBody, listenStatus)
@@ -67,10 +72,6 @@ class SmsSendMethodCallHandler(private val smsController: SmsController) : Metho
     } catch (e: RuntimeException) {
       result.error(FAILED_FETCH, e.message, null)
     }
-  }
-
-  override fun onPermissionGranted(action: SmsAction) {
-    handleMethod(action)
   }
 
   override fun onPermissionDenied(deniedPermissions: List<String>) {
