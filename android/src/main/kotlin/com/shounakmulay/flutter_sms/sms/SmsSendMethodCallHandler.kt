@@ -17,7 +17,7 @@ import java.lang.IllegalArgumentException
 import java.lang.RuntimeException
 
 class SmsSendMethodCallHandler(private val smsController: SmsController)
-  : MethodChannel.MethodCallHandler, BaseMethodCallHandler.OnPermissionDeniedListener, BaseMethodCallHandler(SMS_SEND_REQUEST_CODE) {
+  : MethodChannel.MethodCallHandler, BaseMethodCallHandler.OnPermissionDeniedListener, BaseMethodCallHandler() {
   
   private lateinit var result: MethodChannel.Result
 
@@ -55,7 +55,7 @@ class SmsSendMethodCallHandler(private val smsController: SmsController)
       result.notImplemented()
       return
     }
-    handleMethod(action)
+    handleMethod(action, SMS_SEND_REQUEST_CODE)
 
   }
 

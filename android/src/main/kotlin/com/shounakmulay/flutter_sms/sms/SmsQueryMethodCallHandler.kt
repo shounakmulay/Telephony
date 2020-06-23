@@ -21,7 +21,7 @@ import java.lang.IllegalArgumentException
 import java.lang.RuntimeException
 
 class SmsQueryMethodCallHandler(private val smsController: SmsController)
-  : BaseMethodCallHandler(SMS_QUERY_REQUEST_CODE), BaseMethodCallHandler.OnPermissionDeniedListener {
+  : BaseMethodCallHandler(), BaseMethodCallHandler.OnPermissionDeniedListener {
 
   private lateinit var result: MethodChannel.Result
 
@@ -47,7 +47,7 @@ class SmsQueryMethodCallHandler(private val smsController: SmsController)
     if (action == SmsAction.NO_SUCH_METHOD) {
       result.notImplemented()
     } else {
-      handleMethod(action)
+      handleMethod(action, SMS_QUERY_REQUEST_CODE)
     }
   }
 

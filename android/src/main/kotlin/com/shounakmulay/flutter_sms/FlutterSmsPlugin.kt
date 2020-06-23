@@ -23,10 +23,12 @@ class FlutterSmsPlugin : FlutterPlugin, ActivityAware {
   private lateinit var smsSendChannel: MethodChannel
   private lateinit var smsSendEventChannel: EventChannel
   private lateinit var smsReceiveEventChannel: EventChannel
+  
   private lateinit var smsQueryMethodCallHandler: SmsQueryMethodCallHandler
   private lateinit var smsSendMethodCallHandler: SmsSendMethodCallHandler
   private lateinit var smsSendStreamHandler: SmsSendStreamHandler
   private lateinit var smsReceiveStreamHandler: SmsReceiveStreamHandler
+  
   private lateinit var smsController: SmsController
   
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
@@ -45,7 +47,7 @@ class FlutterSmsPlugin : FlutterPlugin, ActivityAware {
     smsQueryMethodCallHandler = SmsQueryMethodCallHandler(smsController)
     smsSendMethodCallHandler = SmsSendMethodCallHandler(smsController)
     smsSendStreamHandler = SmsSendStreamHandler(context)
-    smsReceiveStreamHandler = SmsReceiveStreamHandler()
+    smsReceiveStreamHandler = SmsReceiveStreamHandler(context)
 
     smsQueryChannel = MethodChannel(messenger, CHANNEL_QUERY_SMS)
     smsQueryChannel.setMethodCallHandler(smsQueryMethodCallHandler)
@@ -78,9 +80,9 @@ class FlutterSmsPlugin : FlutterPlugin, ActivityAware {
   }
 
   override fun onAttachedToActivity(binding: ActivityPluginBinding) {
-    smsQueryMethodCallHandler.setActivity(binding.activity)
-    smsSendMethodCallHandler.setActivity(binding.activity)
+    PermissionsController.setActivity(binding.activity)
     binding.addRequestPermissionsResultListener(smsQueryMethodCallHandler)
+    binding.addRequestPermissionsResultListener(smsSendMethodCallHandler)
   }
 
   override fun onDetachedFromActivityForConfigChanges() {

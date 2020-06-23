@@ -1,24 +1,21 @@
 package com.shounakmulay.flutter_sms
 
-import android.app.Activity
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.annotation.RequiresApi
-import com.shounakmulay.flutter_sms.utils.Constants.PERMISSION_READ_SMS
-import com.shounakmulay.flutter_sms.utils.Constants.PERMISSION_SEND_SMS
+import com.shounakmulay.flutter_sms.sms.BaseHandler
 import com.shounakmulay.flutter_sms.utils.enums.SmsAction
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.PluginRegistry
 
 
-abstract class BaseMethodCallHandler(
-    private val requestCode: Int
-) : PluginRegistry.RequestPermissionsResultListener, MethodChannel.MethodCallHandler {
-  private lateinit var permissionsController: PermissionsController
+abstract class BaseMethodCallHandler: PluginRegistry.RequestPermissionsResultListener, MethodChannel.MethodCallHandler, BaseHandler() {
   private lateinit var action: SmsAction
+  private var requestCode: Int = -1
 
   private lateinit var onPermissionDeniedListener: OnPermissionDeniedListener
   private lateinit var onPermissionGrantedListener: OnPermissionGrantedListener
+
 
 
   interface OnPermissionGrantedListener {
@@ -29,11 +26,9 @@ abstract class BaseMethodCallHandler(
     fun onPermissionDenied(deniedPermissions: List<String>)
   }
 
-  fun setActivity(activity: Activity) {
-    permissionsController = PermissionsController(activity)
-  }
 
-  fun setOnPermissionDeniedListener(listener: BaseMethodCallHandler.OnPermissionDeniedListener) {
+
+  fun setOnPermissionDeniedListener(listener: OnPermissionDeniedListener) {
     onPermissionDeniedListener = listener
   }
 
@@ -52,8 +47,8 @@ abstract class BaseMethodCallHandler(
    * @see OnPermissionGrantedListener
    * @param smsAction The [SmsAction] to be performed
    */
-  fun handleMethod(smsAction: SmsAction) {
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || checkOrRequestPermission(smsAction)) {
+  fun handleMethod(smsAction: SmsAction, requestCode: Int) {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || checkOrRequestPermission(smsAction, requestCode)) {
       execute(smsAction)
     }
   }
@@ -77,45 +72,37 @@ abstract class BaseMethodCallHandler(
   abstract fun execute(smsAction: SmsAction)
 
   @RequiresApi(Build.VERSION_CODES.M)
-  fun checkOrRequestPermission(smsAction: SmsAction): Boolean {
-    if (this::permissionsController.isInitialized) {
+  fun checkOrRequestPermission(smsAction: SmsAction, requestCode: Int): Boolean {
       this.action = smsAction
+      this.requestCode = requestCode
       when (smsAction) {
         SmsAction.GET_INBOX,
         SmsAction.GET_SENT,
         SmsAction.GET_DRAFT,
-        SmsAction.GET_CONVERSATIONS -> {
-          return checkOrRequestPermission(PERMISSION_READ_SMS)
-        }
+        SmsAction.GET_CONVERSATIONS,
         SmsAction.SEND_SMS,
         SmsAction.SEND_MULTIPART_SMS,
         SmsAction.SEND_SMS_INTENT -> {
-          return checkOrRequestPermission(PERMISSION_SEND_SMS)
+          val permissions = PermissionsController.getSmsPermissions()
+          return checkOrRequestPermission(permissions, requestCode)
         }
         SmsAction.NO_SUCH_METHOD -> noop()
       }
-    }
     return false
-  }
-
-  private fun checkOrRequestPermission(permission: String): Boolean {
-    permissionsController.apply {
-      if (!hasRequiredPermissions(permission)) {
-        permissionsController.requestPermissions(permission, requestCode)
-        return false
-      }
-      return true
-    }
   }
 
   /* no-op */
   private fun noop() {}
 
   override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>?, grantResults: IntArray?): Boolean {
+
+    PermissionsController.isRequestingPermission = false
+
     val deniedPermissions = mutableListOf<String>()
-    if (requestCode != this.requestCode) {
+    if (requestCode != this.requestCode && !this::action.isInitialized) {
       return false
     }
+
     val allPermissionGranted = grantResults?.foldIndexed(true) { i, acc, result ->
       if (result == PackageManager.PERMISSION_DENIED) {
         permissions?.let { deniedPermissions.add(it[i]) }

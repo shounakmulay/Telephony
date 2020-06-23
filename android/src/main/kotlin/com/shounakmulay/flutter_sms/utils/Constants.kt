@@ -8,7 +8,7 @@ object Constants {
   const val CHANNEL_QUERY_SMS = "plugins.shounakmulay.com/querySMS"
   const val CHANNEL_SEND_SMS = "plugins.shounakmulay.com/sendSMS"
   const val CHANNEL_SEND_SMS_STREAM = "plugins.shounakmulay.com/sendSmsStream"
-  const val CHANNEL_RECEIVE_SMS_STREAM = "plugins.shounakmula.com/receiveSmsStream"
+  const val CHANNEL_RECEIVE_SMS_STREAM = "plugins.shounakmulay.com/receiveSmsStream"
 
   // Intent Actions
   const val ACTION_SMS_SENT = "plugins.shounakmulay.intent.ACTION_SMS_SENT"
@@ -21,12 +21,15 @@ object Constants {
   const val PERMISSION_READ_SMS = android.Manifest.permission.READ_SMS
   const val PERMISSION_SEND_SMS = android.Manifest.permission.SEND_SMS
   const val PERMISSION_RECEIVE_SMS = android.Manifest.permission.RECEIVE_SMS
+  
+  val SMS_PERMISSIONS = listOf(PERMISSION_READ_SMS, PERMISSION_SEND_SMS, PERMISSION_RECEIVE_SMS)
 
   // Request Codes
   const val SMS_QUERY_REQUEST_CODE = 1
   const val SMS_SEND_REQUEST_CODE = 2
-  const val SMS_SENT_BROADCAST_REQUEST_CODE = 20
-  const val SMS_DELIVERED_BROADCAST_REQUEST_CODE = 21
+  const val SMS_SENT_BROADCAST_REQUEST_CODE = 21
+  const val SMS_DELIVERED_BROADCAST_REQUEST_CODE = 22
+  const val SMS_RECEIVE_REQUEST_CODE = 31
 
   // Method Call Arguments
   const val PROJECTION = "projection"
@@ -36,6 +39,10 @@ object Constants {
   const val MESSAGE_BODY = "message_body"
   const val ADDRESS = "address"
   const val LISTEN_STATUS = "listen_status"
+
+  const val TIMESTAMP = "timestamp"
+  const val ORIGINATING_ADDRESS = "originating_address"
+  const val STATUS = "status"
 
   // Projections
   val DEFAULT_SMS_PROJECTION = listOf(Telephony.Sms._ID, Telephony.Sms.ADDRESS, Telephony.Sms.BODY, Telephony.Sms.DATE)

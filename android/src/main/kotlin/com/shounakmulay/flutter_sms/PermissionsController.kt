@@ -1,22 +1,30 @@
 package com.shounakmulay.flutter_sms
 
 import android.app.Activity
+import android.content.pm.PackageManager
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Build
 import androidx.annotation.RequiresApi
+import com.shounakmulay.flutter_sms.utils.Constants
 
-class PermissionsController(private var activity: Activity) {
+object PermissionsController {
 
-  fun hasRequiredPermissions(permissions: List<String>): Boolean {
-    var hasPermissions = true
-    for (permission in permissions) {
-      hasPermissions = hasPermissions && checkPermission(permission)
-    }
-    return hasPermissions
+  private lateinit var activity: Activity
+  var isRequestingPermission: Boolean = false
+
+  fun setActivity(activity: Activity) {
+    this.activity = activity
   }
 
-  fun hasRequiredPermissions(permission: String): Boolean {
-    return checkPermission(permission)
+  fun hasRequiredPermissions(permissions: List<String>): Boolean {
+    if (this::activity.isInitialized) {
+      var hasPermissions = true
+      for (permission in permissions) {
+        hasPermissions = hasPermissions && checkPermission(permission)
+      }
+      return hasPermissions
+    }
+    return false
   }
 
   private fun checkPermission(permission: String): Boolean {
@@ -25,17 +33,24 @@ class PermissionsController(private var activity: Activity) {
 
   @RequiresApi(Build.VERSION_CODES.M)
   fun requestPermissions(permissions: List<String>, requestCode: Int) {
-    activity.requestPermissions(permissions.toTypedArray(), requestCode)
+    if (this::activity.isInitialized && !isRequestingPermission) {
+      isRequestingPermission = true
+      activity.requestPermissions(permissions.toTypedArray(), requestCode)
+    }
   }
 
-  @RequiresApi(Build.VERSION_CODES.M)
-  fun requestPermissions(permission: String, requestCode: Int) {
-    activity.requestPermissions(arrayOf(permission), requestCode)
-  }
-  
-  @RequiresApi(Build.VERSION_CODES.M)
-  fun shouldShowRequestPermissionRationale(permission: String) {
-    activity.shouldShowRequestPermissionRationale(permission)
+  fun getSmsPermissions(): List<String> {
+    val permissions = getListedPermissions()
+    return permissions.filter { permission -> Constants.SMS_PERMISSIONS.contains(permission) }
   }
 
+  private fun getListedPermissions(): Array<out String> {
+    if (this::activity.isInitialized) {
+      activity.applicationContext.apply {
+        val info = packageManager.getPackageInfo(packageName, PackageManager.GET_PERMISSIONS)
+        return info.requestedPermissions ?: arrayOf()
+      }
+    }
+    return arrayOf()
+  }
 }
