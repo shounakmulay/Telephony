@@ -3,8 +3,11 @@ package com.shounakmulay.flutter_sms.sms
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.provider.Telephony
 import android.telephony.SmsMessage
+import androidx.annotation.RequiresApi
+import com.shounakmulay.flutter_sms.PermissionsController
 import com.shounakmulay.flutter_sms.utils.Constants.MESSAGE_BODY
 import com.shounakmulay.flutter_sms.utils.Constants.ORIGINATING_ADDRESS
 import com.shounakmulay.flutter_sms.utils.Constants.SMS_RECEIVE_REQUEST_CODE
@@ -14,7 +17,7 @@ import io.flutter.plugin.common.EventChannel
 
 private var sink: EventChannel.EventSink? = null
 
-class SmsReceiveStreamHandler(context: Context?) : BaseStreamHandler() {
+class SmsReceiveStreamHandler: EventChannel.StreamHandler {
 
   override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
     if (events != null) {
@@ -26,7 +29,28 @@ class SmsReceiveStreamHandler(context: Context?) : BaseStreamHandler() {
   override fun onCancel(arguments: Any?) {
     sink = null
   }
+
+  private fun checkOrRequestPermission(requestCode: Int): Boolean {
+    return if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+      true
+    } else {
+      val permissions = PermissionsController.getSmsPermissions()
+      checkOrRequestPermission(permissions, requestCode)
+    }
+  }
+
+  @RequiresApi(Build.VERSION_CODES.M)
+  private fun checkOrRequestPermission(permissions: List<String>, requestCode: Int): Boolean {
+    PermissionsController.apply {
+      if (!hasRequiredPermissions(permissions)) {
+        requestPermissions(permissions, requestCode)
+        return false
+      }
+      return true
+    }
+  }
 }
+
 
 class SmsReceiveBroadcastReceiver : BroadcastReceiver() {
   override fun onReceive(context: Context?, intent: Intent?) {

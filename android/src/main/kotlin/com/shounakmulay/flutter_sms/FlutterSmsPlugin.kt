@@ -24,8 +24,7 @@ class FlutterSmsPlugin : FlutterPlugin, ActivityAware {
   private lateinit var smsSendEventChannel: EventChannel
   private lateinit var smsReceiveEventChannel: EventChannel
   
-  private lateinit var smsQueryMethodCallHandler: SmsQueryMethodCallHandler
-  private lateinit var smsSendMethodCallHandler: SmsSendMethodCallHandler
+  private lateinit var smsMethodCallHandler: SmsMethodCallHandler
   private lateinit var smsSendStreamHandler: SmsSendStreamHandler
   private lateinit var smsReceiveStreamHandler: SmsReceiveStreamHandler
   
@@ -44,19 +43,18 @@ class FlutterSmsPlugin : FlutterPlugin, ActivityAware {
 
   private fun setupPlugin(context: Context, messenger: BinaryMessenger) {
     smsController = SmsController(context)
-    smsQueryMethodCallHandler = SmsQueryMethodCallHandler(smsController)
-    smsSendMethodCallHandler = SmsSendMethodCallHandler(smsController)
+    smsMethodCallHandler = SmsMethodCallHandler(smsController)
     smsSendStreamHandler = SmsSendStreamHandler(context)
-    smsReceiveStreamHandler = SmsReceiveStreamHandler(context)
+    smsReceiveStreamHandler = SmsReceiveStreamHandler()
 
     smsQueryChannel = MethodChannel(messenger, CHANNEL_QUERY_SMS)
-    smsQueryChannel.setMethodCallHandler(smsQueryMethodCallHandler)
+    smsQueryChannel.setMethodCallHandler(smsMethodCallHandler)
 
     smsSendEventChannel = EventChannel(messenger, CHANNEL_SEND_SMS_STREAM)
     smsSendEventChannel.setStreamHandler(smsSendStreamHandler)
     
     smsSendChannel = MethodChannel(messenger, CHANNEL_SEND_SMS)
-    smsSendChannel.setMethodCallHandler(smsSendMethodCallHandler)
+    smsSendChannel.setMethodCallHandler(smsMethodCallHandler)
 
     smsReceiveEventChannel = EventChannel(messenger, CHANNEL_RECEIVE_SMS_STREAM)
     smsReceiveEventChannel.setStreamHandler(smsReceiveStreamHandler)
@@ -81,8 +79,7 @@ class FlutterSmsPlugin : FlutterPlugin, ActivityAware {
 
   override fun onAttachedToActivity(binding: ActivityPluginBinding) {
     PermissionsController.setActivity(binding.activity)
-    binding.addRequestPermissionsResultListener(smsQueryMethodCallHandler)
-    binding.addRequestPermissionsResultListener(smsSendMethodCallHandler)
+    binding.addRequestPermissionsResultListener(smsMethodCallHandler)
   }
 
   override fun onDetachedFromActivityForConfigChanges() {

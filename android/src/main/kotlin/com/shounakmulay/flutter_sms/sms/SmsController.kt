@@ -13,13 +13,13 @@ import com.shounakmulay.flutter_sms.utils.Constants.SMS_BODY
 import com.shounakmulay.flutter_sms.utils.Constants.SMS_DELIVERED_BROADCAST_REQUEST_CODE
 import com.shounakmulay.flutter_sms.utils.Constants.SMS_SENT_BROADCAST_REQUEST_CODE
 import com.shounakmulay.flutter_sms.utils.Constants.SMS_TO
-import com.shounakmulay.flutter_sms.utils.enums.ContentUri
+import com.shounakmulay.flutter_sms.utils.ContentUri
 
 
-class SmsController(private val context: Context) : ISmsController {
+class SmsController(private val context: Context) {
 
   // FETCH SMS
-  override fun getConversations(
+  fun getConversations(
       contentUri: ContentUri,
       projection: List<String>,
       selection: String?,
@@ -29,7 +29,7 @@ class SmsController(private val context: Context) : ISmsController {
     return getQueryResult(contentUri, projection, selection, selectionArgs, sortOrder)
   }
 
-  override fun getMessages(
+  fun getMessages(
       contentUri: ContentUri,
       projection: List<String>,
       selection: String?,
@@ -72,7 +72,7 @@ class SmsController(private val context: Context) : ISmsController {
   }
 
   // SEND SMS
-  override fun sendSms(destinationAddress: String, messageBody: String, listenStatus: Boolean) {
+  fun sendSms(destinationAddress: String, messageBody: String, listenStatus: Boolean) {
     val smsManager = getSmsManager()
     if (listenStatus) {
       val pendingIntents = getPendingIntents()
@@ -82,7 +82,7 @@ class SmsController(private val context: Context) : ISmsController {
     }
   }
 
-  override fun sendMultipartSms(destinationAddress: String, messageBody: String, listenStatus: Boolean) {
+  fun sendMultipartSms(destinationAddress: String, messageBody: String, listenStatus: Boolean) {
     val smsManager = getSmsManager()
     val messageParts = smsManager.divideMessage(messageBody)
     if (listenStatus) {
@@ -104,7 +104,7 @@ class SmsController(private val context: Context) : ISmsController {
     return Pair(sentPendingIntents, deliveredPendingIntents)
   }
 
-  override fun sendSmsIntent(destinationAddress: String, messageBody: String) {
+  fun sendSmsIntent(destinationAddress: String, messageBody: String) {
     val intent = Intent(Intent.ACTION_SENDTO).apply {
       data = Uri.parse(SMS_TO + destinationAddress)
       putExtra(SMS_BODY, messageBody)
