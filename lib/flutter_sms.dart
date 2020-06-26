@@ -84,7 +84,12 @@ class FlutterSms {
     }
   }
 
-  Future<dynamic> _handler(MethodCall call) {}
+  Future<dynamic> _handler(MethodCall call) {
+    switch (call.method) {
+      case "onNewMessage":
+        return _onNewMessages(call.arguments.cast<String, dynamic>());
+    }
+  }
 
 //  static Stream<dynamic> get sendSms {
 //    final Map args = Map();

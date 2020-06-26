@@ -8,7 +8,6 @@ object Constants {
   const val CHANNEL_QUERY_SMS = "plugins.shounakmulay.com/querySMS"
   const val CHANNEL_SEND_SMS = "plugins.shounakmulay.com/sendSMS"
   const val CHANNEL_SEND_SMS_STREAM = "plugins.shounakmulay.com/sendSmsStream"
-  const val CHANNEL_RECEIVE_SMS_STREAM = "plugins.shounakmulay.com/receiveSmsStream"
 
   // Intent Actions
   const val ACTION_SMS_SENT = "plugins.shounakmulay.intent.ACTION_SMS_SENT"
@@ -18,11 +17,7 @@ object Constants {
   const val SMS_DELIVERED = "SMS_DELIVERED"
 
   // Permissions
-  const val PERMISSION_READ_SMS = android.Manifest.permission.READ_SMS
-  const val PERMISSION_SEND_SMS = android.Manifest.permission.SEND_SMS
-  const val PERMISSION_RECEIVE_SMS = android.Manifest.permission.RECEIVE_SMS
-  
-  val SMS_PERMISSIONS = listOf(PERMISSION_READ_SMS, PERMISSION_SEND_SMS, PERMISSION_RECEIVE_SMS)
+  val SMS_PERMISSIONS = listOf(android.Manifest.permission.READ_SMS, android.Manifest.permission.SEND_SMS, android.Manifest.permission.RECEIVE_SMS)
 
   // Request Codes
   const val SMS_QUERY_REQUEST_CODE = 1
@@ -59,4 +54,10 @@ object Constants {
 
   const val SMS_TO = "smsto:"
   const val SMS_BODY = "sms_body"
+  
+  // Shared Preferences
+  const val SHARED_PREFERENCES_NAME = "com.shounakmulay.android_telephony_plugin"
+  const val SHARED_PREFS_BACKGROUND_SETUP_HANDLE = "background_setup_handle"
+  const val SHARED_PREFS_BACKGROUND_MESSAGE_HANDLE = "background_message_handle"
+
 }
