@@ -5,9 +5,9 @@ import android.provider.Telephony
 object Constants {
   
   // Channels
-  const val CHANNEL_QUERY_SMS = "plugins.shounakmulay.com/querySMS"
-  const val CHANNEL_SEND_SMS = "plugins.shounakmulay.com/sendSMS"
-  const val CHANNEL_SEND_SMS_STREAM = "plugins.shounakmulay.com/sendSmsStream"
+  const val CHANNEL_SMS = "plugins.shounakmulay.com/foreground_sms_channel"
+  const val CHANNEL_SMS_BACKGROUND = "plugins.shounakmulay.com/background_sms_channel"
+  const val CHANNEL_SEND_SMS_STREAM = "plugins.shounakmulay.com/send_sms_stream"
 
   // Intent Actions
   const val ACTION_SMS_SENT = "plugins.shounakmulay.intent.ACTION_SMS_SENT"
@@ -24,7 +24,7 @@ object Constants {
   const val SMS_SEND_REQUEST_CODE = 2
   const val SMS_SENT_BROADCAST_REQUEST_CODE = 21
   const val SMS_DELIVERED_BROADCAST_REQUEST_CODE = 22
-  const val SMS_RECEIVE_REQUEST_CODE = 31
+  const val SMS_BACKGROUND_REQUEST_CODE = 31
 
   // Method Call Arguments
   const val PROJECTION = "projection"
@@ -38,6 +38,9 @@ object Constants {
   const val TIMESTAMP = "timestamp"
   const val ORIGINATING_ADDRESS = "originating_address"
   const val STATUS = "status"
+
+  const val SETUP_HANDLE = "setupHandle"
+  const val BACKGROUND_HANDLE = "backgroundHandle"
 
   // Projections
   val DEFAULT_SMS_PROJECTION = listOf(Telephony.Sms._ID, Telephony.Sms.ADDRESS, Telephony.Sms.BODY, Telephony.Sms.DATE)

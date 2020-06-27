@@ -1,11 +1,14 @@
 package com.shounakmulay.flutter_sms.sms
 
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.shounakmulay.flutter_sms.PermissionsController
+import com.shounakmulay.flutter_sms.utils.ActionType
 import com.shounakmulay.flutter_sms.utils.Constants
 import com.shounakmulay.flutter_sms.utils.Constants.ADDRESS
+import com.shounakmulay.flutter_sms.utils.Constants.BACKGROUND_HANDLE
 import com.shounakmulay.flutter_sms.utils.Constants.DEFAULT_CONVERSATION_PROJECTION
 import com.shounakmulay.flutter_sms.utils.Constants.DEFAULT_SMS_PROJECTION
 import com.shounakmulay.flutter_sms.utils.Constants.FAILED_FETCH
@@ -17,21 +20,20 @@ import com.shounakmulay.flutter_sms.utils.Constants.PERMISSION_DENIED_MESSAGE
 import com.shounakmulay.flutter_sms.utils.Constants.PROJECTION
 import com.shounakmulay.flutter_sms.utils.Constants.SELECTION
 import com.shounakmulay.flutter_sms.utils.Constants.SELECTION_ARGS
+import com.shounakmulay.flutter_sms.utils.Constants.SETUP_HANDLE
+import com.shounakmulay.flutter_sms.utils.Constants.SMS_BACKGROUND_REQUEST_CODE
 import com.shounakmulay.flutter_sms.utils.Constants.SMS_QUERY_REQUEST_CODE
 import com.shounakmulay.flutter_sms.utils.Constants.SMS_SEND_REQUEST_CODE
 import com.shounakmulay.flutter_sms.utils.Constants.SORT_ORDER
 import com.shounakmulay.flutter_sms.utils.Constants.WRONG_METHOD_TYPE
-import com.shounakmulay.flutter_sms.utils.ActionType
 import com.shounakmulay.flutter_sms.utils.ContentUri
 import com.shounakmulay.flutter_sms.utils.SmsAction
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.PluginRegistry
-import java.lang.IllegalArgumentException
-import java.lang.RuntimeException
 
 
-class SmsMethodCallHandler(private val smsController: SmsController)
+class SmsMethodCallHandler(private val context: Context, private val smsController: SmsController)
   : PluginRegistry.RequestPermissionsResultListener, MethodChannel.MethodCallHandler {
 
   private lateinit var result: MethodChannel.Result
@@ -45,6 +47,9 @@ class SmsMethodCallHandler(private val smsController: SmsController)
   private lateinit var messageBody: String
   private lateinit var address: String
   private var listenStatus: Boolean = false
+
+  private var setupHandle: Long = -1
+  private var backgroundHandle: Long = -1
 
   private var requestCode: Int = -1
 
@@ -60,7 +65,6 @@ class SmsMethodCallHandler(private val smsController: SmsController)
 
     when (action.toActionType()) {
       ActionType.GET -> {
-
         if (call.hasArgument(MESSAGE_BODY)
             && call.hasArgument(ADDRESS)) {
           val messageBody = call.argument<String>(MESSAGE_BODY)
@@ -83,6 +87,21 @@ class SmsMethodCallHandler(private val smsController: SmsController)
         selectionArgs = call.argument(SELECTION_ARGS)
         sortOrder = call.argument(SORT_ORDER)
         handleMethod(action, SMS_SEND_REQUEST_CODE)
+      }
+      ActionType.BACKGROUND -> {
+        if (call.hasArgument(SETUP_HANDLE)
+            && call.hasArgument(BACKGROUND_HANDLE)) {
+          val setupHandle = call.argument<Long>(SETUP_HANDLE)
+          val backgroundHandle = call.argument<Long>(BACKGROUND_HANDLE)
+          if (setupHandle == null || backgroundHandle == null) {
+            result.error(ILLEGAL_ARGUMENT, "Setuphandle or background handle missing", null)
+            return
+          }
+
+          this.setupHandle = setupHandle
+          this.backgroundHandle = backgroundHandle
+        }
+        handleMethod(action, SMS_BACKGROUND_REQUEST_CODE)
       }
     }
   }
@@ -123,6 +142,19 @@ class SmsMethodCallHandler(private val smsController: SmsController)
             else -> throw IllegalArgumentException()
           }
         }
+        ActionType.BACKGROUND -> {
+          when (smsAction) {
+            SmsAction.START_BACKGROUND_SERVICE -> {
+              IncomingSmsHandler.setBackgroundSetupHandle(context, setupHandle)
+              IncomingSmsHandler.startBackgroundIsolate(context, setupHandle)
+              IncomingSmsHandler.setBackgroundMessageHandle(context, backgroundHandle)
+            }
+            SmsAction.BACKGROUND_SERVICE_INITIALIZED -> {
+              IncomingSmsHandler.onInitialized()
+            }
+            else -> throw IllegalArgumentException()
+          }
+        }
       }
     } catch (e: IllegalArgumentException) {
       result.error(ILLEGAL_ARGUMENT, WRONG_METHOD_TYPE, null)
@@ -157,7 +189,9 @@ class SmsMethodCallHandler(private val smsController: SmsController)
       SmsAction.GET_CONVERSATIONS,
       SmsAction.SEND_SMS,
       SmsAction.SEND_MULTIPART_SMS,
-      SmsAction.SEND_SMS_INTENT -> {
+      SmsAction.SEND_SMS_INTENT,
+      SmsAction.START_BACKGROUND_SERVICE,
+      SmsAction.BACKGROUND_SERVICE_INITIALIZED -> {
         val permissions = PermissionsController.getSmsPermissions()
         return checkOrRequestPermission(permissions, requestCode)
       }
