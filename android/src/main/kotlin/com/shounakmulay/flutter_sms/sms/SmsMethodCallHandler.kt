@@ -146,7 +146,6 @@ class SmsMethodCallHandler(private val context: Context, private val smsControll
           when (smsAction) {
             SmsAction.START_BACKGROUND_SERVICE -> {
               IncomingSmsHandler.setBackgroundSetupHandle(context, setupHandle)
-              IncomingSmsHandler.startBackgroundIsolate(context, setupHandle)
               IncomingSmsHandler.setBackgroundMessageHandle(context, backgroundHandle)
             }
             SmsAction.BACKGROUND_SERVICE_INITIALIZED -> {

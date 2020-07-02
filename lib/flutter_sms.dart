@@ -5,11 +5,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:platform/platform.dart';
 
-typedef Future<dynamic> MessageHandler(Map<String, dynamic> message);
+typedef MessageHandler(Map<String, dynamic> message);
 
 void _flutterSmsSetupBackgroundChannel(
     {MethodChannel backgroundChannel = const MethodChannel(
-        'plugins.shounakmulay.com/receiveSmsStreamBrackground')}) async {
+        'plugins.shounakmulay.com/background_sms_channel')}) async {
   WidgetsFlutterBinding.ensureInitialized();
 
   backgroundChannel.setMethodCallHandler((call) async {
@@ -29,7 +29,7 @@ void _flutterSmsSetupBackgroundChannel(
     }
   });
 
-  backgroundChannel.invokeMethod<void>('FcmDartService#initialized');
+  backgroundChannel.invokeMethod<void>('backgroundServiceInitialized');
 }
 
 class FlutterSms {
@@ -48,7 +48,7 @@ class FlutterSms {
         _platform = platform;
 
   static final FlutterSms _instance = FlutterSms.instance(
-      const MethodChannel('plugins.shounakmulay.com/sendSMS'),
+      const MethodChannel('plugins.shounakmulay.com/foreground_sms_channel'),
       const LocalPlatform());
 
   MessageHandler _onNewMessages;
@@ -75,7 +75,7 @@ class FlutterSms {
       }
 
       _foregroundChannel.invokeMethod<bool>(
-        'FcmDartService#start',
+        'startBackgroundService',
         <String, dynamic>{
           'setupHandle': backgroundSetupHandle.toRawHandle(),
           'backgroundHandle': backgroundMessageHandle.toRawHandle()
@@ -84,9 +84,11 @@ class FlutterSms {
     }
   }
 
-  Future<dynamic> _handler(MethodCall call) {
+  Future<dynamic> _handler(MethodCall call) async {
+    debugPrint("Method Call Flutter: " + call.method.toString());
     switch (call.method) {
-      case "onNewMessage":
+      case "on_message":
+        debugPrint("on_message activated on foreground dart");
         return _onNewMessages(call.arguments.cast<String, dynamic>());
     }
   }

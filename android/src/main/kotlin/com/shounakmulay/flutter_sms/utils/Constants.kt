@@ -26,6 +26,9 @@ object Constants {
   const val SMS_DELIVERED_BROADCAST_REQUEST_CODE = 22
   const val SMS_BACKGROUND_REQUEST_CODE = 31
 
+  // Methods
+  const val ON_MESSAGE = "on_message"
+
   // Method Call Arguments
   const val PROJECTION = "projection"
   const val SELECTION = "selection"
