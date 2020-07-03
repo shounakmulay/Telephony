@@ -63,6 +63,9 @@ class SmsMethodCallHandler(private val context: Context, private val smsControll
       return
     }
 
+    /**
+     * 
+     */
     when (action.toActionType()) {
       ActionType.GET -> {
         if (call.hasArgument(MESSAGE_BODY)
@@ -107,7 +110,7 @@ class SmsMethodCallHandler(private val context: Context, private val smsControll
   }
 
   /**
-   * This function is called by [handleMethod] after checking the permissions.
+   * Called by [handleMethod] after checking the permissions.
    *
    * #####
    *
@@ -177,6 +180,9 @@ class SmsMethodCallHandler(private val context: Context, private val smsControll
   /* no-op */
   private fun noop() {}
 
+  /**
+   * Check and request if necessary for all the SMS permissions listed in the manifest
+   */
   @RequiresApi(Build.VERSION_CODES.M)
   fun checkOrRequestPermission(smsAction: SmsAction, requestCode: Int): Boolean {
     this.action = smsAction

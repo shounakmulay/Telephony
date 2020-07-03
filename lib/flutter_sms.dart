@@ -87,7 +87,7 @@ class FlutterSms {
   Future<dynamic> _handler(MethodCall call) async {
     debugPrint("Method Call Flutter: " + call.method.toString());
     switch (call.method) {
-      case "on_message":
+      case "onMessage":
         debugPrint("on_message activated on foreground dart");
         return _onNewMessages(call.arguments.cast<String, dynamic>());
     }

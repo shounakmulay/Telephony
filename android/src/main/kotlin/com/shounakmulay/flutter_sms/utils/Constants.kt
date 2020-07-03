@@ -27,7 +27,12 @@ object Constants {
   const val SMS_BACKGROUND_REQUEST_CODE = 31
 
   // Methods
-  const val ON_MESSAGE = "on_message"
+  const val ON_MESSAGE = "onMessage"
+  const val HANDLE_BACKGROUND_MESSAGE = "handleBackgroundMessage"
+  
+  // Invoke Method Arguments
+  const val HANDLE = "handle"
+  const val MESSAGE = "message"
 
   // Method Call Arguments
   const val PROJECTION = "projection"
