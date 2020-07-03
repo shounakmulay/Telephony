@@ -5,10 +5,9 @@ import android.provider.Telephony
 object Constants {
   
   // Channels
-  const val CHANNEL_QUERY_SMS = "plugins.shounakmulay.com/querySMS"
-  const val CHANNEL_SEND_SMS = "plugins.shounakmulay.com/sendSMS"
-  const val CHANNEL_SEND_SMS_STREAM = "plugins.shounakmulay.com/sendSmsStream"
-  const val CHANNEL_RECEIVE_SMS_STREAM = "plugins.shounakmulay.com/receiveSmsStream"
+  const val CHANNEL_SMS = "plugins.shounakmulay.com/foreground_sms_channel"
+  const val CHANNEL_SMS_BACKGROUND = "plugins.shounakmulay.com/background_sms_channel"
+  const val CHANNEL_SEND_SMS_STREAM = "plugins.shounakmulay.com/send_sms_stream"
 
   // Intent Actions
   const val ACTION_SMS_SENT = "plugins.shounakmulay.intent.ACTION_SMS_SENT"
@@ -18,18 +17,22 @@ object Constants {
   const val SMS_DELIVERED = "SMS_DELIVERED"
 
   // Permissions
-  const val PERMISSION_READ_SMS = android.Manifest.permission.READ_SMS
-  const val PERMISSION_SEND_SMS = android.Manifest.permission.SEND_SMS
-  const val PERMISSION_RECEIVE_SMS = android.Manifest.permission.RECEIVE_SMS
-  
-  val SMS_PERMISSIONS = listOf(PERMISSION_READ_SMS, PERMISSION_SEND_SMS, PERMISSION_RECEIVE_SMS)
+  val SMS_PERMISSIONS = listOf(android.Manifest.permission.READ_SMS, android.Manifest.permission.SEND_SMS, android.Manifest.permission.RECEIVE_SMS)
 
   // Request Codes
   const val SMS_QUERY_REQUEST_CODE = 1
   const val SMS_SEND_REQUEST_CODE = 2
   const val SMS_SENT_BROADCAST_REQUEST_CODE = 21
   const val SMS_DELIVERED_BROADCAST_REQUEST_CODE = 22
-  const val SMS_RECEIVE_REQUEST_CODE = 31
+  const val SMS_BACKGROUND_REQUEST_CODE = 31
+
+  // Methods
+  const val ON_MESSAGE = "onMessage"
+  const val HANDLE_BACKGROUND_MESSAGE = "handleBackgroundMessage"
+  
+  // Invoke Method Arguments
+  const val HANDLE = "handle"
+  const val MESSAGE = "message"
 
   // Method Call Arguments
   const val PROJECTION = "projection"
@@ -43,6 +46,9 @@ object Constants {
   const val TIMESTAMP = "timestamp"
   const val ORIGINATING_ADDRESS = "originating_address"
   const val STATUS = "status"
+
+  const val SETUP_HANDLE = "setupHandle"
+  const val BACKGROUND_HANDLE = "backgroundHandle"
 
   // Projections
   val DEFAULT_SMS_PROJECTION = listOf(Telephony.Sms._ID, Telephony.Sms.ADDRESS, Telephony.Sms.BODY, Telephony.Sms.DATE)
@@ -59,4 +65,10 @@ object Constants {
 
   const val SMS_TO = "smsto:"
   const val SMS_BODY = "sms_body"
+  
+  // Shared Preferences
+  const val SHARED_PREFERENCES_NAME = "com.shounakmulay.android_telephony_plugin"
+  const val SHARED_PREFS_BACKGROUND_SETUP_HANDLE = "background_setup_handle"
+  const val SHARED_PREFS_BACKGROUND_MESSAGE_HANDLE = "background_message_handle"
+
 }

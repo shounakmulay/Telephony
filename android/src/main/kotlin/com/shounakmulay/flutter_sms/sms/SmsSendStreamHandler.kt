@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.util.Log
 import com.shounakmulay.flutter_sms.utils.Constants.ACTION_SMS_DELIVERED
 import com.shounakmulay.flutter_sms.utils.Constants.ACTION_SMS_SENT
 import com.shounakmulay.flutter_sms.utils.Constants.SMS_DELIVERED

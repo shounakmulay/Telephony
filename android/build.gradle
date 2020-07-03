@@ -2,14 +2,14 @@ group 'com.shounakmulay.flutter_sms'
 version '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '1.3.50'
+    ext.kotlin_version = '1.3.72'
     repositories {
         google()
         jcenter()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.0'
+        classpath 'com.android.tools.build:gradle:4.0.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -26,6 +26,10 @@ apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 28
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
