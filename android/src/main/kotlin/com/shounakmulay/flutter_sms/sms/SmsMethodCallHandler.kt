@@ -64,10 +64,18 @@ class SmsMethodCallHandler(private val context: Context, private val smsControll
     }
 
     /**
-     * 
+     *
      */
     when (action.toActionType()) {
       ActionType.GET -> {
+        projection = call.argument(PROJECTION)
+        selection = call.argument(SELECTION)
+        selectionArgs = call.argument(SELECTION_ARGS)
+        sortOrder = call.argument(SORT_ORDER)
+
+        handleMethod(action, SMS_QUERY_REQUEST_CODE)
+      }
+      ActionType.SEND -> {
         if (call.hasArgument(MESSAGE_BODY)
             && call.hasArgument(ADDRESS)) {
           val messageBody = call.argument<String>(MESSAGE_BODY)
@@ -82,13 +90,6 @@ class SmsMethodCallHandler(private val context: Context, private val smsControll
 
           listenStatus = call.argument(LISTEN_STATUS) ?: false
         }
-        handleMethod(action, SMS_QUERY_REQUEST_CODE)
-      }
-      ActionType.SEND -> {
-        projection = call.argument(PROJECTION)
-        selection = call.argument(SELECTION)
-        selectionArgs = call.argument(SELECTION_ARGS)
-        sortOrder = call.argument(SORT_ORDER)
         handleMethod(action, SMS_SEND_REQUEST_CODE)
       }
       ActionType.BACKGROUND -> {
