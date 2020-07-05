@@ -50,14 +50,9 @@ class _MyAppState extends State<MyApp> {
         filter: SmsFilter.where(SmsColumn.DATE)
             .greaterThanOrEqualTo("1593865041625")
             .and(SmsColumn.READ)
-            .equals("1"));
-    SmsFilter filter = SmsFilter.where(SmsColumn.ADDRESS)
-        .equals("9004640268")
-        .and(SmsColumn.TYPE)
-        .equals("6")
-        .and(SmsColumn.THREAD_ID)
-        .lessThanOrEqualTo("test");
-
+            .equals("0"),
+        sortOrder: [OrderBy(SmsColumn.BODY, sort: Sort.ASC), OrderBy(SmsColumn.DATE, sort: Sort.ASC),]);
+    messages;
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
     // setState to update our non-existent appearance.

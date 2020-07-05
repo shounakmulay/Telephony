@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:collection';
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
@@ -8,6 +7,9 @@ import 'package:flutter_sms/projections.dart';
 import 'package:platform/platform.dart';
 
 typedef MessageHandler(Map<String, dynamic> message);
+typedef SmsSendStatusListener(SendStatus status);
+
+enum SendStatus { SENT, DELIVERED }
 
 void _flutterSmsSetupBackgroundChannel(
     {MethodChannel backgroundChannel = const MethodChannel(
@@ -110,7 +112,7 @@ class FlutterSms {
         await _foregroundChannel.invokeMethod('getAllInboxSms', args);
 
     return messages
-        .map((message) => SmsMessage.fromMap(
+        .map((message) => SmsMessage._fromMap(
             Map.castFrom<dynamic, dynamic, String, dynamic>(message), columns))
         .toList();
   }
@@ -124,7 +126,7 @@ class FlutterSms {
     final List<Map<String, dynamic>> messages =
         await _foregroundChannel.invokeMethod('getAllSentSms', args);
 
-    return messages.map((message) => SmsMessage.fromMap(message, columns));
+    return messages.map((message) => SmsMessage._fromMap(message, columns));
   }
 
   Future<List<SmsMessage>> getDraftSms(
@@ -136,7 +138,7 @@ class FlutterSms {
     final List<Map<String, dynamic>> messages =
         await _foregroundChannel.invokeMethod('getAllDraftSms', args);
 
-    return messages.map((message) => SmsMessage.fromMap(message, columns));
+    return messages.map((message) => SmsMessage._fromMap(message, columns));
   }
 
   Map<String, dynamic> _getArguments(
@@ -194,7 +196,7 @@ class SmsMessage {
       this.errorCode,
       this.status);
 
-  SmsMessage.fromMap(Map<String, dynamic> message, List<SmsColumn> columns) {
+  SmsMessage._fromMap(Map<String, dynamic> message, List<SmsColumn> columns) {
     for (var column in columns) {
       final value = message[column.name];
       switch (column) {
