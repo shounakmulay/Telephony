@@ -1,6 +1,9 @@
 package com.shounakmulay.flutter_sms.sms
 
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -22,8 +25,10 @@ import com.shounakmulay.flutter_sms.utils.Constants.SELECTION
 import com.shounakmulay.flutter_sms.utils.Constants.SELECTION_ARGS
 import com.shounakmulay.flutter_sms.utils.Constants.SETUP_HANDLE
 import com.shounakmulay.flutter_sms.utils.Constants.SMS_BACKGROUND_REQUEST_CODE
+import com.shounakmulay.flutter_sms.utils.Constants.SMS_DELIVERED
 import com.shounakmulay.flutter_sms.utils.Constants.SMS_QUERY_REQUEST_CODE
 import com.shounakmulay.flutter_sms.utils.Constants.SMS_SEND_REQUEST_CODE
+import com.shounakmulay.flutter_sms.utils.Constants.SMS_SENT
 import com.shounakmulay.flutter_sms.utils.Constants.SORT_ORDER
 import com.shounakmulay.flutter_sms.utils.Constants.WRONG_METHOD_TYPE
 import com.shounakmulay.flutter_sms.utils.ContentUri
@@ -34,10 +39,11 @@ import io.flutter.plugin.common.PluginRegistry
 
 
 class SmsMethodCallHandler(private val context: Context, private val smsController: SmsController)
-  : PluginRegistry.RequestPermissionsResultListener, MethodChannel.MethodCallHandler {
+  : PluginRegistry.RequestPermissionsResultListener, MethodChannel.MethodCallHandler, BroadcastReceiver() {
 
   private lateinit var result: MethodChannel.Result
   private lateinit var action: SmsAction
+  private lateinit var foregroundChannel: MethodChannel
 
   private var projection: List<String>? = null
   private var selection: String? = null
@@ -63,11 +69,16 @@ class SmsMethodCallHandler(private val context: Context, private val smsControll
       return
     }
 
-    /**
-     * 
-     */
     when (action.toActionType()) {
       ActionType.GET -> {
+        projection = call.argument(PROJECTION)
+        selection = call.argument(SELECTION)
+        selectionArgs = call.argument(SELECTION_ARGS)
+        sortOrder = call.argument(SORT_ORDER)
+
+        handleMethod(action, SMS_QUERY_REQUEST_CODE)
+      }
+      ActionType.SEND -> {
         if (call.hasArgument(MESSAGE_BODY)
             && call.hasArgument(ADDRESS)) {
           val messageBody = call.argument<String>(MESSAGE_BODY)
@@ -82,13 +93,6 @@ class SmsMethodCallHandler(private val context: Context, private val smsControll
 
           listenStatus = call.argument(LISTEN_STATUS) ?: false
         }
-        handleMethod(action, SMS_QUERY_REQUEST_CODE)
-      }
-      ActionType.SEND -> {
-        projection = call.argument(PROJECTION)
-        selection = call.argument(SELECTION)
-        selectionArgs = call.argument(SELECTION_ARGS)
-        sortOrder = call.argument(SORT_ORDER)
         handleMethod(action, SMS_SEND_REQUEST_CODE)
       }
       ActionType.BACKGROUND -> {
@@ -138,6 +142,13 @@ class SmsMethodCallHandler(private val context: Context, private val smsControll
           result.success(messages)
         }
         ActionType.SEND -> {
+          if (listenStatus) {
+            val intentFilter = IntentFilter().apply {
+              addAction(Constants.ACTION_SMS_SENT)
+              addAction(Constants.ACTION_SMS_DELIVERED)
+            }
+            context.applicationContext.registerReceiver(this, intentFilter)
+          }
           when (smsAction) {
             SmsAction.SEND_SMS -> smsController.sendSms(address, messageBody, listenStatus)
             SmsAction.SEND_MULTIPART_SMS -> smsController.sendMultipartSms(address, messageBody, listenStatus)
@@ -245,5 +256,19 @@ class SmsMethodCallHandler(private val context: Context, private val smsControll
     result.error(PERMISSION_DENIED, PERMISSION_DENIED_MESSAGE, deniedPermissions)
   }
 
+  fun setForegroundChannel(channel: MethodChannel) {
+    foregroundChannel = channel
+  }
 
+  override fun onReceive(ctx: Context?, intent: Intent?) {
+    if (intent != null) {
+      when (intent.action) {
+        Constants.ACTION_SMS_SENT -> foregroundChannel.invokeMethod(SMS_SENT, null)
+        Constants.ACTION_SMS_DELIVERED -> {
+          foregroundChannel.invokeMethod(SMS_DELIVERED, null)
+          context.unregisterReceiver(this)
+        }
+      }
+    }
+  }
 }

@@ -3,7 +3,6 @@ package com.shounakmulay.flutter_sms
 import android.content.Context
 import androidx.annotation.NonNull
 import com.shounakmulay.flutter_sms.sms.*
-import com.shounakmulay.flutter_sms.utils.Constants.CHANNEL_SEND_SMS_STREAM
 import com.shounakmulay.flutter_sms.utils.Constants.CHANNEL_SMS
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
@@ -14,10 +13,8 @@ import io.flutter.plugin.common.*
 class FlutterSmsPlugin : FlutterPlugin, ActivityAware {
 
   private lateinit var smsChannel: MethodChannel
-  private lateinit var smsSendEventChannel: EventChannel
 
   private lateinit var smsMethodCallHandler: SmsMethodCallHandler
-  private lateinit var smsSendStreamHandler: SmsSendStreamHandler
 
   private lateinit var smsController: SmsController
 
@@ -49,13 +46,10 @@ class FlutterSmsPlugin : FlutterPlugin, ActivityAware {
   private fun setupPlugin(context: Context, messenger: BinaryMessenger) {
     smsController = SmsController(context)
     smsMethodCallHandler = SmsMethodCallHandler(context, smsController)
-    smsSendStreamHandler = SmsSendStreamHandler(context)
-
-    smsSendEventChannel = EventChannel(messenger, CHANNEL_SEND_SMS_STREAM)
-    smsSendEventChannel.setStreamHandler(smsSendStreamHandler)
 
     smsChannel = MethodChannel(messenger, CHANNEL_SMS)
     smsChannel.setMethodCallHandler(smsMethodCallHandler)
+    smsMethodCallHandler.setForegroundChannel(smsChannel)
 
     IncomingSmsReceiver.foregroundSmsChannel = smsChannel
   }

@@ -7,14 +7,12 @@ object Constants {
   // Channels
   const val CHANNEL_SMS = "plugins.shounakmulay.com/foreground_sms_channel"
   const val CHANNEL_SMS_BACKGROUND = "plugins.shounakmulay.com/background_sms_channel"
-  const val CHANNEL_SEND_SMS_STREAM = "plugins.shounakmulay.com/send_sms_stream"
 
   // Intent Actions
   const val ACTION_SMS_SENT = "plugins.shounakmulay.intent.ACTION_SMS_SENT"
   const val ACTION_SMS_DELIVERED = "plugins.shounakmulay.intent.ACTION_SMS_DELIVERED"
 
-  const val SMS_SENT = "SMS_SENT"
-  const val SMS_DELIVERED = "SMS_DELIVERED"
+
 
   // Permissions
   val SMS_PERMISSIONS = listOf(android.Manifest.permission.READ_SMS, android.Manifest.permission.SEND_SMS, android.Manifest.permission.RECEIVE_SMS)
@@ -29,6 +27,8 @@ object Constants {
   // Methods
   const val ON_MESSAGE = "onMessage"
   const val HANDLE_BACKGROUND_MESSAGE = "handleBackgroundMessage"
+  const val SMS_SENT = "smsSent"
+  const val SMS_DELIVERED = "smsDelivered"
   
   // Invoke Method Arguments
   const val HANDLE = "handle"

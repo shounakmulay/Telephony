@@ -50,7 +50,7 @@ class SmsController(private val context: Context) {
 
     val cursor = context.contentResolver.query(
         contentUri.uri,
-        null,
+        projection.toTypedArray(),
         selection,
         selectionArgs?.toTypedArray(),
         sortOrder
