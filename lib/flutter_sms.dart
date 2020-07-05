@@ -42,6 +42,9 @@ class FlutterSms {
 
   MessageHandler _onNewMessages;
   MessageHandler _onBackgroundMessages;
+  SmsSendStatusListener _statusListener;
+
+  FlutterSms(this._foregroundChannel, this._platform);
 
   static FlutterSms get instance => _instance;
 
@@ -99,6 +102,13 @@ class FlutterSms {
     switch (call.method) {
       case "onMessage":
         return _onNewMessages(call.arguments.cast<String, dynamic>());
+        break;
+      case "smsSent":
+        return _statusListener(SendStatus.SENT);
+        break;
+      case "smsDelivered":
+        return _statusListener(SendStatus.DELIVERED);
+        break;
     }
   }
 
@@ -159,6 +169,37 @@ class FlutterSms {
     }
 
     return args;
+  }
+
+  void sendSms({
+    @required String to,
+    @required String message,
+    SmsSendStatusListener statusListener,
+    bool isMultipart = false,
+  }) {
+    bool listenStatus = false;
+    if (statusListener != null) {
+      _statusListener = statusListener;
+      listenStatus = true;
+    }
+    final Map<String, dynamic> args = {
+      "address": to,
+      "message_body": message,
+      "listen_status": listenStatus
+    };
+    final String method = isMultipart ? "sendMultipartSms" : "sendSms";
+    _foregroundChannel.invokeMethod(method, args);
+  }
+
+  void sendSmsByDefaultApp({
+    @required String to,
+    @required String message,
+  }) {
+    final Map<String, dynamic> args = {
+      "address": to,
+      "message_body": message,
+    };
+    _foregroundChannel.invokeMethod("sendSmsIntent", args);
   }
 }
 
