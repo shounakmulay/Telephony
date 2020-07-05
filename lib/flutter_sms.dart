@@ -160,6 +160,33 @@ class FlutterSms {
 
     return args;
   }
+
+  void sendSms({
+    @required String to,
+    @required String message,
+    SmsSendStatusListener statusListener,
+    bool isMultipart = false,
+  }) {
+    bool listenStatus = statusListener != null ? true : false;
+    final Map<String, dynamic> args = {
+      "address": to,
+      "message_body": message,
+      "listen_status": listenStatus
+    };
+    final String method = isMultipart ? "sendMultipartSms" : "sendSms";
+    _foregroundChannel.invokeMethod(method, args);
+  }
+
+  void sendSmsByDefaultApp({
+    @required String to,
+    @required String message,
+  }) {
+    final Map<String, dynamic> args = {
+      "address": to,
+      "message_body": message,
+    };
+    _foregroundChannel.invokeMethod("sendSmsIntent", args);
+  }
 }
 
 class SmsMessage {
