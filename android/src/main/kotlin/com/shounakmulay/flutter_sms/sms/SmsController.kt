@@ -1,12 +1,15 @@
 package com.shounakmulay.flutter_sms.sms
 
+import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.telephony.SmsManager
 import android.telephony.SubscriptionManager
+import android.telephony.TelephonyManager
 import com.shounakmulay.flutter_sms.utils.Constants.ACTION_SMS_DELIVERED
 import com.shounakmulay.flutter_sms.utils.Constants.ACTION_SMS_SENT
 import com.shounakmulay.flutter_sms.utils.Constants.SMS_BODY
@@ -139,5 +142,73 @@ class SmsController(private val context: Context) {
       }
     }
     return SmsManager.getDefault()
+  }
+
+  // STATUS
+  fun isSmsCapable(): Boolean {
+    val telephonyManager = getTelephonyManager()
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+      telephonyManager.isSmsCapable
+    } else {
+      val packageManager = context.packageManager
+      if (packageManager != null) {
+        return packageManager.hasSystemFeature(PackageManager.FEATURE_TELEPHONY)
+      }
+      return false
+    }
+  }
+
+  fun getCellularDataState(): Int {
+    return getTelephonyManager().dataState
+  }
+
+  fun getCallState(): Int {
+    return getTelephonyManager().callState
+  }
+
+  fun getDataActivity(): Int {
+    return getTelephonyManager().dataActivity
+  }
+
+  fun getNetworkOperator(): String {
+    return getTelephonyManager().networkOperator
+  }
+
+  fun getNetworkOperatorName(): String {
+    return getTelephonyManager().networkOperatorName
+  }
+
+  @SuppressLint("MissingPermission")
+  fun getDataNetworkType(): Int {
+    val telephonyManager = getTelephonyManager()
+    return if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
+      telephonyManager.dataNetworkType
+    } else {
+      telephonyManager.networkType
+    }
+  }
+
+  fun getPhoneType(): Int {
+    return getTelephonyManager().phoneType
+  }
+
+  fun getSimOperator(): String {
+    return getTelephonyManager().simOperator
+  }
+
+  fun getSimOperatorName(): String {
+    return getTelephonyManager().simOperatorName
+  }
+
+  fun getSimState(): Int {
+    return getTelephonyManager().simState
+  }
+
+  fun isNetworkRoaming(): Boolean {
+    return getTelephonyManager().isNetworkRoaming
+  }
+
+  private fun getTelephonyManager(): TelephonyManager {
+    return context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
   }
 }

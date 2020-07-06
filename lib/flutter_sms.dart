@@ -3,8 +3,9 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_sms/projections.dart';
 import 'package:platform/platform.dart';
+
+part 'constants.dart';
 
 typedef MessageHandler(Map<String, dynamic> message);
 typedef SmsSendStatusListener(SendStatus status);
@@ -201,152 +202,62 @@ class FlutterSms {
     };
     _foregroundChannel.invokeMethod("sendSmsIntent", args);
   }
-}
 
-class SmsMessage {
-  int id;
-  String address;
-  String body;
-  int date;
-  int dateSent;
-  bool read;
-  bool seen;
-  String subject;
-  String subscriptionId;
-  String threadId;
-  SmsType type;
-  bool timed;
-  bool deleted;
-  int errorCode;
-  int status;
+  Future<bool> get isSmsCapable =>
+      _foregroundChannel.invokeMethod<bool>("isSmsCapable");
 
-  SmsMessage(
-      this.id,
-      this.address,
-      this.body,
-      this.date,
-      this.read,
-      this.seen,
-      this.subject,
-      this.subscriptionId,
-      this.threadId,
-      this.dateSent,
-      this.type,
-      this.timed,
-      this.deleted,
-      this.errorCode,
-      this.status);
-
-  SmsMessage._fromMap(Map<String, dynamic> message, List<SmsColumn> columns) {
-    for (var column in columns) {
-      final value = message[column.name];
-      switch (column) {
-        case SmsColumn.COUNT:
-          // TODO: Handle this case.
-          break;
-        case SmsColumn.ID:
-          this.id = int.tryParse(value);
-          break;
-        case SmsColumn.ADDRESS:
-          this.address = value;
-          break;
-        case SmsColumn.BODY:
-          this.body = value;
-          break;
-        case SmsColumn.CREATOR:
-          // TODO: Handle this case.
-          break;
-        case SmsColumn.DATE:
-          this.date = int.tryParse(value);
-          break;
-        case SmsColumn.DATE_SENT:
-          this.dateSent = value;
-          break;
-        case SmsColumn.ERROR_CODE:
-          this.errorCode = value;
-          break;
-        case SmsColumn.LOCKED:
-          // TODO: Handle this case.
-          break;
-        case SmsColumn.MESSAGE_TYPE_ALL:
-          // TODO: Handle this case.
-          break;
-        case SmsColumn.MESSAGE_TYPE_DRAFT:
-          // TODO: Handle this case.
-          break;
-        case SmsColumn.MESSAGE_TYPE_FAILED:
-          // TODO: Handle this case.
-          break;
-        case SmsColumn.MESSAGE_TYPE_INBOX:
-          // TODO: Handle this case.
-          break;
-        case SmsColumn.MESSAGE_TYPE_OUTBOX:
-          // TODO: Handle this case.
-          break;
-        case SmsColumn.MESSAGE_TYPE_QUEUED:
-          // TODO: Handle this case.
-          break;
-        case SmsColumn.MESSAGE_TYPE_SENT:
-          // TODO: Handle this case.
-          break;
-        case SmsColumn.PERSON:
-          // TODO: Handle this case.
-          break;
-        case SmsColumn.PROTOCOL:
-          // TODO: Handle this case.
-          break;
-        case SmsColumn.READ:
-          this.read = int.tryParse(value) == 0 ? false : true;
-          break;
-        case SmsColumn.REPLY_PATH_PRESENT:
-          // TODO: Handle this case.
-          break;
-        case SmsColumn.SEEN:
-          this.seen = value;
-          break;
-        case SmsColumn.SERVICE_CENTER:
-          // TODO: Handle this case.
-          break;
-        case SmsColumn.STATUS:
-          this.status = value;
-          break;
-        case SmsColumn.STATUS_COMPLETE:
-          // TODO: Handle this case.
-          break;
-        case SmsColumn.STATUS_FAILED:
-          // TODO: Handle this case.
-          break;
-        case SmsColumn.STATUS_NONE:
-          // TODO: Handle this case.
-          break;
-        case SmsColumn.STATUS_PENDING:
-          // TODO: Handle this case.
-          break;
-        case SmsColumn.SUBJECT:
-          this.subject = value;
-          break;
-        case SmsColumn.SUBSCRIPTION_ID:
-          this.subscriptionId = value;
-          break;
-        case SmsColumn.THREAD_ID:
-          this.threadId = value;
-          break;
-        case SmsColumn.TYPE:
-          // TODO: Handle this case.
-          break;
-      }
+  Future<DataState> get cellularDataState async {
+    final int dataState =
+        await _foregroundChannel.invokeMethod<int>("getCellularDataState");
+    if (dataState == -1) {
+      return DataState.UNKNOWN;
+    } else {
+      return DataState.values[dataState];
     }
   }
-}
 
-enum SmsType {
-  MESSAGE_TYPE_ALL,
-  MESSAGE_TYPE_INBOX,
-  MESSAGE_TYPE_SENT,
-  MESSAGE_TYPE_DRAFT,
-  MESSAGE_TYPE_OUTBOX,
-  MESSAGE_TYPE_FAILED,
-  MESSAGE_TYPE_QUEUED
+  Future<CallState> get callState async {
+    final int state =
+        await _foregroundChannel.invokeMethod<int>("getCallState");
+    return CallState.values[state];
+  }
+
+  Future<DataActivity> get dataActivity async {
+    final int activity =
+        await _foregroundChannel.invokeMethod<int>("getDataActivity");
+    return DataActivity.values[activity];
+  }
+
+  Future<String> get networkOperator =>
+      _foregroundChannel.invokeMethod<String>("getNetworkOperator");
+
+  Future<String> get networkOperatorName =>
+      _foregroundChannel.invokeMethod<String>("getNetworkOperatorName");
+
+  Future<NetworkType> get dataNetworkType async {
+    final int type =
+        await _foregroundChannel.invokeMethod<int>("getDataNetworkType");
+    return NetworkType.values[type];
+  }
+
+  Future<PhoneType> get phoneType async {
+    final int type = await _foregroundChannel.invokeMethod<int>("getPhoneType");
+    return PhoneType.values[type];
+  }
+
+  Future<String> get simOperator =>
+      _foregroundChannel.invokeMethod<String>("getSimOperator");
+
+  Future<String> get simOperatorName =>
+      _foregroundChannel.invokeMethod<String>("getSimOperatorName");
+
+  Future<SimState> get simState async {
+    final int state = await _foregroundChannel.invokeMethod<int>("getSimState");
+    return SimState.values[state];
+  }
+
+  Future<bool> get isNetworkRoaming =>
+      _foregroundChannel.invokeMethod<bool>("isNetworkRoaming");
 }
 
 class SmsFilter {
@@ -442,6 +353,8 @@ class OrderBy {
   String get _value => "${_column.name} ${_sort.value}";
 }
 
+enum Sort { ASC, DESC }
+
 extension Value on Sort {
   String get value {
     switch (this) {
@@ -455,5 +368,3 @@ extension Value on Sort {
     }
   }
 }
-
-enum Sort { ASC, DESC }

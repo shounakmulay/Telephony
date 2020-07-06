@@ -70,7 +70,7 @@ class SmsMethodCallHandler(private val context: Context, private val smsControll
     }
 
     when (action.toActionType()) {
-      ActionType.GET -> {
+      ActionType.GET_SMS -> {
         projection = call.argument(PROJECTION)
         selection = call.argument(SELECTION)
         selectionArgs = call.argument(SELECTION_ARGS)
@@ -78,7 +78,7 @@ class SmsMethodCallHandler(private val context: Context, private val smsControll
 
         handleMethod(action, SMS_QUERY_REQUEST_CODE)
       }
-      ActionType.SEND -> {
+      ActionType.SEND_SMS -> {
         if (call.hasArgument(MESSAGE_BODY)
             && call.hasArgument(ADDRESS)) {
           val messageBody = call.argument<String>(MESSAGE_BODY)
@@ -101,7 +101,7 @@ class SmsMethodCallHandler(private val context: Context, private val smsControll
           val setupHandle = call.argument<Long>(SETUP_HANDLE)
           val backgroundHandle = call.argument<Long>(BACKGROUND_HANDLE)
           if (setupHandle == null || backgroundHandle == null) {
-            result.error(ILLEGAL_ARGUMENT, "Setuphandle or background handle missing", null)
+            result.error(ILLEGAL_ARGUMENT, "Setup handle or background handle missing", null)
             return
           }
 
@@ -110,6 +110,7 @@ class SmsMethodCallHandler(private val context: Context, private val smsControll
         }
         handleMethod(action, SMS_BACKGROUND_REQUEST_CODE)
       }
+      ActionType.GET -> execute(action)
     }
   }
 
@@ -126,46 +127,28 @@ class SmsMethodCallHandler(private val context: Context, private val smsControll
    */
   private fun execute(smsAction: SmsAction) {
     try {
-      when (action.toActionType()) {
+      when (smsAction.toActionType()) {
+        ActionType.GET_SMS -> handleGetSmsActions(smsAction)
+        ActionType.SEND_SMS -> handleSendSmsActions(smsAction)
+        ActionType.BACKGROUND -> handleBackgroundActions(smsAction)
         ActionType.GET -> {
-          if (projection == null) {
-            projection = if (smsAction == SmsAction.GET_CONVERSATIONS) DEFAULT_CONVERSATION_PROJECTION else DEFAULT_SMS_PROJECTION
-          }
-          val contentUri = when (smsAction) {
-            SmsAction.GET_INBOX -> ContentUri.INBOX
-            SmsAction.GET_SENT -> ContentUri.SENT
-            SmsAction.GET_DRAFT -> ContentUri.DRAFT
-            SmsAction.GET_CONVERSATIONS -> ContentUri.CONVERSATIONS
-            else -> throw IllegalArgumentException()
-          }
-          val messages = smsController.getMessages(contentUri, projection!!, selection, selectionArgs, sortOrder)
-          result.success(messages)
-        }
-        ActionType.SEND -> {
-          if (listenStatus) {
-            val intentFilter = IntentFilter().apply {
-              addAction(Constants.ACTION_SMS_SENT)
-              addAction(Constants.ACTION_SMS_DELIVERED)
+          smsController.apply {
+            val value: Any = when (smsAction) {
+              SmsAction.IS_SMS_CAPABLE -> isSmsCapable()
+              SmsAction.GET_CELLULAR_DATA_STATE -> getCellularDataState()
+              SmsAction.GET_CALL_STATE -> getCallState()
+              SmsAction.GET_DATA_ACTIVITY -> getDataActivity()
+              SmsAction.GET_NETWORK_OPERATOR -> getNetworkOperator()
+              SmsAction.GET_NETWORK_OPERATOR_NAME -> getNetworkOperatorName()
+              SmsAction.GET_DATA_NETWORK_TYPE -> getDataNetworkType()
+              SmsAction.GET_PHONE_TYPE -> getPhoneType()
+              SmsAction.GET_SIM_OPERATOR -> getSimOperator()
+              SmsAction.GET_SIM_OPERATOR_NAME -> getSimOperatorName()
+              SmsAction.GET_SIM_STATE -> getSimState()
+              SmsAction.IS_NETWORK_ROAMING -> isNetworkRoaming()
+              else -> throw IllegalArgumentException()
             }
-            context.applicationContext.registerReceiver(this, intentFilter)
-          }
-          when (smsAction) {
-            SmsAction.SEND_SMS -> smsController.sendSms(address, messageBody, listenStatus)
-            SmsAction.SEND_MULTIPART_SMS -> smsController.sendMultipartSms(address, messageBody, listenStatus)
-            SmsAction.SEND_SMS_INTENT -> smsController.sendSmsIntent(address, messageBody)
-            else -> throw IllegalArgumentException()
-          }
-        }
-        ActionType.BACKGROUND -> {
-          when (smsAction) {
-            SmsAction.START_BACKGROUND_SERVICE -> {
-              IncomingSmsHandler.setBackgroundSetupHandle(context, setupHandle)
-              IncomingSmsHandler.setBackgroundMessageHandle(context, backgroundHandle)
-            }
-            SmsAction.BACKGROUND_SERVICE_INITIALIZED -> {
-              IncomingSmsHandler.onInitialized()
-            }
-            else -> throw IllegalArgumentException()
+            result.success(value)
           }
         }
       }
@@ -173,6 +156,50 @@ class SmsMethodCallHandler(private val context: Context, private val smsControll
       result.error(ILLEGAL_ARGUMENT, WRONG_METHOD_TYPE, null)
     } catch (e: RuntimeException) {
       result.error(FAILED_FETCH, e.message, null)
+    }
+  }
+
+  private fun handleGetSmsActions(smsAction: SmsAction) {
+    if (projection == null) {
+      projection = if (smsAction == SmsAction.GET_CONVERSATIONS) DEFAULT_CONVERSATION_PROJECTION else DEFAULT_SMS_PROJECTION
+    }
+    val contentUri = when (smsAction) {
+      SmsAction.GET_INBOX -> ContentUri.INBOX
+      SmsAction.GET_SENT -> ContentUri.SENT
+      SmsAction.GET_DRAFT -> ContentUri.DRAFT
+      SmsAction.GET_CONVERSATIONS -> ContentUri.CONVERSATIONS
+      else -> throw IllegalArgumentException()
+    }
+    val messages = smsController.getMessages(contentUri, projection!!, selection, selectionArgs, sortOrder)
+    result.success(messages)
+  }
+
+  private fun handleSendSmsActions(smsAction: SmsAction) {
+    if (listenStatus) {
+      val intentFilter = IntentFilter().apply {
+        addAction(Constants.ACTION_SMS_SENT)
+        addAction(Constants.ACTION_SMS_DELIVERED)
+      }
+      context.applicationContext.registerReceiver(this, intentFilter)
+    }
+    when (smsAction) {
+      SmsAction.SEND_SMS -> smsController.sendSms(address, messageBody, listenStatus)
+      SmsAction.SEND_MULTIPART_SMS -> smsController.sendMultipartSms(address, messageBody, listenStatus)
+      SmsAction.SEND_SMS_INTENT -> smsController.sendSmsIntent(address, messageBody)
+      else -> throw IllegalArgumentException()
+    }
+  }
+
+  private fun handleBackgroundActions(smsAction: SmsAction) {
+    when (smsAction) {
+      SmsAction.START_BACKGROUND_SERVICE -> {
+        IncomingSmsHandler.setBackgroundSetupHandle(context, setupHandle)
+        IncomingSmsHandler.setBackgroundMessageHandle(context, backgroundHandle)
+      }
+      SmsAction.BACKGROUND_SERVICE_INITIALIZED -> {
+        IncomingSmsHandler.onInitialized()
+      }
+      else -> throw IllegalArgumentException()
     }
   }
 
@@ -211,7 +238,21 @@ class SmsMethodCallHandler(private val context: Context, private val smsControll
         val permissions = PermissionsController.getSmsPermissions()
         return checkOrRequestPermission(permissions, requestCode)
       }
+      SmsAction.IS_SMS_CAPABLE,
+      SmsAction.GET_CELLULAR_DATA_STATE,
+      SmsAction.GET_CALL_STATE,
+      SmsAction.GET_DATA_ACTIVITY,
+      SmsAction.GET_NETWORK_OPERATOR,
+      SmsAction.GET_NETWORK_OPERATOR_NAME,
+        //TODO: Requires Manifest.permission.READ_PHONE_STATE
+      SmsAction.GET_DATA_NETWORK_TYPE,
+      SmsAction.GET_PHONE_TYPE,
+      SmsAction.GET_SIM_OPERATOR,
+      SmsAction.GET_SIM_OPERATOR_NAME,
+      SmsAction.GET_SIM_STATE,
+      SmsAction.IS_NETWORK_ROAMING,
       SmsAction.NO_SUCH_METHOD -> noop()
+
     }
     return false
   }

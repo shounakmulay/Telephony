@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter_sms/flutter_sms.dart';
-import 'package:flutter_sms/projections.dart';
-import 'package:flutter_sms/sms_message.dart';
 import 'package:vibration/vibration.dart';
 
 onBackgroundMessage(Map<String, dynamic> message) {
