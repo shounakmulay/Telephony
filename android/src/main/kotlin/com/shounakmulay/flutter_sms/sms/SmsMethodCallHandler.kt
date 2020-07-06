@@ -1,5 +1,6 @@
 package com.shounakmulay.flutter_sms.sms
 
+import android.Manifest
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -15,6 +16,7 @@ import com.shounakmulay.flutter_sms.utils.Constants.BACKGROUND_HANDLE
 import com.shounakmulay.flutter_sms.utils.Constants.DEFAULT_CONVERSATION_PROJECTION
 import com.shounakmulay.flutter_sms.utils.Constants.DEFAULT_SMS_PROJECTION
 import com.shounakmulay.flutter_sms.utils.Constants.FAILED_FETCH
+import com.shounakmulay.flutter_sms.utils.Constants.GET_STATUS_REQUEST_CODE
 import com.shounakmulay.flutter_sms.utils.Constants.ILLEGAL_ARGUMENT
 import com.shounakmulay.flutter_sms.utils.Constants.LISTEN_STATUS
 import com.shounakmulay.flutter_sms.utils.Constants.MESSAGE_BODY
@@ -110,7 +112,7 @@ class SmsMethodCallHandler(private val context: Context, private val smsControll
         }
         handleMethod(action, SMS_BACKGROUND_REQUEST_CODE)
       }
-      ActionType.GET -> execute(action)
+      ActionType.GET -> handleMethod(action, GET_STATUS_REQUEST_CODE)
     }
   }
 
@@ -238,23 +240,24 @@ class SmsMethodCallHandler(private val context: Context, private val smsControll
         val permissions = PermissionsController.getSmsPermissions()
         return checkOrRequestPermission(permissions, requestCode)
       }
+      SmsAction.GET_DATA_NETWORK_TYPE -> {
+        val permissions = PermissionsController.getPhonePermissions()
+        return checkOrRequestPermission(permissions, requestCode)
+      }
       SmsAction.IS_SMS_CAPABLE,
       SmsAction.GET_CELLULAR_DATA_STATE,
       SmsAction.GET_CALL_STATE,
       SmsAction.GET_DATA_ACTIVITY,
       SmsAction.GET_NETWORK_OPERATOR,
       SmsAction.GET_NETWORK_OPERATOR_NAME,
-        //TODO: Requires Manifest.permission.READ_PHONE_STATE
-      SmsAction.GET_DATA_NETWORK_TYPE,
       SmsAction.GET_PHONE_TYPE,
       SmsAction.GET_SIM_OPERATOR,
       SmsAction.GET_SIM_OPERATOR_NAME,
       SmsAction.GET_SIM_STATE,
       SmsAction.IS_NETWORK_ROAMING,
-      SmsAction.NO_SUCH_METHOD -> noop()
+      SmsAction.NO_SUCH_METHOD -> return true
 
     }
-    return false
   }
 
   @RequiresApi(Build.VERSION_CODES.M)

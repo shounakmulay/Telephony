@@ -16,6 +16,7 @@ object Constants {
 
   // Permissions
   val SMS_PERMISSIONS = listOf(android.Manifest.permission.READ_SMS, android.Manifest.permission.SEND_SMS, android.Manifest.permission.RECEIVE_SMS)
+  val PHONE_PERMISSIONS = listOf(android.Manifest.permission.READ_PHONE_STATE)
 
   // Request Codes
   const val SMS_QUERY_REQUEST_CODE = 1
@@ -23,6 +24,7 @@ object Constants {
   const val SMS_SENT_BROADCAST_REQUEST_CODE = 21
   const val SMS_DELIVERED_BROADCAST_REQUEST_CODE = 22
   const val SMS_BACKGROUND_REQUEST_CODE = 31
+  const val GET_STATUS_REQUEST_CODE = 41
 
   // Methods
   const val ON_MESSAGE = "onMessage"
