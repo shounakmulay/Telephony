@@ -255,3 +255,7 @@ enum SimState {
   LOADED,
   PRESENT
 }
+
+enum ServiceState { IN_SERVICE, OUT_OF_SERVICE, EMERGENCY_ONLY, POWER_OFF }
+
+enum SignalStrength { NONE_OR_UNKNOWN, POOR, MODERATE, GOOD, GREAT }

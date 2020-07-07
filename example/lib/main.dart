@@ -58,7 +58,7 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Plugin example app'),
         ),
         body: Center(child: FutureBuilder(
-          future: sms.simOperator,
+          future: sms.serviceState,
           builder: (context, snapshot) {
             return Text('Running on: ${snapshot.data.toString()}\n');
           }

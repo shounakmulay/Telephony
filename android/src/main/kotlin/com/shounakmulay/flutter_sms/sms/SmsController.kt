@@ -1,5 +1,6 @@
 package com.shounakmulay.flutter_sms.sms
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.content.Context
@@ -7,9 +8,10 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
-import android.telephony.SmsManager
-import android.telephony.SubscriptionManager
-import android.telephony.TelephonyManager
+import android.provider.Telephony
+import android.telephony.*
+import androidx.annotation.RequiresApi
+import androidx.annotation.RequiresPermission
 import com.shounakmulay.flutter_sms.utils.Constants.ACTION_SMS_DELIVERED
 import com.shounakmulay.flutter_sms.utils.Constants.ACTION_SMS_SENT
 import com.shounakmulay.flutter_sms.utils.Constants.SMS_BODY
@@ -206,6 +208,21 @@ class SmsController(private val context: Context) {
 
   fun isNetworkRoaming(): Boolean {
     return getTelephonyManager().isNetworkRoaming
+  }
+
+  @RequiresApi(Build.VERSION_CODES.O)
+  @RequiresPermission(allOf = [Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.READ_PHONE_STATE])
+    fun getServiceState(): Int? {
+    val serviceState = getTelephonyManager().serviceState
+    return serviceState?.state
+  }
+
+  @RequiresApi(Build.VERSION_CODES.Q)
+  fun getSignalStrength(): List<Int>? {
+    val signalStrength = getTelephonyManager().signalStrength
+    return signalStrength?.cellSignalStrengths?.map {
+      return@map it.level
+    }
   }
 
   private fun getTelephonyManager(): TelephonyManager {

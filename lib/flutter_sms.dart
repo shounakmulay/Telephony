@@ -258,6 +258,18 @@ class FlutterSms {
 
   Future<bool> get isNetworkRoaming =>
       _foregroundChannel.invokeMethod<bool>("isNetworkRoaming");
+
+  Future<List<SignalStrength>> get signalStrengths async {
+    final List<dynamic> strengths =
+        await _foregroundChannel.invokeMethod("getSignalStrength");
+    return strengths.map((s) => SignalStrength.values[s]).toList(growable: false);
+  }
+
+  Future<ServiceState> get serviceState async {
+    final int state =
+        await _foregroundChannel.invokeMethod<int>("getServiceState");
+    return ServiceState.values[state];
+  }
 }
 
 class SmsFilter {

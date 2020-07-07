@@ -24,6 +24,8 @@ enum class SmsAction(private val methodName: String) {
   GET_SIM_OPERATOR("getSimOperator"),
   GET_SIM_OPERATOR_NAME("getSimOperatorName"),
   GET_SIM_STATE("getSimState"),
+  GET_SERVICE_STATE("getServiceState"),
+  GET_SIGNAL_STRENGTH("getSignalStrength"),
   IS_NETWORK_ROAMING("isNetworkRoaming"),
   NO_SUCH_METHOD("noSuchMethod");
 
@@ -61,6 +63,8 @@ enum class SmsAction(private val methodName: String) {
       GET_SIM_OPERATOR,
       GET_SIM_OPERATOR_NAME,
       GET_SIM_STATE,
+      GET_SERVICE_STATE,
+      GET_SIGNAL_STRENGTH,
       IS_NETWORK_ROAMING -> ActionType.GET
     }
   }
