@@ -5,7 +5,9 @@ import android.content.pm.PackageManager
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Build
 import androidx.annotation.RequiresApi
-import com.shounakmulay.flutter_sms.utils.Constants
+import com.shounakmulay.flutter_sms.utils.Constants.PHONE_PERMISSIONS
+import com.shounakmulay.flutter_sms.utils.Constants.SERVICE_STATE_PERMISSIONS
+import com.shounakmulay.flutter_sms.utils.Constants.SMS_PERMISSIONS
 
 object PermissionsController {
 
@@ -41,7 +43,17 @@ object PermissionsController {
 
   fun getSmsPermissions(): List<String> {
     val permissions = getListedPermissions()
-    return permissions.filter { permission -> Constants.SMS_PERMISSIONS.contains(permission) }
+    return permissions.filter { permission -> SMS_PERMISSIONS.contains(permission) }
+  }
+
+  fun getPhonePermissions(): List<String> {
+    val permissions = getListedPermissions()
+    return permissions.filter { permission -> PHONE_PERMISSIONS.contains(permission) }
+  }
+
+  fun getServiceStatePermissions(): List<String> {
+    val permissions = getListedPermissions()
+    return permissions.filter { permission -> SERVICE_STATE_PERMISSIONS.contains(permission) }
   }
 
   private fun getListedPermissions(): Array<out String> {
