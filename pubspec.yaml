@@ -1,9 +1,6 @@
-
 name: telephony
 description: A new flutter plugin project.
 version: 0.0.1
-author:
-homepage:
 
 environment:
   sdk: ">=2.7.0 <3.0.0"

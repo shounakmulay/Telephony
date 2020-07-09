@@ -12,7 +12,7 @@ import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.*
 
 
-class FlutterSmsPlugin : FlutterPlugin, ActivityAware {
+class TelephonyPlugin : FlutterPlugin, ActivityAware {
 
   private lateinit var smsChannel: MethodChannel
 
