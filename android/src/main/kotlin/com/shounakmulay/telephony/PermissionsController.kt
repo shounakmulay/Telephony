@@ -1,13 +1,13 @@
-package com.shounakmulay.flutter_sms
+package com.shounakmulay.telephony
 
 import android.app.Activity
 import android.content.pm.PackageManager
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Build
 import androidx.annotation.RequiresApi
-import com.shounakmulay.flutter_sms.utils.Constants.PHONE_PERMISSIONS
-import com.shounakmulay.flutter_sms.utils.Constants.SERVICE_STATE_PERMISSIONS
-import com.shounakmulay.flutter_sms.utils.Constants.SMS_PERMISSIONS
+import com.shounakmulay.telephony.utils.Constants.PHONE_PERMISSIONS
+import com.shounakmulay.telephony.utils.Constants.SERVICE_STATE_PERMISSIONS
+import com.shounakmulay.telephony.utils.Constants.SMS_PERMISSIONS
 
 object PermissionsController {
 
@@ -15,7 +15,7 @@ object PermissionsController {
   var isRequestingPermission: Boolean = false
 
   fun setActivity(activity: Activity) {
-    this.activity = activity
+    PermissionsController.activity = activity
   }
 
   fun hasRequiredPermissions(permissions: List<String>): Boolean {

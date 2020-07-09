@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 name: flutter_sms_example
 description: Demonstrates how to use the flutter_sms plugin.
+=======
+name: telephony_example
+description: Demonstrates how to use the telephony plugin.
+>>>>>>> Change plugin name
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `pub publish`. This is preferred for private packages.
@@ -9,6 +14,7 @@ environment:
   sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
+<<<<<<< HEAD
   vibration: ^1.4.0
   flutter:
     sdk: flutter
@@ -16,6 +22,14 @@ dependencies:
   flutter_sms:
     # When depending on this package from a real application you should use:
     #   flutter_sms: ^x.y.z
+=======
+  flutter:
+    sdk: flutter
+
+  telephony:
+    # When depending on this package from a real application you should use:
+    #   telephony: ^x.y.z
+>>>>>>> Change plugin name
     # See https://dart.dev/tools/pub/dependencies#version-constraints
     # The example app is bundled with the plugin so we use a path dependency on
     # the parent directory to use the current plugin's version. 

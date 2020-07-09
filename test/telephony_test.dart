@@ -1,9 +1,9 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_sms/flutter_sms.dart';
+import 'package:telephony/telephony.dart';
 
 void main() {
-  const MethodChannel channel = MethodChannel('flutter_sms');
+  const MethodChannel channel = MethodChannel('telephony');
 
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -15,9 +15,5 @@ void main() {
 
   tearDown(() {
     channel.setMockMethodCallHandler(null);
-  });
-
-  test('getPlatformVersion', () async {
-    expect(await FlutterSms.platformVersion, '42');
   });
 }

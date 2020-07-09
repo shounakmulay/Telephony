@@ -1,5 +1,6 @@
-name: flutter_sms
-description: A new Flutter plugin.
+
+name: telephony
+description: A new flutter plugin project.
 version: 0.0.1
 author:
 homepage:
@@ -29,10 +30,10 @@ flutter:
   plugin:
     platforms:
       android:
-        package: com.shounakmulay.flutter_sms
-        pluginClass: FlutterSmsPlugin
+        package: com.shounakmulay.telephony
+        pluginClass: TelephonyPlugin
       ios:
-        pluginClass: FlutterSmsPlugin
+        pluginClass: TelephonyPlugin
 
   # To add assets to your plugin package, add an assets section, like this:
   # assets:

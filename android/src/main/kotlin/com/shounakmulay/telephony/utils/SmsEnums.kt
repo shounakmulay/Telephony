@@ -1,4 +1,4 @@
-package com.shounakmulay.flutter_sms.utils
+package com.shounakmulay.telephony.utils
 
 import android.net.Uri
 import android.provider.Telephony

@@ -1,6 +1,7 @@
-# flutter_sms_example
 
-Demonstrates how to use the flutter_sms plugin.
+# telephony_example
+
+Demonstrates how to use the telephony plugin.
 
 ## Getting Started
 

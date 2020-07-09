@@ -1,6 +1,6 @@
-# flutter_sms
+# telephony
 
-A new Flutter plugin.
+A new flutter plugin project.
 
 ## Getting Started
 

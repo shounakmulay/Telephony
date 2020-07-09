@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:flutter_sms/flutter_sms.dart';
-import 'package:vibration/vibration.dart';
+import 'package:telephony/telephony.dart';
 
 onBackgroundMessage(Map<String, dynamic> message) {
   debugPrint("onBackgroundMessage called");
-  Vibration.vibrate(duration: 1000);
 }
+
 
 void main() {
   runApp(MyApp());
@@ -30,7 +29,6 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       _message = message.toString();
     });
-    await Vibration.vibrate(duration: 5000, repeat: 2);
   }
 
   onSendStatus(SendStatus status) {
@@ -51,7 +49,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    var sms = FlutterSms.instance;
+    var sms = Telephony.instance;
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(

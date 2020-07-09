@@ -1,9 +1,11 @@
-package com.shounakmulay.flutter_sms
+package com.shounakmulay.telephony
 
 import android.content.Context
 import androidx.annotation.NonNull
-import com.shounakmulay.flutter_sms.sms.*
-import com.shounakmulay.flutter_sms.utils.Constants.CHANNEL_SMS
+import com.shounakmulay.telephony.utils.Constants.CHANNEL_SMS
+import com.shounakmulay.telephony.sms.IncomingSmsReceiver
+import com.shounakmulay.telephony.sms.SmsController
+import com.shounakmulay.telephony.sms.SmsMethodCallHandler
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
