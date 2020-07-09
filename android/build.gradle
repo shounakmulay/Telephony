@@ -1,4 +1,4 @@
-group 'com.shounakmulay.flutter_sms'
+group 'com.shounakmulay.telephony'
 version '1.0-SNAPSHOT'
 
 buildscript {

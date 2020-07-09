@@ -37,7 +37,7 @@ void _flutterSmsSetupBackgroundChannel(
   backgroundChannel.invokeMethod<void>('backgroundServiceInitialized');
 }
 
-class FlutterSms {
+class Telephony {
   final MethodChannel _foregroundChannel;
   final LocalPlatform _platform;
 
@@ -45,17 +45,17 @@ class FlutterSms {
   MessageHandler _onBackgroundMessages;
   SmsSendStatusListener _statusListener;
 
-  FlutterSms(this._foregroundChannel, this._platform);
+  Telephony(this._foregroundChannel, this._platform);
 
-  static FlutterSms get instance => _instance;
+  static Telephony get instance => _instance;
 
-  FlutterSms._newInstance(MethodChannel methodChannel, LocalPlatform platform)
+  Telephony._newInstance(MethodChannel methodChannel, LocalPlatform platform)
       : _foregroundChannel = methodChannel,
         _platform = platform {
     _foregroundChannel.setMethodCallHandler(_handler);
   }
 
-  static final FlutterSms _instance = FlutterSms._newInstance(
+  static final Telephony _instance = Telephony._newInstance(
       const MethodChannel('plugins.shounakmulay.com/foreground_sms_channel'),
       const LocalPlatform());
 

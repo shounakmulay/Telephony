@@ -1,4 +1,4 @@
-part of 'flutter_sms.dart';
+part of 'telephony.dart';
 
 class _SmsProjections {
   static const String COUNT = "_count";

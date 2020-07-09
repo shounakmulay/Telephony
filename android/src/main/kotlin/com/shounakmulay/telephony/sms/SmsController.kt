@@ -1,4 +1,4 @@
-package com.shounakmulay.flutter_sms.sms
+package com.shounakmulay.telephony.sms
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -8,17 +8,16 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
-import android.provider.Telephony
 import android.telephony.*
 import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
-import com.shounakmulay.flutter_sms.utils.Constants.ACTION_SMS_DELIVERED
-import com.shounakmulay.flutter_sms.utils.Constants.ACTION_SMS_SENT
-import com.shounakmulay.flutter_sms.utils.Constants.SMS_BODY
-import com.shounakmulay.flutter_sms.utils.Constants.SMS_DELIVERED_BROADCAST_REQUEST_CODE
-import com.shounakmulay.flutter_sms.utils.Constants.SMS_SENT_BROADCAST_REQUEST_CODE
-import com.shounakmulay.flutter_sms.utils.Constants.SMS_TO
-import com.shounakmulay.flutter_sms.utils.ContentUri
+import com.shounakmulay.telephony.utils.Constants.ACTION_SMS_DELIVERED
+import com.shounakmulay.telephony.utils.Constants.ACTION_SMS_SENT
+import com.shounakmulay.telephony.utils.Constants.SMS_BODY
+import com.shounakmulay.telephony.utils.Constants.SMS_DELIVERED_BROADCAST_REQUEST_CODE
+import com.shounakmulay.telephony.utils.Constants.SMS_SENT_BROADCAST_REQUEST_CODE
+import com.shounakmulay.telephony.utils.Constants.SMS_TO
+import com.shounakmulay.telephony.utils.ContentUri
 
 
 class SmsController(private val context: Context) {
