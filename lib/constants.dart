@@ -34,73 +34,54 @@ class _SmsProjections {
   static const String TYPE = "type";
 }
 
-enum SmsColumn {
-  ID,
-  ADDRESS,
-  BODY,
-  DATE,
-  DATE_SENT,
-  READ,
-  SEEN,
-  STATUS,
-  SUBJECT,
-  SUBSCRIPTION_ID,
-  THREAD_ID,
-  TYPE
+class _ConversationProjections {
+  static const String SNIPPET = "snippet";
+  static const String THREAD_ID = "thread_id";
+  static const String MSG_COUNT = "msg_count";
 }
 
-extension ColumnNames on SmsColumn {
-  String get name {
-    switch (this) {
-      case SmsColumn.ID:
-        return _SmsProjections.ID;
-        break;
-      case SmsColumn.ADDRESS:
-        return _SmsProjections.ADDRESS;
-        break;
-      case SmsColumn.BODY:
-        return _SmsProjections.BODY;
-        break;
-      case SmsColumn.DATE:
-        return _SmsProjections.DATE;
-        break;
-      case SmsColumn.DATE_SENT:
-        return _SmsProjections.DATE_SENT;
-        break;
-      case SmsColumn.READ:
-        return _SmsProjections.READ;
-        break;
-      case SmsColumn.SEEN:
-        return _SmsProjections.SEEN;
-        break;
-      case SmsColumn.STATUS:
-        return _SmsProjections.STATUS;
-        break;
-      case SmsColumn.SUBJECT:
-        return _SmsProjections.SUBJECT;
-        break;
-      case SmsColumn.SUBSCRIPTION_ID:
-        return _SmsProjections.SUBSCRIPTION_ID;
-        break;
-      case SmsColumn.THREAD_ID:
-        return _SmsProjections.THREAD_ID;
-        break;
-      case SmsColumn.TYPE:
-        return _SmsProjections.TYPE;
-        break;
-      default:
-        return null;
-    }
-  }
+abstract class Column {
 
-  SmsColumn fromName(String name) {
-    for (var column in SmsColumn.values) {
-      if (column.name == name) {
-        return this;
-      }
-    }
-    return null;
-  }
+  const Column();
+
+  String get _name;
+}
+
+class SmsColumn extends Column {
+  final String _columnName;
+
+  const SmsColumn._(this._columnName);
+
+  static const ID = SmsColumn._(_SmsProjections.ID);
+  static const ADDRESS = SmsColumn._(_SmsProjections.ADDRESS);
+  static const BODY = SmsColumn._(_SmsProjections.BODY);
+  static const DATE = SmsColumn._(_SmsProjections.DATE);
+  static const DATE_SENT = SmsColumn._(_SmsProjections.DATE_SENT);
+  static const READ = SmsColumn._(_SmsProjections.READ);
+  static const SEEN = SmsColumn._(_SmsProjections.SEEN);
+  static const STATUS = SmsColumn._(_SmsProjections.STATUS);
+  static const SUBJECT = SmsColumn._(_SmsProjections.SUBJECT);
+  static const SUBSCRIPTION_ID = SmsColumn._(_SmsProjections.SUBSCRIPTION_ID);
+  static const THREAD_ID = SmsColumn._(_SmsProjections.THREAD_ID);
+  static const TYPE = SmsColumn._(_SmsProjections.TYPE);
+
+  @override
+  String get _name => _columnName;
+}
+
+class ConversationColumn extends Column {
+  final String _columnName;
+
+  const ConversationColumn._(this._columnName);
+
+  static const SNIPPET = ConversationColumn._(_ConversationProjections.SNIPPET);
+  static const THREAD_ID =
+      ConversationColumn._(_ConversationProjections.THREAD_ID);
+  static const MSG_COUNT =
+      ConversationColumn._(_ConversationProjections.MSG_COUNT);
+
+  @override
+  String get _name => _columnName;
 }
 
 const DEFAULT_SMS_COLUMNS = [
@@ -108,6 +89,12 @@ const DEFAULT_SMS_COLUMNS = [
   SmsColumn.ADDRESS,
   SmsColumn.BODY,
   SmsColumn.DATE
+];
+
+const DEFAULT_CONVERSATION_COLUMNS = [
+  ConversationColumn.SNIPPET,
+  ConversationColumn.THREAD_ID,
+  ConversationColumn.MSG_COUNT
 ];
 
 class SmsMessage {
@@ -119,51 +106,39 @@ class SmsMessage {
   bool read;
   bool seen;
   String subject;
-  String subscriptionId;
-  String threadId;
+  int subscriptionId;
+  int threadId;
   SmsType type;
   SmsStatus status;
 
-  SmsMessage(
-      this.id,
-      this.address,
-      this.body,
-      this.date,
-      this.read,
-      this.seen,
-      this.subject,
-      this.subscriptionId,
-      this.threadId,
-      this.dateSent,
-      this.type,
-      this.status);
-
-  SmsMessage._fromMap(Map<String, dynamic> message, List<SmsColumn> columns) {
+  SmsMessage._fromMap(
+      Map rawMessage, List<SmsColumn> columns) {
+    final message = Map.castFrom<dynamic, dynamic, String, dynamic>(rawMessage);
     for (var column in columns) {
-      final value = message[column.name];
-      switch (column) {
-        case SmsColumn.ID:
+      final value = message[column._columnName];
+      switch (column._columnName) {
+        case _SmsProjections.ID:
           this.id = int.tryParse(value);
           break;
-        case SmsColumn.ADDRESS:
+        case _SmsProjections.ADDRESS:
           this.address = value;
           break;
-        case SmsColumn.BODY:
+        case _SmsProjections.BODY:
           this.body = value;
           break;
-        case SmsColumn.DATE:
+        case _SmsProjections.DATE:
           this.date = int.tryParse(value);
           break;
-        case SmsColumn.DATE_SENT:
+        case _SmsProjections.DATE_SENT:
           this.dateSent = int.tryParse(value);
           break;
-        case SmsColumn.READ:
+        case _SmsProjections.READ:
           this.read = int.tryParse(value) == 0 ? false : true;
           break;
-        case SmsColumn.SEEN:
+        case _SmsProjections.SEEN:
           this.seen = int.tryParse(value) == 0 ? false : true;
           break;
-        case SmsColumn.STATUS:
+        case _SmsProjections.STATUS:
           switch (int.tryParse(value)) {
             case 0:
               this.status = SmsStatus.STATUS_COMPLETE;
@@ -180,16 +155,16 @@ class SmsMessage {
               break;
           }
           break;
-        case SmsColumn.SUBJECT:
+        case _SmsProjections.SUBJECT:
           this.subject = value;
           break;
-        case SmsColumn.SUBSCRIPTION_ID:
-          this.subscriptionId = value;
+        case _SmsProjections.SUBSCRIPTION_ID:
+          this.subscriptionId = int.tryParse(value);
           break;
-        case SmsColumn.THREAD_ID:
-          this.threadId = value;
+        case _SmsProjections.THREAD_ID:
+          this.threadId = int.tryParse(value);
           break;
-        case SmsColumn.TYPE:
+        case _SmsProjections.TYPE:
           this.type = SmsType.values[value];
           break;
       }
@@ -208,6 +183,31 @@ enum SmsType {
 }
 
 enum SmsStatus { STATUS_COMPLETE, STATUS_FAILED, STATUS_NONE, STATUS_PENDING }
+
+class SmsConversation {
+  String snippet;
+  int threadId;
+  int messageCount;
+
+  SmsConversation._fromMap(Map rawConversation) {
+    final conversation =
+        Map.castFrom<dynamic, dynamic, String, dynamic>(rawConversation);
+    for (var column in DEFAULT_CONVERSATION_COLUMNS) {
+      final String value = conversation[column._columnName];
+      switch (column._columnName) {
+        case _ConversationProjections.SNIPPET:
+          this.snippet = value;
+          break;
+        case _ConversationProjections.THREAD_ID:
+          this.threadId = int.tryParse(value);
+          break;
+        case _ConversationProjections.MSG_COUNT:
+          this.messageCount = int.tryParse(value);
+          break;
+      }
+    }
+  }
+}
 
 enum DataState { DISCONNECTED, CONNECTING, CONNECTED, SUSPENDED, UNKNOWN }
 

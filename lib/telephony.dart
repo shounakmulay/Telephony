@@ -123,9 +123,8 @@ class Telephony {
         await _foregroundChannel.invokeMethod('getAllInboxSms', args);
 
     return messages
-        .map((message) => SmsMessage._fromMap(
-            Map.castFrom<dynamic, dynamic, String, dynamic>(message), columns))
-        .toList();
+        .map((message) => SmsMessage._fromMap(message, columns))
+        .toList(growable: false);
   }
 
   Future<List<SmsMessage>> getSentSms(
@@ -134,10 +133,12 @@ class Telephony {
       List<OrderBy> sortOrder}) async {
     final args = _getArguments(columns, filter, sortOrder);
 
-    final List<Map<String, dynamic>> messages =
+    final List<dynamic> messages =
         await _foregroundChannel.invokeMethod('getAllSentSms', args);
 
-    return messages.map((message) => SmsMessage._fromMap(message, columns));
+    return messages
+        .map((message) => SmsMessage._fromMap(message, columns))
+        .toList(growable: false);
   }
 
   Future<List<SmsMessage>> getDraftSms(
@@ -146,18 +147,34 @@ class Telephony {
       List<OrderBy> sortOrder}) async {
     final args = _getArguments(columns, filter, sortOrder);
 
-    final List<Map<String, dynamic>> messages =
+    final List<dynamic> messages =
         await _foregroundChannel.invokeMethod('getAllDraftSms', args);
 
-    return messages.map((message) => SmsMessage._fromMap(message, columns));
+    return messages
+        .map((message) => SmsMessage._fromMap(message, columns))
+        .toList(growable: false);
+  }
+
+  Future<List<SmsConversation>> getConversations(
+      {List<ConversationColumn> columns,
+      ConversationFilter filter,
+      List<OrderBy> sortOrder}) async {
+    final args = _getArguments(columns, filter, sortOrder);
+
+    final List<dynamic> conversations =
+        await _foregroundChannel.invokeMethod('getAllConversations');
+
+    return conversations
+        .map((conversation) => SmsConversation._fromMap(conversation))
+        .toList(growable: false);
   }
 
   Map<String, dynamic> _getArguments(
-      List<SmsColumn> columns, SmsFilter filter, List<OrderBy> sortOrder) {
+      List<Column> columns, Filter filter, List<OrderBy> sortOrder) {
     final Map<String, dynamic> args = {};
 
     if (columns != null) {
-      args["projection"] = columns.map((c) => c.name).toList();
+      args["projection"] = columns.map((c) => c._name).toList();
     }
 
     if (filter != null) {
@@ -262,7 +279,9 @@ class Telephony {
   Future<List<SignalStrength>> get signalStrengths async {
     final List<dynamic> strengths =
         await _foregroundChannel.invokeMethod("getSignalStrength");
-    return strengths.map((s) => SignalStrength.values[s]).toList(growable: false);
+    return strengths
+        .map((s) => SignalStrength.values[s])
+        .toList(growable: false);
   }
 
   Future<ServiceState> get serviceState async {
@@ -272,88 +291,149 @@ class Telephony {
   }
 }
 
-class SmsFilter {
+abstract class Filter<T, K> {
+  T and(K column);
+
+  String get _selection;
+
+  List<String> get _selectionArgs;
+}
+
+class SmsFilter implements Filter<SmsFilterStatement, SmsColumn> {
   final String _filter;
   final List<String> _filterArgs;
 
   SmsFilter._(this._filter, this._filterArgs);
 
-  static FilterStatement where(SmsColumn column) => FilterStatement._(column);
+  static SmsFilterStatement where(SmsColumn column) =>
+      SmsFilterStatement._(column._columnName);
 
-  FilterStatement and(SmsColumn column) {
-    return FilterStatement._withPreviousFilter(
-        "$_filter AND", column, List.from(_filterArgs, growable: true));
+  SmsFilterStatement and(SmsColumn column) {
+    return SmsFilterStatement._withPreviousFilter(
+        "$_filter AND", column._name, List.from(_filterArgs, growable: true));
   }
 
+  @override
   String get _selection => _filter;
 
+  @override
   List<String> get _selectionArgs => _filterArgs;
 }
 
-class FilterStatement {
-  final SmsColumn _column;
+class ConversationFilter extends Filter<ConversationFilterStatement, ConversationColumn> {
+  final String _filter;
+  final List<String> _filterArgs;
+
+  ConversationFilter._(this._filter, this._filterArgs);
+
+  static ConversationFilterStatement where(ConversationColumn column) =>
+      ConversationFilterStatement._(column._columnName);
+
+  @override
+  ConversationFilterStatement and(ConversationColumn column) {
+    return ConversationFilterStatement._withPreviousFilter(
+        "$_filter AND", column._name, List.from(_filterArgs, growable: true));
+  }
+
+  @override
+  String get _selection => _filter;
+
+  @override
+  List<String> get _selectionArgs => _filterArgs;
+}
+
+abstract class FilterStatement<T extends Filter> {
+  String _column;
   String _previousFilter;
   List<String> _previousFilterArgs;
 
   FilterStatement._(this._column);
 
   FilterStatement._withPreviousFilter(
-      String previousFilter, SmsColumn column, List<String> previousFilterArgs)
+      String previousFilter, String column, List<String> previousFilterArgs)
       : _previousFilter = previousFilter,
         _column = column,
         _previousFilterArgs = previousFilterArgs;
 
-  SmsFilter equals(String equalTo) {
+  T equals(String equalTo) {
     return _createFilter(equalTo, "=");
   }
 
-  SmsFilter greaterThan(String value) {
+  T greaterThan(String value) {
     return _createFilter(value, ">");
   }
 
-  SmsFilter lessThan(String value) {
+  T lessThan(String value) {
     return _createFilter(value, "<");
   }
 
-  SmsFilter greaterThanOrEqualTo(String value) {
+  T greaterThanOrEqualTo(String value) {
     return _createFilter(value, ">=");
   }
 
-  SmsFilter lessThanOrEqualTo(String value) {
+  T lessThanOrEqualTo(String value) {
     return _createFilter(value, "<=");
   }
 
-  SmsFilter notEqualTo(String value) {
+  T notEqualTo(String value) {
     return _createFilter(value, "!=");
   }
 
-  SmsFilter like(String value) {
+  T like(String value) {
     return _createFilter(value, "LIKE");
   }
 
-  SmsFilter inValues(List<String> values) {
+  T inValues(List<String> values) {
     final String filterValues = values.join(",");
     return _createFilter("($filterValues)", "IN");
   }
 
-  SmsFilter between(String from, String to) {
+  T between(String from, String to) {
     final String filterValue = "$from AND $to";
     return _createFilter(filterValue, "BETWEEN");
   }
 
-  // TODO: Probably should add () to every filter
+  T _createFilter(String value, String operator);
+}
+
+class SmsFilterStatement extends FilterStatement<SmsFilter> {
+  SmsFilterStatement._(String column) : super._(column);
+
+  SmsFilterStatement._withPreviousFilter(
+      String previousFilter, String column, List<String> previousFilterArgs)
+      : super._withPreviousFilter(previousFilter, column, previousFilterArgs);
+
+  @override
   SmsFilter _createFilter(String value, String operator) {
     if (_previousFilter != null) {
-      return SmsFilter._("$_previousFilter ${_column.name} $operator ?",
+      return SmsFilter._("$_previousFilter $_column $operator ?",
           _previousFilterArgs..add(value));
     } else {
-      return SmsFilter._("${_column.name} $operator ?", [value]);
+      return SmsFilter._("$_column $operator ?", [value]);
+    }
+  }
+}
+
+class ConversationFilterStatement extends FilterStatement<ConversationFilter> {
+  ConversationFilterStatement._(String column) : super._(column);
+
+  ConversationFilterStatement._withPreviousFilter(
+      String previousFilter, String column, List<String> previousFilterArgs)
+      : super._withPreviousFilter(previousFilter, column, previousFilterArgs);
+
+  @override
+  ConversationFilter _createFilter(String value, String operator) {
+    if (_previousFilter != null) {
+      return ConversationFilter._("$_previousFilter $_column $operator ?",
+          _previousFilterArgs..add(value));
+    } else {
+      return ConversationFilter._("$_column $operator ?", [value]);
     }
   }
 }
 
 class OrderBy {
-  final SmsColumn _column;
+  final String _column;
   Sort _sort = Sort.DESC;
 
   OrderBy(this._column, {Sort sort}) {
@@ -362,7 +442,7 @@ class OrderBy {
     }
   }
 
-  String get _value => "${_column.name} ${_sort.value}";
+  String get _value => "$_column ${_sort.value}";
 }
 
 enum Sort { ASC, DESC }
