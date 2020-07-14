@@ -23,16 +23,6 @@ import com.shounakmulay.telephony.utils.ContentUri
 class SmsController(private val context: Context) {
 
   // FETCH SMS
-  fun getConversations(
-      contentUri: ContentUri,
-      projection: List<String>,
-      selection: String?,
-      selectionArgs: List<String>?,
-      sortOrder: String?
-  ): List<HashMap<String, String?>> {
-    return getQueryResult(contentUri, projection, selection, selectionArgs, sortOrder)
-  }
-
   fun getMessages(
       contentUri: ContentUri,
       projection: List<String>,
@@ -40,16 +30,6 @@ class SmsController(private val context: Context) {
       selectionArgs: List<String>?,
       sortOrder: String?
   ): List<HashMap<String, String?>> {
-    return getQueryResult(contentUri, projection, selection, selectionArgs, sortOrder)
-  }
-
-  private fun getQueryResult(
-      contentUri: ContentUri,
-      projection: List<String>,
-      selection: String?,
-      selectionArgs: List<String>?,
-      sortOrder: String?
-  ): MutableList<HashMap<String, String?>> {
     val messages = mutableListOf<HashMap<String, String?>>()
 
     val cursor = context.contentResolver.query(
@@ -211,7 +191,7 @@ class SmsController(private val context: Context) {
 
   @RequiresApi(Build.VERSION_CODES.O)
   @RequiresPermission(allOf = [Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.READ_PHONE_STATE])
-    fun getServiceState(): Int? {
+  fun getServiceState(): Int? {
     val serviceState = getTelephonyManager().serviceState
     return serviceState?.state
   }

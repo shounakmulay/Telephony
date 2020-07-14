@@ -7,10 +7,10 @@ import 'package:platform/platform.dart';
 
 part 'constants.dart';
 
+part 'filter.dart';
+
 typedef MessageHandler(Map<String, dynamic> message);
 typedef SmsSendStatusListener(SendStatus status);
-
-enum SendStatus { SENT, DELIVERED }
 
 void _flutterSmsSetupBackgroundChannel(
     {MethodChannel backgroundChannel = const MethodChannel(
@@ -123,9 +123,8 @@ class Telephony {
         await _foregroundChannel.invokeMethod('getAllInboxSms', args);
 
     return messages
-        .map((message) => SmsMessage._fromMap(
-            Map.castFrom<dynamic, dynamic, String, dynamic>(message), columns))
-        .toList();
+        .map((message) => SmsMessage._fromMap(message, columns))
+        .toList(growable: false);
   }
 
   Future<List<SmsMessage>> getSentSms(
@@ -134,10 +133,12 @@ class Telephony {
       List<OrderBy> sortOrder}) async {
     final args = _getArguments(columns, filter, sortOrder);
 
-    final List<Map<String, dynamic>> messages =
+    final List<dynamic> messages =
         await _foregroundChannel.invokeMethod('getAllSentSms', args);
 
-    return messages.map((message) => SmsMessage._fromMap(message, columns));
+    return messages
+        .map((message) => SmsMessage._fromMap(message, columns))
+        .toList(growable: false);
   }
 
   Future<List<SmsMessage>> getDraftSms(
@@ -146,18 +147,34 @@ class Telephony {
       List<OrderBy> sortOrder}) async {
     final args = _getArguments(columns, filter, sortOrder);
 
-    final List<Map<String, dynamic>> messages =
+    final List<dynamic> messages =
         await _foregroundChannel.invokeMethod('getAllDraftSms', args);
 
-    return messages.map((message) => SmsMessage._fromMap(message, columns));
+    return messages
+        .map((message) => SmsMessage._fromMap(message, columns))
+        .toList(growable: false);
+  }
+
+  Future<List<SmsConversation>> getConversations(
+      {List<ConversationColumn> columns,
+      ConversationFilter filter,
+      List<OrderBy> sortOrder}) async {
+    final args = _getArguments(columns, filter, sortOrder);
+
+    final List<dynamic> conversations =
+        await _foregroundChannel.invokeMethod('getAllConversations', args);
+
+    return conversations
+        .map((conversation) => SmsConversation._fromMap(conversation))
+        .toList(growable: false);
   }
 
   Map<String, dynamic> _getArguments(
-      List<SmsColumn> columns, SmsFilter filter, List<OrderBy> sortOrder) {
+      List<Column> columns, Filter filter, List<OrderBy> sortOrder) {
     final Map<String, dynamic> args = {};
 
     if (columns != null) {
-      args["projection"] = columns.map((c) => c.name).toList();
+      args["projection"] = columns.map((c) => c._name).toList();
     }
 
     if (filter != null) {
@@ -262,7 +279,9 @@ class Telephony {
   Future<List<SignalStrength>> get signalStrengths async {
     final List<dynamic> strengths =
         await _foregroundChannel.invokeMethod("getSignalStrength");
-    return strengths.map((s) => SignalStrength.values[s]).toList(growable: false);
+    return strengths
+        .map((s) => SignalStrength.values[s])
+        .toList(growable: false);
   }
 
   Future<ServiceState> get serviceState async {
@@ -272,111 +291,101 @@ class Telephony {
   }
 }
 
-class SmsFilter {
-  final String _filter;
-  final List<String> _filterArgs;
+class SmsMessage {
+  int id;
+  String address;
+  String body;
+  int date;
+  int dateSent;
+  bool read;
+  bool seen;
+  String subject;
+  int subscriptionId;
+  int threadId;
+  SmsType type;
+  SmsStatus status;
 
-  SmsFilter._(this._filter, this._filterArgs);
-
-  static FilterStatement where(SmsColumn column) => FilterStatement._(column);
-
-  FilterStatement and(SmsColumn column) {
-    return FilterStatement._withPreviousFilter(
-        "$_filter AND", column, List.from(_filterArgs, growable: true));
-  }
-
-  String get _selection => _filter;
-
-  List<String> get _selectionArgs => _filterArgs;
-}
-
-class FilterStatement {
-  final SmsColumn _column;
-  String _previousFilter;
-  List<String> _previousFilterArgs;
-
-  FilterStatement._(this._column);
-
-  FilterStatement._withPreviousFilter(
-      String previousFilter, SmsColumn column, List<String> previousFilterArgs)
-      : _previousFilter = previousFilter,
-        _column = column,
-        _previousFilterArgs = previousFilterArgs;
-
-  SmsFilter equals(String equalTo) {
-    return _createFilter(equalTo, "=");
-  }
-
-  SmsFilter greaterThan(String value) {
-    return _createFilter(value, ">");
-  }
-
-  SmsFilter lessThan(String value) {
-    return _createFilter(value, "<");
-  }
-
-  SmsFilter greaterThanOrEqualTo(String value) {
-    return _createFilter(value, ">=");
-  }
-
-  SmsFilter lessThanOrEqualTo(String value) {
-    return _createFilter(value, "<=");
-  }
-
-  SmsFilter notEqualTo(String value) {
-    return _createFilter(value, "!=");
-  }
-
-  SmsFilter like(String value) {
-    return _createFilter(value, "LIKE");
-  }
-
-  SmsFilter inValues(List<String> values) {
-    final String filterValues = values.join(",");
-    return _createFilter("($filterValues)", "IN");
-  }
-
-  SmsFilter between(String from, String to) {
-    final String filterValue = "$from AND $to";
-    return _createFilter(filterValue, "BETWEEN");
-  }
-
-  // TODO: Probably should add () to every filter
-  SmsFilter _createFilter(String value, String operator) {
-    if (_previousFilter != null) {
-      return SmsFilter._("$_previousFilter ${_column.name} $operator ?",
-          _previousFilterArgs..add(value));
-    } else {
-      return SmsFilter._("${_column.name} $operator ?", [value]);
+  SmsMessage._fromMap(Map rawMessage, List<SmsColumn> columns) {
+    final message = Map.castFrom<dynamic, dynamic, String, dynamic>(rawMessage);
+    for (var column in columns) {
+      final value = message[column._columnName];
+      switch (column._columnName) {
+        case _SmsProjections.ID:
+          this.id = int.tryParse(value);
+          break;
+        case _SmsProjections.ADDRESS:
+          this.address = value;
+          break;
+        case _SmsProjections.BODY:
+          this.body = value;
+          break;
+        case _SmsProjections.DATE:
+          this.date = int.tryParse(value);
+          break;
+        case _SmsProjections.DATE_SENT:
+          this.dateSent = int.tryParse(value);
+          break;
+        case _SmsProjections.READ:
+          this.read = int.tryParse(value) == 0 ? false : true;
+          break;
+        case _SmsProjections.SEEN:
+          this.seen = int.tryParse(value) == 0 ? false : true;
+          break;
+        case _SmsProjections.STATUS:
+          switch (int.tryParse(value)) {
+            case 0:
+              this.status = SmsStatus.STATUS_COMPLETE;
+              break;
+            case 32:
+              this.status = SmsStatus.STATUS_PENDING;
+              break;
+            case 64:
+              this.status = SmsStatus.STATUS_FAILED;
+              break;
+            case -1:
+            default:
+              this.status = SmsStatus.STATUS_NONE;
+              break;
+          }
+          break;
+        case _SmsProjections.SUBJECT:
+          this.subject = value;
+          break;
+        case _SmsProjections.SUBSCRIPTION_ID:
+          this.subscriptionId = int.tryParse(value);
+          break;
+        case _SmsProjections.THREAD_ID:
+          this.threadId = int.tryParse(value);
+          break;
+        case _SmsProjections.TYPE:
+          this.type = SmsType.values[value];
+          break;
+      }
     }
   }
 }
 
-class OrderBy {
-  final SmsColumn _column;
-  Sort _sort = Sort.DESC;
+class SmsConversation {
+  String snippet;
+  int threadId;
+  int messageCount;
 
-  OrderBy(this._column, {Sort sort}) {
-    if (sort != null) {
-      _sort = sort;
-    }
-  }
-
-  String get _value => "${_column.name} ${_sort.value}";
-}
-
-enum Sort { ASC, DESC }
-
-extension Value on Sort {
-  String get value {
-    switch (this) {
-      case Sort.ASC:
-        return "ASC";
-        break;
-      case Sort.DESC:
-      default:
-        return "DESC";
-        break;
+  SmsConversation._fromMap(Map rawConversation) {
+    final conversation =
+        Map.castFrom<dynamic, dynamic, String, dynamic>(rawConversation);
+    for (var column in DEFAULT_CONVERSATION_COLUMNS) {
+      final String value = conversation[column._columnName];
+      switch (column._columnName) {
+        case _ConversationProjections.SNIPPET:
+          this.snippet = value;
+          break;
+        case _ConversationProjections.THREAD_ID:
+          this.threadId = int.tryParse(value);
+          break;
+        case _ConversationProjections.MSG_COUNT:
+          this.messageCount = int.tryParse(value);
+          break;
+      }
     }
   }
 }
