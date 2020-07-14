@@ -7,10 +7,10 @@ import 'package:platform/platform.dart';
 
 part 'constants.dart';
 
+part 'filter.dart';
+
 typedef MessageHandler(Map<String, dynamic> message);
 typedef SmsSendStatusListener(SendStatus status);
-
-enum SendStatus { SENT, DELIVERED }
 
 void _flutterSmsSetupBackgroundChannel(
     {MethodChannel backgroundChannel = const MethodChannel(
@@ -162,7 +162,7 @@ class Telephony {
     final args = _getArguments(columns, filter, sortOrder);
 
     final List<dynamic> conversations =
-        await _foregroundChannel.invokeMethod('getAllConversations');
+        await _foregroundChannel.invokeMethod('getAllConversations', args);
 
     return conversations
         .map((conversation) => SmsConversation._fromMap(conversation))
@@ -291,172 +291,101 @@ class Telephony {
   }
 }
 
-abstract class Filter<T, K> {
-  T and(K column);
+class SmsMessage {
+  int id;
+  String address;
+  String body;
+  int date;
+  int dateSent;
+  bool read;
+  bool seen;
+  String subject;
+  int subscriptionId;
+  int threadId;
+  SmsType type;
+  SmsStatus status;
 
-  String get _selection;
-
-  List<String> get _selectionArgs;
-}
-
-class SmsFilter implements Filter<SmsFilterStatement, SmsColumn> {
-  final String _filter;
-  final List<String> _filterArgs;
-
-  SmsFilter._(this._filter, this._filterArgs);
-
-  static SmsFilterStatement where(SmsColumn column) =>
-      SmsFilterStatement._(column._columnName);
-
-  SmsFilterStatement and(SmsColumn column) {
-    return SmsFilterStatement._withPreviousFilter(
-        "$_filter AND", column._name, List.from(_filterArgs, growable: true));
-  }
-
-  @override
-  String get _selection => _filter;
-
-  @override
-  List<String> get _selectionArgs => _filterArgs;
-}
-
-class ConversationFilter extends Filter<ConversationFilterStatement, ConversationColumn> {
-  final String _filter;
-  final List<String> _filterArgs;
-
-  ConversationFilter._(this._filter, this._filterArgs);
-
-  static ConversationFilterStatement where(ConversationColumn column) =>
-      ConversationFilterStatement._(column._columnName);
-
-  @override
-  ConversationFilterStatement and(ConversationColumn column) {
-    return ConversationFilterStatement._withPreviousFilter(
-        "$_filter AND", column._name, List.from(_filterArgs, growable: true));
-  }
-
-  @override
-  String get _selection => _filter;
-
-  @override
-  List<String> get _selectionArgs => _filterArgs;
-}
-
-abstract class FilterStatement<T extends Filter> {
-  String _column;
-  String _previousFilter;
-  List<String> _previousFilterArgs;
-
-  FilterStatement._(this._column);
-
-  FilterStatement._withPreviousFilter(
-      String previousFilter, String column, List<String> previousFilterArgs)
-      : _previousFilter = previousFilter,
-        _column = column,
-        _previousFilterArgs = previousFilterArgs;
-
-  T equals(String equalTo) {
-    return _createFilter(equalTo, "=");
-  }
-
-  T greaterThan(String value) {
-    return _createFilter(value, ">");
-  }
-
-  T lessThan(String value) {
-    return _createFilter(value, "<");
-  }
-
-  T greaterThanOrEqualTo(String value) {
-    return _createFilter(value, ">=");
-  }
-
-  T lessThanOrEqualTo(String value) {
-    return _createFilter(value, "<=");
-  }
-
-  T notEqualTo(String value) {
-    return _createFilter(value, "!=");
-  }
-
-  T like(String value) {
-    return _createFilter(value, "LIKE");
-  }
-
-  T inValues(List<String> values) {
-    final String filterValues = values.join(",");
-    return _createFilter("($filterValues)", "IN");
-  }
-
-  T between(String from, String to) {
-    final String filterValue = "$from AND $to";
-    return _createFilter(filterValue, "BETWEEN");
-  }
-
-  T _createFilter(String value, String operator);
-}
-
-class SmsFilterStatement extends FilterStatement<SmsFilter> {
-  SmsFilterStatement._(String column) : super._(column);
-
-  SmsFilterStatement._withPreviousFilter(
-      String previousFilter, String column, List<String> previousFilterArgs)
-      : super._withPreviousFilter(previousFilter, column, previousFilterArgs);
-
-  @override
-  SmsFilter _createFilter(String value, String operator) {
-    if (_previousFilter != null) {
-      return SmsFilter._("$_previousFilter $_column $operator ?",
-          _previousFilterArgs..add(value));
-    } else {
-      return SmsFilter._("$_column $operator ?", [value]);
+  SmsMessage._fromMap(Map rawMessage, List<SmsColumn> columns) {
+    final message = Map.castFrom<dynamic, dynamic, String, dynamic>(rawMessage);
+    for (var column in columns) {
+      final value = message[column._columnName];
+      switch (column._columnName) {
+        case _SmsProjections.ID:
+          this.id = int.tryParse(value);
+          break;
+        case _SmsProjections.ADDRESS:
+          this.address = value;
+          break;
+        case _SmsProjections.BODY:
+          this.body = value;
+          break;
+        case _SmsProjections.DATE:
+          this.date = int.tryParse(value);
+          break;
+        case _SmsProjections.DATE_SENT:
+          this.dateSent = int.tryParse(value);
+          break;
+        case _SmsProjections.READ:
+          this.read = int.tryParse(value) == 0 ? false : true;
+          break;
+        case _SmsProjections.SEEN:
+          this.seen = int.tryParse(value) == 0 ? false : true;
+          break;
+        case _SmsProjections.STATUS:
+          switch (int.tryParse(value)) {
+            case 0:
+              this.status = SmsStatus.STATUS_COMPLETE;
+              break;
+            case 32:
+              this.status = SmsStatus.STATUS_PENDING;
+              break;
+            case 64:
+              this.status = SmsStatus.STATUS_FAILED;
+              break;
+            case -1:
+            default:
+              this.status = SmsStatus.STATUS_NONE;
+              break;
+          }
+          break;
+        case _SmsProjections.SUBJECT:
+          this.subject = value;
+          break;
+        case _SmsProjections.SUBSCRIPTION_ID:
+          this.subscriptionId = int.tryParse(value);
+          break;
+        case _SmsProjections.THREAD_ID:
+          this.threadId = int.tryParse(value);
+          break;
+        case _SmsProjections.TYPE:
+          this.type = SmsType.values[value];
+          break;
+      }
     }
   }
 }
 
-class ConversationFilterStatement extends FilterStatement<ConversationFilter> {
-  ConversationFilterStatement._(String column) : super._(column);
+class SmsConversation {
+  String snippet;
+  int threadId;
+  int messageCount;
 
-  ConversationFilterStatement._withPreviousFilter(
-      String previousFilter, String column, List<String> previousFilterArgs)
-      : super._withPreviousFilter(previousFilter, column, previousFilterArgs);
-
-  @override
-  ConversationFilter _createFilter(String value, String operator) {
-    if (_previousFilter != null) {
-      return ConversationFilter._("$_previousFilter $_column $operator ?",
-          _previousFilterArgs..add(value));
-    } else {
-      return ConversationFilter._("$_column $operator ?", [value]);
-    }
-  }
-}
-
-class OrderBy {
-  final String _column;
-  Sort _sort = Sort.DESC;
-
-  OrderBy(this._column, {Sort sort}) {
-    if (sort != null) {
-      _sort = sort;
-    }
-  }
-
-  String get _value => "$_column ${_sort.value}";
-}
-
-enum Sort { ASC, DESC }
-
-extension Value on Sort {
-  String get value {
-    switch (this) {
-      case Sort.ASC:
-        return "ASC";
-        break;
-      case Sort.DESC:
-      default:
-        return "DESC";
-        break;
+  SmsConversation._fromMap(Map rawConversation) {
+    final conversation =
+        Map.castFrom<dynamic, dynamic, String, dynamic>(rawConversation);
+    for (var column in DEFAULT_CONVERSATION_COLUMNS) {
+      final String value = conversation[column._columnName];
+      switch (column._columnName) {
+        case _ConversationProjections.SNIPPET:
+          this.snippet = value;
+          break;
+        case _ConversationProjections.THREAD_ID:
+          this.threadId = int.tryParse(value);
+          break;
+        case _ConversationProjections.MSG_COUNT:
+          this.messageCount = int.tryParse(value);
+          break;
+      }
     }
   }
 }

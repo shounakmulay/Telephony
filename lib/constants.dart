@@ -41,7 +41,6 @@ class _ConversationProjections {
 }
 
 abstract class Column {
-
   const Column();
 
   String get _name;
@@ -97,81 +96,6 @@ const DEFAULT_CONVERSATION_COLUMNS = [
   ConversationColumn.MSG_COUNT
 ];
 
-class SmsMessage {
-  int id;
-  String address;
-  String body;
-  int date;
-  int dateSent;
-  bool read;
-  bool seen;
-  String subject;
-  int subscriptionId;
-  int threadId;
-  SmsType type;
-  SmsStatus status;
-
-  SmsMessage._fromMap(
-      Map rawMessage, List<SmsColumn> columns) {
-    final message = Map.castFrom<dynamic, dynamic, String, dynamic>(rawMessage);
-    for (var column in columns) {
-      final value = message[column._columnName];
-      switch (column._columnName) {
-        case _SmsProjections.ID:
-          this.id = int.tryParse(value);
-          break;
-        case _SmsProjections.ADDRESS:
-          this.address = value;
-          break;
-        case _SmsProjections.BODY:
-          this.body = value;
-          break;
-        case _SmsProjections.DATE:
-          this.date = int.tryParse(value);
-          break;
-        case _SmsProjections.DATE_SENT:
-          this.dateSent = int.tryParse(value);
-          break;
-        case _SmsProjections.READ:
-          this.read = int.tryParse(value) == 0 ? false : true;
-          break;
-        case _SmsProjections.SEEN:
-          this.seen = int.tryParse(value) == 0 ? false : true;
-          break;
-        case _SmsProjections.STATUS:
-          switch (int.tryParse(value)) {
-            case 0:
-              this.status = SmsStatus.STATUS_COMPLETE;
-              break;
-            case 32:
-              this.status = SmsStatus.STATUS_PENDING;
-              break;
-            case 64:
-              this.status = SmsStatus.STATUS_FAILED;
-              break;
-            case -1:
-            default:
-              this.status = SmsStatus.STATUS_NONE;
-              break;
-          }
-          break;
-        case _SmsProjections.SUBJECT:
-          this.subject = value;
-          break;
-        case _SmsProjections.SUBSCRIPTION_ID:
-          this.subscriptionId = int.tryParse(value);
-          break;
-        case _SmsProjections.THREAD_ID:
-          this.threadId = int.tryParse(value);
-          break;
-        case _SmsProjections.TYPE:
-          this.type = SmsType.values[value];
-          break;
-      }
-    }
-  }
-}
-
 enum SmsType {
   MESSAGE_TYPE_ALL,
   MESSAGE_TYPE_INBOX,
@@ -183,31 +107,6 @@ enum SmsType {
 }
 
 enum SmsStatus { STATUS_COMPLETE, STATUS_FAILED, STATUS_NONE, STATUS_PENDING }
-
-class SmsConversation {
-  String snippet;
-  int threadId;
-  int messageCount;
-
-  SmsConversation._fromMap(Map rawConversation) {
-    final conversation =
-        Map.castFrom<dynamic, dynamic, String, dynamic>(rawConversation);
-    for (var column in DEFAULT_CONVERSATION_COLUMNS) {
-      final String value = conversation[column._columnName];
-      switch (column._columnName) {
-        case _ConversationProjections.SNIPPET:
-          this.snippet = value;
-          break;
-        case _ConversationProjections.THREAD_ID:
-          this.threadId = int.tryParse(value);
-          break;
-        case _ConversationProjections.MSG_COUNT:
-          this.messageCount = int.tryParse(value);
-          break;
-      }
-    }
-  }
-}
 
 enum DataState { DISCONNECTED, CONNECTING, CONNECTED, SUSPENDED, UNKNOWN }
 
@@ -259,3 +158,21 @@ enum SimState {
 enum ServiceState { IN_SERVICE, OUT_OF_SERVICE, EMERGENCY_ONLY, POWER_OFF }
 
 enum SignalStrength { NONE_OR_UNKNOWN, POOR, MODERATE, GOOD, GREAT }
+
+enum Sort { ASC, DESC }
+
+extension Value on Sort {
+  String get value {
+    switch (this) {
+      case Sort.ASC:
+        return "ASC";
+        break;
+      case Sort.DESC:
+      default:
+        return "DESC";
+        break;
+    }
+  }
+}
+
+enum SendStatus { SENT, DELIVERED }

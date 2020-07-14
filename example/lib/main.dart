@@ -6,7 +6,6 @@ onBackgroundMessage(Map<String, dynamic> message) {
   debugPrint("onBackgroundMessage called");
 }
 
-
 void main() {
   runApp(MyApp());
 }
@@ -53,14 +52,28 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),
-        body: Center(child: FutureBuilder(
-          future: Telephony.instance.getInboxSms(
-            filter: SmsFilter.where(SmsColumn.DATE).greaterThan("4")
-          ),
-          builder: (context, snapshot) {
-            return Text('Running on: ${snapshot.data.toString()}\n');
-          }
-        )),
+        body: Center(
+            child: FutureBuilder(
+                future: Telephony.instance.getInboxSms(
+                    filter: SmsFilter.where(SmsColumn.DATE)
+                        .greaterThan("4")
+                        .and(SmsColumn.BODY)
+                        .not
+                        .equals("equalTo")
+                        .and(SmsColumn.BODY)
+                        .like("%!%")),
+                builder: (context, AsyncSnapshot<List<SmsMessage>> snapshot) {
+                  return ListView.builder(
+                    itemCount: snapshot.data.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                            "${snapshot.data[index].address}: ${snapshot.data[index].body}"),
+                      );
+                    },
+                  );
+                })),
       ),
     );
   }
