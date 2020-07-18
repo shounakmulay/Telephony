@@ -38,6 +38,6 @@ jobs:
     steps:
       - uses: ChicagoFlutter/lcov-cop@v1.0.0
         with:
-          path: "./coverage/lcov.info"
+          path: "coverage/lcov.info"
           min_coverage: 90
           exclude: "**/*.g.dart"
