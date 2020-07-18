@@ -27,6 +27,9 @@ enum class SmsAction(private val methodName: String) {
   GET_SERVICE_STATE("getServiceState"),
   GET_SIGNAL_STRENGTH("getSignalStrength"),
   IS_NETWORK_ROAMING("isNetworkRoaming"),
+  REQUEST_SMS_PERMISSIONS("requestSmsPermissions"),
+  REQUEST_PHONE_PERMISSIONS("requestPhonePermissions"),
+  REQUEST_PHONE_AND_SMS_PERMISSIONS("requestPhoneAndSmsPermissions"),
   NO_SUCH_METHOD("noSuchMethod");
 
   companion object {
@@ -66,12 +69,15 @@ enum class SmsAction(private val methodName: String) {
       GET_SERVICE_STATE,
       GET_SIGNAL_STRENGTH,
       IS_NETWORK_ROAMING -> ActionType.GET
+      REQUEST_SMS_PERMISSIONS,
+      REQUEST_PHONE_PERMISSIONS,
+      REQUEST_PHONE_AND_SMS_PERMISSIONS -> ActionType.PERMISSION
     }
   }
 }
 
 enum class ActionType {
-  GET_SMS, SEND_SMS, BACKGROUND, GET
+  GET_SMS, SEND_SMS, BACKGROUND, GET, PERMISSION
 }
 
 enum class ContentUri(val uri: Uri) {

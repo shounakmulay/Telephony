@@ -22,6 +22,7 @@ import com.shounakmulay.telephony.utils.Constants.LISTEN_STATUS
 import com.shounakmulay.telephony.utils.Constants.MESSAGE_BODY
 import com.shounakmulay.telephony.utils.Constants.PERMISSION_DENIED
 import com.shounakmulay.telephony.utils.Constants.PERMISSION_DENIED_MESSAGE
+import com.shounakmulay.telephony.utils.Constants.PERMISSION_REQUEST_CODE
 import com.shounakmulay.telephony.utils.Constants.PROJECTION
 import com.shounakmulay.telephony.utils.Constants.SELECTION
 import com.shounakmulay.telephony.utils.Constants.SELECTION_ARGS
@@ -113,6 +114,7 @@ class SmsMethodCallHandler(private val context: Context, private val smsControll
         handleMethod(action, SMS_BACKGROUND_REQUEST_CODE)
       }
       ActionType.GET -> handleMethod(action, GET_STATUS_REQUEST_CODE)
+      ActionType.PERMISSION -> handleMethod(action, PERMISSION_REQUEST_CODE)
     }
   }
 
@@ -127,49 +129,14 @@ class SmsMethodCallHandler(private val context: Context, private val smsControll
    *
    * #####
    */
-  @SuppressLint("MissingPermission")
   private fun execute(smsAction: SmsAction) {
     try {
       when (smsAction.toActionType()) {
         ActionType.GET_SMS -> handleGetSmsActions(smsAction)
         ActionType.SEND_SMS -> handleSendSmsActions(smsAction)
         ActionType.BACKGROUND -> handleBackgroundActions(smsAction)
-        ActionType.GET -> {
-          smsController.apply {
-            val value: Any = when (smsAction) {
-              SmsAction.IS_SMS_CAPABLE -> isSmsCapable()
-              SmsAction.GET_CELLULAR_DATA_STATE -> getCellularDataState()
-              SmsAction.GET_CALL_STATE -> getCallState()
-              SmsAction.GET_DATA_ACTIVITY -> getDataActivity()
-              SmsAction.GET_NETWORK_OPERATOR -> getNetworkOperator()
-              SmsAction.GET_NETWORK_OPERATOR_NAME -> getNetworkOperatorName()
-              SmsAction.GET_DATA_NETWORK_TYPE -> getDataNetworkType()
-              SmsAction.GET_PHONE_TYPE -> getPhoneType()
-              SmsAction.GET_SIM_OPERATOR -> getSimOperator()
-              SmsAction.GET_SIM_OPERATOR_NAME -> getSimOperatorName()
-              SmsAction.GET_SIM_STATE -> getSimState()
-              SmsAction.IS_NETWORK_ROAMING -> isNetworkRoaming()
-              SmsAction.GET_SIGNAL_STRENGTH -> {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                  getSignalStrength() ?: result.error("SERVICE_STATE_NULL", "Error getting service state", null)
-
-                } else {
-                  result.error("INCORRECT_SDK_VERSION", "getServiceState() can only be called on Android Q and above", null)
-                }
-              }
-              SmsAction.GET_SERVICE_STATE -> {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                  getServiceState()
-                      ?: result.error("SERVICE_STATE_NULL", "Error getting service state", null)
-                } else {
-                  result.error("INCORRECT_SDK_VERSION", "getServiceState() can only be called on Android O and above", null)
-                }
-              }
-              else -> throw IllegalArgumentException()
-            }
-            result.success(value)
-          }
-        }
+        ActionType.GET -> handleGetActions(smsAction)
+        ActionType.PERMISSION -> result.success(true)
       }
     } catch (e: IllegalArgumentException) {
       result.error(ILLEGAL_ARGUMENT, WRONG_METHOD_TYPE, null)
@@ -222,6 +189,45 @@ class SmsMethodCallHandler(private val context: Context, private val smsControll
     }
   }
 
+  @SuppressLint("MissingPermission")
+  private fun handleGetActions(smsAction: SmsAction) {
+    smsController.apply {
+      val value: Any = when (smsAction) {
+        SmsAction.IS_SMS_CAPABLE -> isSmsCapable()
+        SmsAction.GET_CELLULAR_DATA_STATE -> getCellularDataState()
+        SmsAction.GET_CALL_STATE -> getCallState()
+        SmsAction.GET_DATA_ACTIVITY -> getDataActivity()
+        SmsAction.GET_NETWORK_OPERATOR -> getNetworkOperator()
+        SmsAction.GET_NETWORK_OPERATOR_NAME -> getNetworkOperatorName()
+        SmsAction.GET_DATA_NETWORK_TYPE -> getDataNetworkType()
+        SmsAction.GET_PHONE_TYPE -> getPhoneType()
+        SmsAction.GET_SIM_OPERATOR -> getSimOperator()
+        SmsAction.GET_SIM_OPERATOR_NAME -> getSimOperatorName()
+        SmsAction.GET_SIM_STATE -> getSimState()
+        SmsAction.IS_NETWORK_ROAMING -> isNetworkRoaming()
+        SmsAction.GET_SIGNAL_STRENGTH -> {
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            getSignalStrength()
+                ?: result.error("SERVICE_STATE_NULL", "Error getting service state", null)
+
+          } else {
+            result.error("INCORRECT_SDK_VERSION", "getServiceState() can only be called on Android Q and above", null)
+          }
+        }
+        SmsAction.GET_SERVICE_STATE -> {
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            getServiceState()
+                ?: result.error("SERVICE_STATE_NULL", "Error getting service state", null)
+          } else {
+            result.error("INCORRECT_SDK_VERSION", "getServiceState() can only be called on Android O and above", null)
+          }
+        }
+        else -> throw IllegalArgumentException()
+      }
+      result.success(value)
+    }
+  }
+
 
   /**
    * Calls the [execute] method after checking if the necessary permissions are granted.
@@ -233,9 +239,6 @@ class SmsMethodCallHandler(private val context: Context, private val smsControll
       execute(smsAction)
     }
   }
-
-  /* no-op */
-  private fun noop() {}
 
   /**
    * Check and request if necessary for all the SMS permissions listed in the manifest
@@ -253,16 +256,22 @@ class SmsMethodCallHandler(private val context: Context, private val smsControll
       SmsAction.SEND_MULTIPART_SMS,
       SmsAction.SEND_SMS_INTENT,
       SmsAction.START_BACKGROUND_SERVICE,
-      SmsAction.BACKGROUND_SERVICE_INITIALIZED -> {
+      SmsAction.BACKGROUND_SERVICE_INITIALIZED,
+      SmsAction.REQUEST_SMS_PERMISSIONS -> {
         val permissions = PermissionsController.getSmsPermissions()
         return checkOrRequestPermission(permissions, requestCode)
       }
-      SmsAction.GET_DATA_NETWORK_TYPE -> {
+      SmsAction.GET_DATA_NETWORK_TYPE,
+      SmsAction.REQUEST_PHONE_PERMISSIONS -> {
         val permissions = PermissionsController.getPhonePermissions()
         return checkOrRequestPermission(permissions, requestCode)
       }
       SmsAction.GET_SERVICE_STATE -> {
         val permissions = PermissionsController.getServiceStatePermissions()
+        return checkOrRequestPermission(permissions, requestCode)
+      }
+      SmsAction.REQUEST_PHONE_AND_SMS_PERMISSIONS -> {
+        val permissions = listOf(PermissionsController.getSmsPermissions(), PermissionsController.getPhonePermissions()).flatten()
         return checkOrRequestPermission(permissions, requestCode)
       }
       SmsAction.IS_SMS_CAPABLE,

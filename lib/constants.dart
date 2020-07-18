@@ -1,5 +1,39 @@
 part of 'telephony.dart';
 
+const FOREGROUND_CHANNEL = 'plugins.shounakmulay.com/foreground_sms_channel';
+const BACKGROUND_CHANNEL = 'plugins.shounakmulay.com/background_sms_channel';
+
+const HANDLE_BACKGROUND_MESSAGE = "handleBackgroundMessage";
+const BACKGROUND_SERVICE_INITIALIZED = "backgroundServiceInitialized";
+const GET_ALL_INBOX_SMS = "getAllInboxSms";
+const GET_ALL_SENT_SMS = "getAllSentSms";
+const GET_ALL_DRAFT_SMS = "getAllDraftSms";
+const GET_ALL_CONVERSATIONS = "getAllConversations";
+const SEND_SMS = "sendSms";
+const SEND_MULTIPART_SMS = "sendMultipartSms";
+const SEND_SMS_INTENT = "sendSmsIntent";
+const IS_SMS_CAPABLE = "isSmsCapable";
+const GET_CELLULAR_DATA_STATE = "getCellularDataState";
+const GET_CALL_STATE = "getCallState";
+const GET_DATA_ACTIVITY = "getDataActivity";
+const GET_NETWORK_OPERATOR = "getNetworkOperator";
+const GET_NETWORK_OPERATOR_NAME = "getNetworkOperatorName";
+const GET_DATA_NETWORK_TYPE = "getDataNetworkType";
+const GET_PHONE_TYPE = "getPhoneType";
+const GET_SIM_OPERATOR = "getSimOperator";
+const GET_SIM_OPERATOR_NAME = "getSimOperatorName";
+const GET_SIM_STATE = "getSimState";
+const IS_NETWORK_ROAMING = "isNetworkRoaming";
+const GET_SIGNAL_STRENGTH = "getSignalStrength";
+const GET_SERVICE_STATE = "getServiceState";
+const REQUEST_SMS_PERMISSION = "requestSmsPermissions";
+const REQUEST_PHONE_PERMISSION = "requestPhonePermissions";
+const REQUEST_PHONE_AND_SMS_PERMISSION = "requestPhoneAndSmsPermissions";
+
+const ON_MESSAGE = "onMessage";
+const SMS_SENT = "smsSent";
+const SMS_DELIVERED = "smsDelivered";
+
 class _SmsProjections {
   static const String COUNT = "_count";
   static const String ID = "_id";
