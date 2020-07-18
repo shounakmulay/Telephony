@@ -99,9 +99,6 @@ unlinked_spec.ds
 **/macos/Flutter/Flutter-Release.xcconfig
 **/macos/Flutter/Flutter-Profile.xcconfig
 
-# Coverage
-coverage/
-
 # Symbols
 app.*.symbols
 
