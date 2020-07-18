@@ -27,6 +27,7 @@ object Constants {
   const val SMS_DELIVERED_BROADCAST_REQUEST_CODE = 22
   const val SMS_BACKGROUND_REQUEST_CODE = 31
   const val GET_STATUS_REQUEST_CODE = 41
+  const val PERMISSION_REQUEST_CODE = 51
 
   // Methods
   const val ON_MESSAGE = "onMessage"

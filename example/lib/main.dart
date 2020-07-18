@@ -42,6 +42,8 @@ class _MyAppState extends State<MyApp> {
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
     // setState to update our non-existent appearance.
+    var result = await Telephony.instance.requestSmsPermissions;
+    result;
     if (!mounted) return;
   }
 
@@ -54,25 +56,9 @@ class _MyAppState extends State<MyApp> {
         ),
         body: Center(
             child: FutureBuilder(
-                future: Telephony.instance.getInboxSms(
-                    filter: SmsFilter.where(SmsColumn.DATE)
-                        .greaterThan("4")
-                        .and(SmsColumn.BODY)
-                        .not
-                        .equals("equalTo")
-                        .and(SmsColumn.BODY)
-                        .like("%!%")),
-                builder: (context, AsyncSnapshot<List<SmsMessage>> snapshot) {
-                  return ListView.builder(
-                    itemCount: snapshot.data.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                            "${snapshot.data[index].address}: ${snapshot.data[index].body}"),
-                      );
-                    },
-                  );
+                future: Telephony.instance.requestSmsPermissions,
+                builder: (context, snapshot) {
+                  return Text("${snapshot.data}: ${snapshot.data}");
                 })),
       ),
     );

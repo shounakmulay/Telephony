@@ -5,9 +5,9 @@ abstract class Filter<T, K> {
 
   T or(K column);
 
-  String get _selection;
+  String get selection;
 
-  List<String> get _selectionArgs;
+  List<String> get selectionArgs;
 }
 
 class SmsFilter implements Filter<SmsFilterStatement, SmsColumn> {
@@ -33,11 +33,13 @@ class SmsFilter implements Filter<SmsFilterStatement, SmsColumn> {
         column._name, List.from(_filterArgs, growable: true));
   }
 
+  @visibleForTesting
   @override
-  String get _selection => _filter;
+  String get selection => _filter;
 
+  @visibleForTesting
   @override
-  List<String> get _selectionArgs => _filterArgs;
+  List<String> get selectionArgs => _filterArgs;
 }
 
 class ConversationFilter
@@ -52,12 +54,12 @@ class ConversationFilter
 
   @override
   ConversationFilterStatement and(ConversationColumn column) {
-    return _addCombineOperator(column, "AND");
+    return _addCombineOperator(column, " AND");
   }
 
   @override
   ConversationFilterStatement or(ConversationColumn column) {
-    return _addCombineOperator(column, "OR");
+    return _addCombineOperator(column, " OR");
   }
 
   ConversationFilterStatement _addCombineOperator(
@@ -67,10 +69,10 @@ class ConversationFilter
   }
 
   @override
-  String get _selection => _filter;
+  String get selection => _filter;
 
   @override
-  List<String> get _selectionArgs => _filterArgs;
+  List<String> get selectionArgs => _filterArgs;
 }
 
 abstract class FilterStatement<T extends Filter, K> {
@@ -165,13 +167,13 @@ class ConversationFilterStatement
       return ConversationFilter._("$_previousFilter $_column $operator ?",
           _previousFilterArgs..add(value));
     } else {
-      return ConversationFilter._(" $_column $operator ?", [value]);
+      return ConversationFilter._("$_column $operator ?", [value]);
     }
   }
 }
 
 class OrderBy {
-  final String _column;
+  final Column _column;
   Sort _sort = Sort.DESC;
 
   OrderBy(this._column, {Sort sort}) {
@@ -180,5 +182,5 @@ class OrderBy {
     }
   }
 
-  String get _value => "$_column ${_sort.value}";
+  String get _value => "${_column._name} ${_sort.value}";
 }
