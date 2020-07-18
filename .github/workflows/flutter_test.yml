@@ -30,7 +30,7 @@ jobs:
     - name: Get dependencies
       run: flutter pub get
     - name: Run tests
-      run: flutter test --coverage
+      run: flutter test --coverage --coverage-path="./coverage/auto/lcov.info"
       
   Coverage:
     needs: [Tests]
@@ -39,4 +39,4 @@ jobs:
       - uses: romeovs/lcov-reporter-action@v0.2.16
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          lcov-file: ./coverage/lcov.info
+          lcov-file: ./coverage/auto/lcov.info
