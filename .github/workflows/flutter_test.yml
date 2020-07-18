@@ -36,8 +36,7 @@ jobs:
     needs: [Tests]
     runs-on: ubuntu-latest
     steps:
-      - uses: ChicagoFlutter/lcov-cop@v1.0.0
+      - uses: romeovs/lcov-reporter-action@v0.2.16
         with:
-          path: "/coverage/lcov.info"
-          min_coverage: 90
-          exclude: "**/*.g.dart"
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          lcov-file: ./coverage/lcov.info
