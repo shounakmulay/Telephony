@@ -10,11 +10,5 @@ import io.flutter.embedding.android.FlutterActivity
 class MainActivity :FlutterActivity() {}
 
 class MyApp: FlutterApplication() {
-
-  override fun onCreate() {
-    super.onCreate()
-    applicationContext.registerReceiver(IncomingSmsReceiver(), IntentFilter("android.provider.Telephony.SMS_RECEIVED"))
-  }
-
   
 }

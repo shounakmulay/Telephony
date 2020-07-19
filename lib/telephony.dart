@@ -9,7 +9,7 @@ part 'constants.dart';
 
 part 'filter.dart';
 
-typedef MessageHandler(Map<String, dynamic> message);
+typedef MessageHandler(SmsMessage message);
 typedef SmsSendStatusListener(SendStatus status);
 
 void _flutterSmsSetupBackgroundChannel(
@@ -25,7 +25,7 @@ void _flutterSmsSetupBackgroundChannel(
           PluginUtilities.getCallbackFromHandle(handle);
       try {
         await handlerFunction(
-            Map<String, dynamic>.from(call.arguments['message']));
+            SmsMessage.fromMap(call.arguments['message'], INCOMING_SMS_COLUMNS));
       } catch (e) {
         print('Unable to handle incoming background message.');
         print(e);
@@ -106,7 +106,9 @@ class Telephony {
   Future<dynamic> _handler(MethodCall call) async {
     switch (call.method) {
       case ON_MESSAGE:
-        return _onNewMessages(call.arguments.cast<String, dynamic>());
+        final message = call.arguments["message"];
+        return _onNewMessages(
+            SmsMessage.fromMap(message, INCOMING_SMS_COLUMNS));
         break;
       case SMS_SENT:
         return _statusListener(SendStatus.SENT);
@@ -330,13 +332,16 @@ class SmsMessage {
         case _SmsProjections.ID:
           this.id = int.tryParse(value);
           break;
+        case _SmsProjections.ORIGINATING_ADDRESS:
         case _SmsProjections.ADDRESS:
           this.address = value;
           break;
+        case _SmsProjections.MESSAGE_BODY:
         case _SmsProjections.BODY:
           this.body = value;
           break;
         case _SmsProjections.DATE:
+        case _SmsProjections.TIMESTAMP:
           this.date = int.tryParse(value);
           break;
         case _SmsProjections.DATE_SENT:

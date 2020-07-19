@@ -37,9 +37,12 @@ const SMS_DELIVERED = "smsDelivered";
 class _SmsProjections {
   static const String COUNT = "_count";
   static const String ID = "_id";
+  static const String ORIGINATING_ADDRESS = "originating_address";
   static const String ADDRESS = "address";
+  static const String MESSAGE_BODY = "message_body";
   static const String BODY = "body";
   static const String CREATOR = "creator";
+  static const String TIMESTAMP = "timestamp";
   static const String DATE = "date";
   static const String DATE_SENT = "date_sent";
   static const String ERROR_CODE = "error_code";
@@ -122,6 +125,13 @@ const DEFAULT_SMS_COLUMNS = [
   SmsColumn.ADDRESS,
   SmsColumn.BODY,
   SmsColumn.DATE
+];
+
+const INCOMING_SMS_COLUMNS = [
+  SmsColumn._(_SmsProjections.ORIGINATING_ADDRESS),
+  SmsColumn._(_SmsProjections.MESSAGE_BODY),
+  SmsColumn._(_SmsProjections.TIMESTAMP),
+  SmsColumn.STATUS
 ];
 
 const DEFAULT_CONVERSATION_COLUMNS = [

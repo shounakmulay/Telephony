@@ -94,9 +94,9 @@ fun SmsMessage.toMap(): HashMap<String, Any?> {
   val smsMap = HashMap<String, Any?>()
   this.apply {
     smsMap[MESSAGE_BODY] = messageBody
-    smsMap[TIMESTAMP] = timestampMillis
+    smsMap[TIMESTAMP] = timestampMillis.toString()
     smsMap[ORIGINATING_ADDRESS] = originatingAddress
-    smsMap[STATUS] = status
+    smsMap[STATUS] = status.toString()
   }
   return smsMap
 }

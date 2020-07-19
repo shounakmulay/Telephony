@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:telephony/telephony.dart';
 
-onBackgroundMessage(Map<String, dynamic> message) {
+onBackgroundMessage(SmsMessage message) {
   debugPrint("onBackgroundMessage called");
 }
 
@@ -24,9 +24,9 @@ class _MyAppState extends State<MyApp> {
     initPlatformState();
   }
 
-  onMessage(Map<String, dynamic> message) async {
+  onMessage(SmsMessage message) async {
     setState(() {
-      _message = message.toString();
+      _message = message.body;
     });
   }
 
@@ -60,7 +60,7 @@ class _MyAppState extends State<MyApp> {
             child: FutureBuilder(
                 future: Telephony.instance.requestSmsPermissions,
                 builder: (context, snapshot) {
-                  return Text("${snapshot.data}: ${snapshot.data}");
+                  return Text("${snapshot.data}: ${_message}");
                 })),
       ),
     );
