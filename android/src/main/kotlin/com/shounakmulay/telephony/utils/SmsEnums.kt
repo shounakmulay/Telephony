@@ -12,6 +12,7 @@ enum class SmsAction(private val methodName: String) {
   SEND_MULTIPART_SMS("sendMultipartSms"),
   SEND_SMS_INTENT("sendSmsIntent"),
   START_BACKGROUND_SERVICE("startBackgroundService"),
+  DISABLE_BACKGROUND_SERVICE("disableBackgroundService"),
   BACKGROUND_SERVICE_INITIALIZED("backgroundServiceInitialized"),
   IS_SMS_CAPABLE("isSmsCapable"),
   GET_CELLULAR_DATA_STATE("getCellularDataState"),
@@ -54,6 +55,7 @@ enum class SmsAction(private val methodName: String) {
       SEND_SMS_INTENT,
       NO_SUCH_METHOD -> ActionType.SEND_SMS
       START_BACKGROUND_SERVICE,
+      DISABLE_BACKGROUND_SERVICE,
       BACKGROUND_SERVICE_INITIALIZED -> ActionType.BACKGROUND
       IS_SMS_CAPABLE,
       GET_CELLULAR_DATA_STATE,
