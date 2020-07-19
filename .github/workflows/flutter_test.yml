@@ -43,6 +43,10 @@ jobs:
       - run: ls
       - run: pwd
       - run: |
+              cd /
+              cd /home/runner/work/Telephony/Telephony
+              ls
+              pwd
               cd coverage
               ls
               pwd
