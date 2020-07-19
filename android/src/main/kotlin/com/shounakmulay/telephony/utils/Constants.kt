@@ -75,5 +75,6 @@ object Constants {
   const val SHARED_PREFERENCES_NAME = "com.shounakmulay.android_telephony_plugin"
   const val SHARED_PREFS_BACKGROUND_SETUP_HANDLE = "background_setup_handle"
   const val SHARED_PREFS_BACKGROUND_MESSAGE_HANDLE = "background_message_handle"
+  const val SHARED_PREFS_DISABLE_BACKGROUND_EXE = "disable_background"
 
 }
