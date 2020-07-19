@@ -41,3 +41,4 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           lcov-file: ./coverage/auto/lcov.info
       - run: ls
+      - run: pwd
