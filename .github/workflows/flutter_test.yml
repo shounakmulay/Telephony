@@ -42,3 +42,7 @@ jobs:
           lcov-file: ./coverage/auto/lcov.info
       - run: ls
       - run: pwd
+      - run: |
+              cd coverage
+              ls
+              pwd
