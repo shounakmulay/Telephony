@@ -10,7 +10,8 @@ A Flutter plugin to use telephony features such as
 - Retrieve various network parameters
 
 This plugin tries to replicate some of the functionality provided by Android's [Telephony](https://developer.android.com/reference/android/provider/Telephony) class.
-Check the [Features section](#Features) to see the list of implemented and missing features.
+
+Check the [Features section](https://github.com/shounakmulay/Telephony#Features) to see the list of implemented and missing features.
 
 
 
