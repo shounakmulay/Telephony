@@ -98,6 +98,8 @@ class Telephony {
           'backgroundHandle': backgroundMessageHandle.toRawHandle()
         },
       );
+    } else {
+      _foregroundChannel.invokeMethod('disableBackgroundService');
     }
   }
 

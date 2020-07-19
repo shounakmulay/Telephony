@@ -44,6 +44,8 @@ class _MyAppState extends State<MyApp> {
     // setState to update our non-existent appearance.
     var result = await Telephony.instance.requestSmsPermissions;
     result;
+
+    Telephony.instance.listenIncomingSms(onNewMessages: onMessage, onBackgroundMessage: onBackgroundMessage);
     if (!mounted) return;
   }
 

@@ -18,6 +18,7 @@ import com.shounakmulay.telephony.utils.Constants.ORIGINATING_ADDRESS
 import com.shounakmulay.telephony.utils.Constants.SHARED_PREFERENCES_NAME
 import com.shounakmulay.telephony.utils.Constants.SHARED_PREFS_BACKGROUND_MESSAGE_HANDLE
 import com.shounakmulay.telephony.utils.Constants.SHARED_PREFS_BACKGROUND_SETUP_HANDLE
+import com.shounakmulay.telephony.utils.Constants.SHARED_PREFS_DISABLE_BACKGROUND_EXE
 import com.shounakmulay.telephony.utils.Constants.STATUS
 import com.shounakmulay.telephony.utils.Constants.TIMESTAMP
 import com.shounakmulay.telephony.utils.SmsAction
@@ -62,7 +63,11 @@ class IncomingSmsReceiver : BroadcastReceiver() {
       args[MESSAGE] = sms.toMap()
       foregroundSmsChannel?.invokeMethod(ON_MESSAGE, args)
     } else {
-      processInBackground(context, sms)
+      val preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+      val disableBackground = preferences.getBoolean(SHARED_PREFS_DISABLE_BACKGROUND_EXE, false)
+      if (!disableBackground) {
+        processInBackground(context, sms)
+      }
     }
   }
 
@@ -98,11 +103,11 @@ fun SmsMessage.toMap(): HashMap<String, Any?> {
 
 /**
  * Handle all the background processing on received SMS
- * 
+ *
  * Call [setBackgroundSetupHandle] and [setBackgroundMessageHandle] before performing any other operations.
- * 
- * 
- * Will throw [RuntimeException] if [backgroundChannel] was not initialized by calling [startBackgroundIsolate] 
+ *
+ *
+ * Will throw [RuntimeException] if [backgroundChannel] was not initialized by calling [startBackgroundIsolate]
  * before calling [executeDartCallbackInBackgroundIsolate]
  */
 object IncomingSmsHandler : MethodChannel.MethodCallHandler {
@@ -139,8 +144,8 @@ object IncomingSmsHandler : MethodChannel.MethodCallHandler {
 
   /**
    * Called when the background dart isolate has completed setting up the method channel
-   * 
-   * If any SMS were received during the background isolate was being initialized, it will process 
+   *
+   * If any SMS were received during the background isolate was being initialized, it will process
    * all those messages.
    */
   fun onInitialized() {
