@@ -215,22 +215,32 @@ backgrounMessageHandler(SmsMessage message) async {
 ```
 ### Network data and metrics
 
+Fetch various metrics such as `network type`, `sim state`, etc.
 
+```dart
 
+// Check if a device is capable of sending SMS
+bool canSendSms = await telephony.isSmsCapable;
+
+// Get sim state
+SimState simState = await telephony.simState;
+```
+
+Check out the [detailed documentation](https://github.com/shounakmulay/Telephony/wiki/Network-data-and-metrics) to know all possible metrics and their values.
 
 
 ## Features
 
  - [x] [Send SMS](#send-sms)
- - [x] Query SMS
+ - [x] [Query SMS](#query-sms)
 	 - [x] Inbox
 	 - [x] Sent
 	 - [x] Draft
- - [x] Query Conversations
- - [x] Listen to incoming SMS
+ - [x] [Query Conversations](#query-conversations)
+ - [x] [Listen to incoming SMS](#listen-to-incoming-sms)
 	 - [x] When app is in foreground
 	 - [x] When app is in background
- - [x] Network data and metrics
+ - [x] [Network data and metrics](#network-data-and-metrics)
 	 - [x] Cellular data state
 	 - [x] Call state
 	 - [x] Data activity
