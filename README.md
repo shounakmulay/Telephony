@@ -149,61 +149,70 @@ List<SmsConversation> messages = await telephony.getConversations(
 1. To listen to incoming SMS add the `RECEIVE_SMS` permission to your `AndroidManifest.xml` file and register the `BroadcastReceiver`.
 
 
-	```xml
-	<manifest>
-		<uses-permission android:name="android.permission.RECEIVE_SMS"/>
+```xml
+<manifest>
+	<uses-permission android:name="android.permission.RECEIVE_SMS"/>
 
-		<application>
-			...
-			...
+	<application>
+		...
+		...
 
-			<receiver android:name="com.shounakmulay.telephony.sms.IncomingSmsReceiver"
-			    android:permission="android.permission.BROADCAST_SMS" android:exported="true">
-			    <intent-filter>
-				<action android:name="android.provider.Telephony.SMS_RECEIVED"/>
-			    </intent-filter>
-			</receiver>
+		<receiver android:name="com.shounakmulay.telephony.sms.IncomingSmsReceiver"
+		    android:permission="android.permission.BROADCAST_SMS" android:exported="true">
+		    <intent-filter>
+			<action android:name="android.provider.Telephony.SMS_RECEIVED"/>
+		    </intent-filter>
+		</receiver>
 
-		</application>
-	</manifest>
-	```
+	</application>
+</manifest>
+```
 
 2. Create a **top-level static function** to handle incoming messages when app is not is foreground.
 
 	:warning: Avoid heavy computations in the background handler as Android system may kill long running operations in the background.
 
-	```dart
-	backgrounMessageHandler(SmsMessage message) async {
-		//Handle background message	
-	}
+```dart
+backgrounMessageHandler(SmsMessage message) async {
+	//Handle background message	
+}
 
-	void main() {
-	  runApp(MyApp());
-	}
-	```
+void main() {
+  runApp(MyApp());
+}
+```
 3. Call `listenIncomingSms` with a foreground `MessageHandler` and pass in the static `backgrounMessageHandler`.
-	```dart
-	telephony.listenIncomingSms(
-			onNewMessage: (SmsMessage message) {
-				// Handle message
-			},
-			onBackgroundMessage: backgroundMessageHandler
-		);
-	```
-	Preferably should be called early in app lifecycle.
+```dart
+telephony.listenIncomingSms(
+		onNewMessage: (SmsMessage message) {
+			// Handle message
+		},
+		onBackgroundMessage: backgroundMessageHandler
+	);
+```
+
+Preferably should be called early in app lifecycle.
 
 4. If you do not wish to receive incoming SMS when the app is in background, just do not pass the `onBackgroundMessage` paramater. 
 
 	Alternatively if you prefer to expecility disable background execution, set the `listenInBackground` flag to `false`.
-	```dart
-	telephony.listenIncomingSms(
-			onNewMessage: (SmsMessage message) {
-				// Handle message
-			},
-			listenInBackground: false
-		);
-	```
-
+```dart
+telephony.listenIncomingSms(
+		onNewMessage: (SmsMessage message) {
+			// Handle message
+		},
+		listenInBackground: false
+	);
+```
+5. As of the `1.12` release of Flutter, plugins are automatically registered. This will allow you to use plugins as you normally do even in the background execution context. 
+```dart
+backgrounMessageHandler(SmsMessage message) async {
+		// Handle background message
+		
+		// Use plugins
+		Vibration.vibrate(duration: 500);
+	}
+```
 ### Network data and metrics
 
 
