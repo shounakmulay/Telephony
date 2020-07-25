@@ -35,7 +35,7 @@ Retrieve the singleton instance of `telephony` by calling
 final Telephony telephony = Telephony.instance;
 ```
 
-### Permissions
+### [Permissions](https://shounakmulay.gitbook.io/telephony/permissions)
 **Although this plugin will check and ask for permissions at runtime, it is advisable to _manually ask for permissions_ before calling any other functions.**
 
 The plugin will only request those permission that are listed in the `AndroidManifest.xml`.
@@ -46,7 +46,7 @@ bool permissionsGranted = await telephony.requestPhoneAndSmsPermissions;
 ```
 You can also request SMS or Phone permissions separately using `requestSmsPermissions` or `requestPhonePermissions` respectively.
 
-### Send SMS
+### [Send SMS](https://shounakmulay.gitbook.io/telephony/sending-an-sms)
 :exclamation: Requires `SEND_SMS` permission.
 Add the following permission in your `AndroidManifest.xml`
 ```xml
@@ -81,7 +81,7 @@ If the body of the message is longer than the standard SMS length limit of `160 
 telephony.sendSmsByDefaultApp(to: "1234567890", message: "May the force be with you!");
 ```
 
-### Query SMS
+### [Query SMS](https://shounakmulay.gitbook.io/telephony/query-sms)
 :exclamation: Requires `READ_SMS` permission.
 Add the following permission in your `AndroidManifest.xml`
 ```xml
@@ -116,7 +116,7 @@ List<SmsMessage> messages = await telephony.getInboxSms(
 		);
 ```
 
-### Query Conversations
+### [Query Conversations](https://shounakmulay.gitbook.io/telephony/query-conversations)
 :exclamation: Requires `READ_SMS` permission.
 Add the following permission in your `AndroidManifest.xml`
 ```xml
@@ -143,7 +143,7 @@ List<SmsConversation> messages = await telephony.getConversations(
 		);
 ```
 
-### Listen to incoming SMS
+### [Listen to incoming SMS](https://shounakmulay.gitbook.io/telephony/listen-incoming-sms)
 :exclamation: Requires `RECEIVE_SMS` permission.
 
 1. To listen to incoming SMS add the `RECEIVE_SMS` permission to your `AndroidManifest.xml` file and register the `BroadcastReceiver`.
@@ -213,7 +213,7 @@ backgrounMessageHandler(SmsMessage message) async {
 		Vibration.vibrate(duration: 500);
 	}
 ```
-### Network data and metrics
+### [Network data and metrics](https://shounakmulay.gitbook.io/telephony/network-data-and-metrics)
 
 Fetch various metrics such as `network type`, `sim state`, etc.
 
