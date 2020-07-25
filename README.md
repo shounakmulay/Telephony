@@ -226,7 +226,7 @@ bool canSendSms = await telephony.isSmsCapable;
 SimState simState = await telephony.simState;
 ```
 
-Check out the [detailed documentation](https://shounakmulay.gitbook.io/telephony) to know all possible metrics and their values.
+Check out the [detailed documentation](https://shounakmulay.gitbook.io/telephony/network-data-and-metrics) to know all possible metrics and their values.
 
 
 ## Features
@@ -254,6 +254,7 @@ Check out the [detailed documentation](https://shounakmulay.gitbook.io/telephony
 	 - [x] Network roaming
 	 - [x] Signal strength
 	 - [x] Service state
+ - [ ] Schedule a SMS
  - [ ] SMS Retriever API
  - [ ] Start Phone Call
  - [ ] iOS support
