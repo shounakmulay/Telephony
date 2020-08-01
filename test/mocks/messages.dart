@@ -27,3 +27,11 @@ const mockConversations = [
     "msg_count": "20"
   }
 ];
+
+const mockIncomingMessage = {
+  "originating_address": "123456789",
+  "message_body": "incoming sms",
+  "timestamp": "123422135",
+  "status": "0"
+};
+

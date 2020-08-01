@@ -45,7 +45,7 @@ class _MyAppState extends State<MyApp> {
     var result = await Telephony.instance.requestSmsPermissions;
     result;
 
-    Telephony.instance.listenIncomingSms(onNewMessages: onMessage, onBackgroundMessage: onBackgroundMessage);
+    Telephony.instance.listenIncomingSms(onNewMessage: onMessage, onBackgroundMessage: onBackgroundMessage);
     if (!mounted) return;
   }
 
