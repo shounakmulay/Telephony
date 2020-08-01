@@ -41,7 +41,7 @@ class Telephony {
   final MethodChannel _foregroundChannel;
   final Platform _platform;
 
-  MessageHandler _onNewMessages;
+  MessageHandler _onNewMessage;
   MessageHandler _onBackgroundMessages;
   SmsSendStatusListener _statusListener;
 
@@ -55,14 +55,14 @@ class Telephony {
   Telephony._newInstance(MethodChannel methodChannel, LocalPlatform platform)
       : _foregroundChannel = methodChannel,
         _platform = platform {
-    _foregroundChannel.setMethodCallHandler(_handler);
+    _foregroundChannel.setMethodCallHandler(handler);
   }
 
   static final Telephony _instance = Telephony._newInstance(
       const MethodChannel(FOREGROUND_CHANNEL), const LocalPlatform());
 
   void listenIncomingSms(
-      {@required MessageHandler onNewMessages,
+      {@required MessageHandler onNewMessage,
       MessageHandler onBackgroundMessage,
       bool listenInBackground = true}) {
     assert(_platform.isAndroid == true, "Can only be called on Android.");
@@ -74,7 +74,7 @@ class Telephony {
             ? "`onBackgroundMessage` cannot be null when `listenInBackground` is true. Set `listenInBackground` to false if you don't need background processing."
             : "You have set `listenInBackground` to false. `onBackgroundMessage` can only be set when `listenInBackground` is true");
 
-    _onNewMessages = onNewMessages;
+    _onNewMessage = onNewMessage;
 
     if (listenInBackground && onBackgroundMessage != null) {
       _onBackgroundMessages = onBackgroundMessage;
@@ -103,11 +103,12 @@ class Telephony {
     }
   }
 
-  Future<dynamic> _handler(MethodCall call) async {
+  @visibleForTesting
+  Future<dynamic> handler(MethodCall call) async {
     switch (call.method) {
       case ON_MESSAGE:
         final message = call.arguments["message"];
-        return _onNewMessages(
+        return _onNewMessage(
             SmsMessage.fromMap(message, INCOMING_SMS_COLUMNS));
         break;
       case SMS_SENT:
