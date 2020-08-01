@@ -1,11 +1,10 @@
-
 import "package:flutter/services.dart";
 import "package:flutter_test/flutter_test.dart";
 import "package:platform/platform.dart";
 import "package:telephony/telephony.dart";
+import 'mocks/messages.dart';
 
 main() {
-
   TestWidgetsFlutterBinding.ensureInitialized();
 
   MethodChannel methodChannel;
@@ -19,10 +18,7 @@ main() {
         methodChannel, FakePlatform(operatingSystem: "android"));
     methodChannel.setMockMethodCallHandler((call) {
       log.add(call);
-      if (call.method == SMS_SENT) {
-        listener(SendStatus.SENT);
-      }
-      return;
+      return telephony.handler(call);
     });
   });
 
@@ -30,7 +26,6 @@ main() {
     methodChannel.setMockMethodCallHandler(null);
     log.clear();
   });
-
 
   group("should listen to", () {
     test("sms sent status", () async {
@@ -54,6 +49,19 @@ main() {
 
       expect(log.length, 2);
       expect(log.last, isMethodCall(SMS_SENT, arguments: null));
+    });
+
+    test("incoming sms", () async {
+      telephony.listenIncomingSms(
+        onNewMessage: (message) {
+          expect(message.body, mockIncomingMessage["message_body"]);
+          expect(message.address, mockIncomingMessage["originating_address"]);
+          expect(message.status, SmsStatus.STATUS_COMPLETE);
+        },
+        listenInBackground: false
+      );
+
+      methodChannel.invokeMethod(ON_MESSAGE, { "message": mockIncomingMessage });
     });
   });
 }
