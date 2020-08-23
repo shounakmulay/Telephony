@@ -23,7 +23,7 @@ jobs:
     - name: Get dependencies
       run: flutter pub get
     - name: Build APK
-      run: flutter build apk --debug
+      run: flutter build apk --debug -t example/lib/main.dart
     
   Tests:
     # The type of runner that the job will run on
