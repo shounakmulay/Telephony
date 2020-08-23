@@ -23,7 +23,7 @@ jobs:
     - name: Get dependencies
       run: flutter pub get
     - name: Publish Dry Run
-      run: flutter publish ---dry-run
+      run: flutter pub publish ---dry-run
     
   Tests:
     # The type of runner that the job will run on
