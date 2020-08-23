@@ -35,36 +35,36 @@ const SMS_SENT = "smsSent";
 const SMS_DELIVERED = "smsDelivered";
 
 class _SmsProjections {
-  static const String COUNT = "_count";
+//  static const String COUNT = "_count";
   static const String ID = "_id";
   static const String ORIGINATING_ADDRESS = "originating_address";
   static const String ADDRESS = "address";
   static const String MESSAGE_BODY = "message_body";
   static const String BODY = "body";
-  static const String CREATOR = "creator";
+//  static const String CREATOR = "creator";
   static const String TIMESTAMP = "timestamp";
   static const String DATE = "date";
   static const String DATE_SENT = "date_sent";
-  static const String ERROR_CODE = "error_code";
-  static const String LOCKED = "locked";
-  static const int MESSAGE_TYPE_ALL = 0;
-  static const int MESSAGE_TYPE_DRAFT = 3;
-  static const int MESSAGE_TYPE_FAILED = 5;
-  static const int MESSAGE_TYPE_INBOX = 1;
-  static const int MESSAGE_TYPE_OUTBOX = 4;
-  static const int MESSAGE_TYPE_QUEUED = 6;
-  static const int MESSAGE_TYPE_SENT = 2;
-  static const String PERSON = "person";
-  static const String PROTOCOL = "protocol";
+//  static const String ERROR_CODE = "error_code";
+//  static const String LOCKED = "locked";
+//  static const int MESSAGE_TYPE_ALL = 0;
+//  static const int MESSAGE_TYPE_DRAFT = 3;
+//  static const int MESSAGE_TYPE_FAILED = 5;
+//  static const int MESSAGE_TYPE_INBOX = 1;
+//  static const int MESSAGE_TYPE_OUTBOX = 4;
+//  static const int MESSAGE_TYPE_QUEUED = 6;
+//  static const int MESSAGE_TYPE_SENT = 2;
+//  static const String PERSON = "person";
+//  static const String PROTOCOL = "protocol";
   static const String READ = "read";
-  static const String REPLY_PATH_PRESENT = "reply_path_present";
+//  static const String REPLY_PATH_PRESENT = "reply_path_present";
   static const String SEEN = "seen";
-  static const String SERVICE_CENTER = "service_center";
+//  static const String SERVICE_CENTER = "service_center";
   static const String STATUS = "status";
-  static const int STATUS_COMPLETE = 0;
-  static const int STATUS_FAILED = 64;
-  static const int STATUS_NONE = -1;
-  static const int STATUS_PENDING = 32;
+//  static const int STATUS_COMPLETE = 0;
+//  static const int STATUS_FAILED = 64;
+//  static const int STATUS_NONE = -1;
+//  static const int STATUS_PENDING = 32;
   static const String SUBJECT = "subject";
   static const String SUBSCRIPTION_ID = "sub_id";
   static const String THREAD_ID = "thread_id";
@@ -77,13 +77,13 @@ class _ConversationProjections {
   static const String MSG_COUNT = "msg_count";
 }
 
-abstract class Column {
-  const Column();
+abstract class _TelephonyColumn {
+  const _TelephonyColumn();
 
   String get _name;
 }
 
-class SmsColumn extends Column {
+class SmsColumn extends _TelephonyColumn {
   final String _columnName;
 
   const SmsColumn._(this._columnName);
@@ -105,7 +105,7 @@ class SmsColumn extends Column {
   String get _name => _columnName;
 }
 
-class ConversationColumn extends Column {
+class ConversationColumn extends _TelephonyColumn {
   final String _columnName;
 
   const ConversationColumn._(this._columnName);

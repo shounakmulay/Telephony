@@ -173,7 +173,7 @@ class ConversationFilterStatement
 }
 
 class OrderBy {
-  final Column _column;
+  final _TelephonyColumn _column;
   Sort _sort = Sort.DESC;
 
   OrderBy(this._column, {Sort sort}) {

@@ -178,7 +178,7 @@ class Telephony {
   }
 
   Map<String, dynamic> _getArguments(
-      List<Column> columns, Filter filter, List<OrderBy> sortOrder) {
+      List<_TelephonyColumn> columns, Filter filter, List<OrderBy> sortOrder) {
     final Map<String, dynamic> args = {};
 
     if (columns != null) {
