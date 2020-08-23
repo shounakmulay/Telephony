@@ -4,7 +4,7 @@ name: Telephony CI
 
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the develop branch
-on: [push, pull_request]
+on: [pull_request]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -22,8 +22,10 @@ jobs:
         channel: 'stable' # or: 'dev' or 'beta'
     - name: Get dependencies
       run: flutter pub get
+    - name: Change dir
+      run: cd example/lib
     - name: Build APK
-      run: flutter build apk --debug -t example/lib/main.dart
+      run: flutter build apk --debug
     
   Tests:
     # The type of runner that the job will run on
