@@ -22,9 +22,8 @@ jobs:
         channel: 'stable' # or: 'dev' or 'beta'
     - name: Get dependencies
       run: flutter pub get
-    - name: Change dir
-      run: cd example/lib
     - name: Build APK
+      working-directory: ./example/lib
       run: flutter build apk --debug
     
   Tests:
