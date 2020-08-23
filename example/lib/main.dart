@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:telephony/telephony.dart';
-import 'package:vibration/vibration.dart';
 
 onBackgroundMessage(SmsMessage message) {
   debugPrint("onBackgroundMessage called");
-  Vibration.vibrate();
 }
 
 void main() {
