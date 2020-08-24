@@ -7,12 +7,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-<<<<<<< HEAD
-import 'package:flutter_sms_example/main.dart';
-=======
 import 'package:telephony_example/main.dart';
->>>>>>> Change plugin name
 
 void main() {
   testWidgets('Verify Platform version', (WidgetTester tester) async {

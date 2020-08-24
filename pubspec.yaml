@@ -1,6 +1,8 @@
 name: telephony
-description: A new flutter plugin project.
-version: 0.0.1
+description: A Flutter plugin to use telephony features such as fetch info about various network parameters, send and receive SMS, and listen for incoming SMS.
+version: 0.0.2
+homepage: https://shounakmulay.gitbook.io/telephony
+repository: https://github.com/shounakmulay/Telephony
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -15,7 +17,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   mockito:
-
+  collection: ^1.14.13
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
