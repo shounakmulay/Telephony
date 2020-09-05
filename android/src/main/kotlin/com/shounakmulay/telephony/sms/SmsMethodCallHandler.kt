@@ -27,6 +27,8 @@ import com.shounakmulay.telephony.utils.Constants.PROJECTION
 import com.shounakmulay.telephony.utils.Constants.SELECTION
 import com.shounakmulay.telephony.utils.Constants.SELECTION_ARGS
 import com.shounakmulay.telephony.utils.Constants.SETUP_HANDLE
+import com.shounakmulay.telephony.utils.Constants.SHARED_PREFERENCES_NAME
+import com.shounakmulay.telephony.utils.Constants.SHARED_PREFS_DISABLE_BACKGROUND_EXE
 import com.shounakmulay.telephony.utils.Constants.SMS_BACKGROUND_REQUEST_CODE
 import com.shounakmulay.telephony.utils.Constants.SMS_DELIVERED
 import com.shounakmulay.telephony.utils.Constants.SMS_QUERY_REQUEST_CODE
@@ -179,11 +181,17 @@ class SmsMethodCallHandler(private val context: Context, private val smsControll
   private fun handleBackgroundActions(smsAction: SmsAction) {
     when (smsAction) {
       SmsAction.START_BACKGROUND_SERVICE -> {
+        val preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+        preferences.edit().putBoolean(SHARED_PREFS_DISABLE_BACKGROUND_EXE, false).apply()
         IncomingSmsHandler.setBackgroundSetupHandle(context, setupHandle)
         IncomingSmsHandler.setBackgroundMessageHandle(context, backgroundHandle)
       }
       SmsAction.BACKGROUND_SERVICE_INITIALIZED -> {
         IncomingSmsHandler.onInitialized()
+      }
+      SmsAction.DISABLE_BACKGROUND_SERVICE -> {
+        val preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+        preferences.edit().putBoolean(SHARED_PREFS_DISABLE_BACKGROUND_EXE, true).apply()
       }
       else -> throw IllegalArgumentException()
     }
@@ -257,6 +265,7 @@ class SmsMethodCallHandler(private val context: Context, private val smsControll
       SmsAction.SEND_SMS_INTENT,
       SmsAction.START_BACKGROUND_SERVICE,
       SmsAction.BACKGROUND_SERVICE_INITIALIZED,
+      SmsAction.DISABLE_BACKGROUND_SERVICE,
       SmsAction.REQUEST_SMS_PERMISSIONS -> {
         val permissions = PermissionsController.getSmsPermissions()
         return checkOrRequestPermission(permissions, requestCode)

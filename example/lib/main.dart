@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:telephony/telephony.dart';
 
-onBackgroundMessage(Map<String, dynamic> message) {
+onBackgroundMessage(SmsMessage message) {
   debugPrint("onBackgroundMessage called");
 }
 
@@ -17,6 +17,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String _message;
+  final telephony = Telephony.instance;
 
   @override
   void initState() {
@@ -24,9 +25,9 @@ class _MyAppState extends State<MyApp> {
     initPlatformState();
   }
 
-  onMessage(Map<String, dynamic> message) async {
+  onMessage(SmsMessage message) async {
     setState(() {
-      _message = message.toString();
+      _message = message.body;
     });
   }
 
@@ -42,25 +43,25 @@ class _MyAppState extends State<MyApp> {
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
     // setState to update our non-existent appearance.
-    var result = await Telephony.instance.requestSmsPermissions;
-    result;
+
+    final bool result = await telephony.requestPhoneAndSmsPermissions;
+
+    if (result) {
+      telephony.listenIncomingSms(
+          onNewMessage: onMessage, onBackgroundMessage: onBackgroundMessage);
+    }
+
     if (!mounted) return;
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Plugin example app'),
-        ),
-        body: Center(
-            child: FutureBuilder(
-                future: Telephony.instance.requestSmsPermissions,
-                builder: (context, snapshot) {
-                  return Text("${snapshot.data}: ${snapshot.data}");
-                })),
+        home: Scaffold(
+      appBar: AppBar(
+        title: const Text('Plugin example app'),
       ),
-    );
+      body: Center(child: Text("Latest received SMS: $_message")),
+    ));
   }
 }

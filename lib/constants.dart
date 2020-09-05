@@ -1,7 +1,7 @@
 part of 'telephony.dart';
 
-const FOREGROUND_CHANNEL = 'plugins.shounakmulay.com/foreground_sms_channel';
-const BACKGROUND_CHANNEL = 'plugins.shounakmulay.com/background_sms_channel';
+const _FOREGROUND_CHANNEL = 'plugins.shounakmulay.com/foreground_sms_channel';
+const _BACKGROUND_CHANNEL = 'plugins.shounakmulay.com/background_sms_channel';
 
 const HANDLE_BACKGROUND_MESSAGE = "handleBackgroundMessage";
 const BACKGROUND_SERVICE_INITIALIZED = "backgroundServiceInitialized";
@@ -34,53 +34,66 @@ const ON_MESSAGE = "onMessage";
 const SMS_SENT = "smsSent";
 const SMS_DELIVERED = "smsDelivered";
 
+///
+/// Possible parameters that can be fetched during a SMS query operation.
 class _SmsProjections {
-  static const String COUNT = "_count";
+//  static const String COUNT = "_count";
   static const String ID = "_id";
+  static const String ORIGINATING_ADDRESS = "originating_address";
   static const String ADDRESS = "address";
+  static const String MESSAGE_BODY = "message_body";
   static const String BODY = "body";
-  static const String CREATOR = "creator";
+
+//  static const String CREATOR = "creator";
+  static const String TIMESTAMP = "timestamp";
   static const String DATE = "date";
   static const String DATE_SENT = "date_sent";
-  static const String ERROR_CODE = "error_code";
-  static const String LOCKED = "locked";
-  static const int MESSAGE_TYPE_ALL = 0;
-  static const int MESSAGE_TYPE_DRAFT = 3;
-  static const int MESSAGE_TYPE_FAILED = 5;
-  static const int MESSAGE_TYPE_INBOX = 1;
-  static const int MESSAGE_TYPE_OUTBOX = 4;
-  static const int MESSAGE_TYPE_QUEUED = 6;
-  static const int MESSAGE_TYPE_SENT = 2;
-  static const String PERSON = "person";
-  static const String PROTOCOL = "protocol";
+
+//  static const String ERROR_CODE = "error_code";
+//  static const String LOCKED = "locked";
+//  static const int MESSAGE_TYPE_ALL = 0;
+//  static const int MESSAGE_TYPE_DRAFT = 3;
+//  static const int MESSAGE_TYPE_FAILED = 5;
+//  static const int MESSAGE_TYPE_INBOX = 1;
+//  static const int MESSAGE_TYPE_OUTBOX = 4;
+//  static const int MESSAGE_TYPE_QUEUED = 6;
+//  static const int MESSAGE_TYPE_SENT = 2;
+//  static const String PERSON = "person";
+//  static const String PROTOCOL = "protocol";
   static const String READ = "read";
-  static const String REPLY_PATH_PRESENT = "reply_path_present";
+
+//  static const String REPLY_PATH_PRESENT = "reply_path_present";
   static const String SEEN = "seen";
-  static const String SERVICE_CENTER = "service_center";
+
+//  static const String SERVICE_CENTER = "service_center";
   static const String STATUS = "status";
-  static const int STATUS_COMPLETE = 0;
-  static const int STATUS_FAILED = 64;
-  static const int STATUS_NONE = -1;
-  static const int STATUS_PENDING = 32;
+
+//  static const int STATUS_COMPLETE = 0;
+//  static const int STATUS_FAILED = 64;
+//  static const int STATUS_NONE = -1;
+//  static const int STATUS_PENDING = 32;
   static const String SUBJECT = "subject";
   static const String SUBSCRIPTION_ID = "sub_id";
   static const String THREAD_ID = "thread_id";
   static const String TYPE = "type";
 }
 
+///
+/// Possible parameters that can be fetched during a Conversation query operation.
 class _ConversationProjections {
   static const String SNIPPET = "snippet";
   static const String THREAD_ID = "thread_id";
   static const String MSG_COUNT = "msg_count";
 }
 
-abstract class Column {
-  const Column();
+abstract class _TelephonyColumn {
+  const _TelephonyColumn();
 
   String get _name;
 }
 
-class SmsColumn extends Column {
+/// Represents all the possible parameters for a SMS
+class SmsColumn extends _TelephonyColumn {
   final String _columnName;
 
   const SmsColumn._(this._columnName);
@@ -102,7 +115,8 @@ class SmsColumn extends Column {
   String get _name => _columnName;
 }
 
-class ConversationColumn extends Column {
+/// Represents all the possible parameters for a Conversation
+class ConversationColumn extends _TelephonyColumn {
   final String _columnName;
 
   const ConversationColumn._(this._columnName);
@@ -124,12 +138,20 @@ const DEFAULT_SMS_COLUMNS = [
   SmsColumn.DATE
 ];
 
+const INCOMING_SMS_COLUMNS = [
+  SmsColumn._(_SmsProjections.ORIGINATING_ADDRESS),
+  SmsColumn._(_SmsProjections.MESSAGE_BODY),
+  SmsColumn._(_SmsProjections.TIMESTAMP),
+  SmsColumn.STATUS
+];
+
 const DEFAULT_CONVERSATION_COLUMNS = [
   ConversationColumn.SNIPPET,
   ConversationColumn.THREAD_ID,
   ConversationColumn.MSG_COUNT
 ];
 
+/// Represents types of SMS.
 enum SmsType {
   MESSAGE_TYPE_ALL,
   MESSAGE_TYPE_INBOX,
@@ -140,14 +162,19 @@ enum SmsType {
   MESSAGE_TYPE_QUEUED
 }
 
+/// Represents states of SMS.
 enum SmsStatus { STATUS_COMPLETE, STATUS_FAILED, STATUS_NONE, STATUS_PENDING }
 
+/// Represents data connection state.
 enum DataState { DISCONNECTED, CONNECTING, CONNECTED, SUSPENDED, UNKNOWN }
 
+/// Represents state of cellular calls.
 enum CallState { IDLE, RINGING, OFFHOOK }
 
+/// Represents state of cellular network data activity.
 enum DataActivity { NONE, IN, OUT, INOUT, DORMANT }
 
+/// Represents types of networks for a device.
 enum NetworkType {
   UNKNOWN,
   GPRS,
@@ -172,8 +199,10 @@ enum NetworkType {
   NR,
 }
 
+/// Represents types of cellular technology supported by a device.
 enum PhoneType { NONE, GSM, CDMA, SIP }
 
+/// Represents state of SIM.
 enum SimState {
   UNKNOWN,
   ABSENT,
@@ -189,10 +218,13 @@ enum SimState {
   PRESENT
 }
 
+/// Represents state of cellular service.
 enum ServiceState { IN_SERVICE, OUT_OF_SERVICE, EMERGENCY_ONLY, POWER_OFF }
 
+/// Represents the quality of cellular signal.
 enum SignalStrength { NONE_OR_UNKNOWN, POOR, MODERATE, GOOD, GREAT }
 
+/// Represents sort order for [OrderBy].
 enum Sort { ASC, DESC }
 
 extension Value on Sort {
@@ -209,4 +241,5 @@ extension Value on Sort {
   }
 }
 
+/// Represents the status of a sms message sent from the device.
 enum SendStatus { SENT, DELIVERED }
