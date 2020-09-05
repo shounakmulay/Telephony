@@ -1,5 +1,7 @@
 name: Telephony CD
 on: 
+  pull_request:
+    branches-ignore: [release]
   push:
     branches: [release]
 jobs:
@@ -17,4 +19,5 @@ jobs:
       run: flutter pub get
     - name: Publish Dry Run
       run: pwd && ls
+    - run: flutter build appbundle
     
