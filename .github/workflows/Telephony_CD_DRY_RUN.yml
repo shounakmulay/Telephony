@@ -1,5 +1,7 @@
 name: Telephony CD - Dry Run
 on:
+  push:
+    branches: [release]
   pull_request:
     branches: [release]
 jobs:
