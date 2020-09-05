@@ -94,9 +94,7 @@ class SmsController(private val context: Context) {
       putExtra(SMS_BODY, messageBody)
       flags = Intent.FLAG_ACTIVITY_NEW_TASK
     }
-    if (intent.resolveActivity(context.packageManager) != null) {
-      context.applicationContext.startActivity(intent)
-    }
+    context.applicationContext.startActivity(intent)
   }
 
   private fun getPendingIntents(): Pair<PendingIntent, PendingIntent> {
