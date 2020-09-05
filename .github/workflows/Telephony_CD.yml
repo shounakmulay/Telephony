@@ -18,6 +18,6 @@ jobs:
     - name: Get dependencies
       run: flutter pub get
     - name: Publish Dry Run
-      run: pwd && ls
+      run: cd example && pwd && ls
     - run: flutter build appbundle
     
