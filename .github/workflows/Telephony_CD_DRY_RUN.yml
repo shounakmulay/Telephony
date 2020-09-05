@@ -8,12 +8,11 @@ jobs:
   Publish_Dry_Run:
     runs-on: ubuntu-latest
     steps:
-      - run: pwd && ls
+      - uses: actions/checkout@v2
       - name: Publish
         uses: sakebook/actions-flutter-pub-publisher@v1.3.1
         with:
           credential: ${{ secrets.CREDENTIAL_JSON }}
-          package_directory: /home/runner/work/Telephony/Telephony
           flutter_package: false
           skip_test: true
           dry_run: true
