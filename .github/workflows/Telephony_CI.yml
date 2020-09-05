@@ -2,8 +2,9 @@ name: Telephony CI
 
 on:
   pull_request:
-  push:
     branches-ignore: [release]
+  push:
+    branches: [develop]
 
 jobs:
   Analyze:
