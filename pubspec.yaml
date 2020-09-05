@@ -17,7 +17,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   mockito:
-  collection: ^1.14.13
+  collection: ^1.14.12
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
