@@ -22,8 +22,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: [Build]
     steps:
+      - uses: actions/checkout@v2
       - name: Publish
         uses: sakebook/actions-flutter-pub-publisher@v1.3.1
         with:
           credential: ${{ secrets.CREDENTIAL_JSON }}
-          skip_test: true
+          flutter_package: false
