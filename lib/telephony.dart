@@ -294,12 +294,12 @@ class Telephony {
   /// - [statusListener] (optional) : Listen to the status of the sent SMS. Values can be one of [SmsStatus]
   /// - [isMultipart] (optional) : If message body is longer than standard SMS limit of 160 characters, set this flag to
   /// send the SMS in multiple parts.
-  void sendSms({
+  Future<void> sendSms({
     @required String to,
     @required String message,
     SmsSendStatusListener statusListener,
     bool isMultipart = false,
-  }) {
+  }) async {
     assert(_platform.isAndroid == true, "Can only be called on Android.");
     bool listenStatus = false;
     if (statusListener != null) {
@@ -312,7 +312,7 @@ class Telephony {
       "listen_status": listenStatus
     };
     final String method = isMultipart ? SEND_MULTIPART_SMS : SEND_SMS;
-    _foregroundChannel.invokeMethod(method, args);
+    await _foregroundChannel.invokeMethod(method, args);
   }
 
   ///
@@ -325,15 +325,15 @@ class Telephony {
   /// - [to] : Address to send the SMS to.
   /// - [message] : Message to be sent.
   ///
-  void sendSmsByDefaultApp({
+  Future<void> sendSmsByDefaultApp({
     @required String to,
     @required String message,
-  }) {
+  }) async {
     final Map<String, dynamic> args = {
       "address": to,
       "message_body": message,
     };
-    _foregroundChannel.invokeMethod(SEND_SMS_INTENT, args);
+    await _foregroundChannel.invokeMethod(SEND_SMS_INTENT, args);
   }
 
   ///
