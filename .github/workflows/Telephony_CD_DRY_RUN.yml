@@ -1,6 +1,6 @@
 name: Telephony CD - Dry Run
 on:
-  push:
+  pull_request:
     branches: [release]
 jobs:
   Build:
