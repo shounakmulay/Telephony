@@ -3,7 +3,7 @@ name: Telephony CI
 on:
   pull_request:
   push:
-    branches: [release, develop]
+    branches-ignore: [release]
 
 jobs:
   Analyze:
