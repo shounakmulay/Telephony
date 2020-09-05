@@ -19,5 +19,7 @@ jobs:
       run: flutter pub get
     - name: Publish Dry Run
       run: cd example && pwd && ls
-    - run: flutter build appbundle
+    - name: Build Appbundle
+      run: flutter build appbundle
+      working-directory: /home/runner/work/Telephony/Telephony/example
     
