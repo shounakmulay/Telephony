@@ -5,7 +5,7 @@ on:
   pull_request:
     branches: [release]
 jobs:
-  Publish Dry Run:
+  Publish_Dry_Run:
     runs-on: ubuntu-latest
     steps:
       - name: Publish
@@ -18,7 +18,7 @@ jobs:
           dry_run: true
   Build:
     runs-on: windows-latest
-    needs: [Publish Dry Run]
+    needs: [Publish_Dry_Run]
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-java@v1
