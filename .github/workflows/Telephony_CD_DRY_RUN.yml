@@ -8,6 +8,7 @@ jobs:
   Publish_Dry_Run:
     runs-on: ubuntu-latest
     steps:
+      - run: pwd && ls
       - name: Publish
         uses: sakebook/actions-flutter-pub-publisher@v1.3.1
         with:
