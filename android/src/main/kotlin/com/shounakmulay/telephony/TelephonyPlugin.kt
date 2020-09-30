@@ -2,6 +2,7 @@ package com.shounakmulay.telephony
 
 import android.content.Context
 import androidx.annotation.NonNull
+import com.shounakmulay.telephony.sms.IncomingSmsHandler
 import com.shounakmulay.telephony.utils.Constants.CHANNEL_SMS
 import com.shounakmulay.telephony.sms.IncomingSmsReceiver
 import com.shounakmulay.telephony.sms.SmsController
@@ -20,8 +21,13 @@ class TelephonyPlugin : FlutterPlugin, ActivityAware {
 
   private lateinit var smsController: SmsController
 
+  private lateinit var binaryMessenger: BinaryMessenger
+
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-    setupPlugin(flutterPluginBinding.applicationContext, flutterPluginBinding.binaryMessenger)
+    val isInForeground = IncomingSmsHandler.isApplicationForeground(flutterPluginBinding.applicationContext);
+    if (!this::binaryMessenger.isInitialized && isInForeground) {
+      binaryMessenger = flutterPluginBinding.binaryMessenger
+    }
   }
 
   override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
@@ -37,6 +43,7 @@ class TelephonyPlugin : FlutterPlugin, ActivityAware {
   }
 
   override fun onAttachedToActivity(binding: ActivityPluginBinding) {
+    setupPlugin(binding.activity.applicationContext, binaryMessenger)
     PermissionsController.setActivity(binding.activity)
     binding.addRequestPermissionsResultListener(smsMethodCallHandler)
   }
