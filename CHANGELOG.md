@@ -1,6 +1,8 @@
-## 0.0.1
+## 0.0.3
 
-* First release of telephony
+#### Changes:
+* Fix unresponsive foreground methods after starting background isolate.
+
 
 ## 0.0.2
 
@@ -11,3 +13,9 @@
 * Adding documentation.
 * Fix conflicting class name (Column --> TelephonyColumn).
 * Update plugin description.
+
+
+## 0.0.1
+
+* First release of telephony
+
