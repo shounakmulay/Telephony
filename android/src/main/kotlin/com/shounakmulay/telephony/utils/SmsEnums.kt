@@ -31,6 +31,8 @@ enum class SmsAction(private val methodName: String) {
   REQUEST_SMS_PERMISSIONS("requestSmsPermissions"),
   REQUEST_PHONE_PERMISSIONS("requestPhonePermissions"),
   REQUEST_PHONE_AND_SMS_PERMISSIONS("requestPhoneAndSmsPermissions"),
+  OPEN_DIALER("openDialer"),
+  DIAL_PHONE_NUMBER("dialPhoneNumber"),
   NO_SUCH_METHOD("noSuchMethod");
 
   companion object {
@@ -74,12 +76,14 @@ enum class SmsAction(private val methodName: String) {
       REQUEST_SMS_PERMISSIONS,
       REQUEST_PHONE_PERMISSIONS,
       REQUEST_PHONE_AND_SMS_PERMISSIONS -> ActionType.PERMISSION
+      OPEN_DIALER,
+      DIAL_PHONE_NUMBER -> ActionType.CALL
     }
   }
 }
 
 enum class ActionType {
-  GET_SMS, SEND_SMS, BACKGROUND, GET, PERMISSION
+  GET_SMS, SEND_SMS, BACKGROUND, GET, PERMISSION, CALL
 }
 
 enum class ContentUri(val uri: Uri) {

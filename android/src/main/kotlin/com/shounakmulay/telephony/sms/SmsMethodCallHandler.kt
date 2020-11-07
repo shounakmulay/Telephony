@@ -13,6 +13,7 @@ import com.shounakmulay.telephony.utils.ActionType
 import com.shounakmulay.telephony.utils.Constants
 import com.shounakmulay.telephony.utils.Constants.ADDRESS
 import com.shounakmulay.telephony.utils.Constants.BACKGROUND_HANDLE
+import com.shounakmulay.telephony.utils.Constants.CALL_REQUEST_CODE
 import com.shounakmulay.telephony.utils.Constants.DEFAULT_CONVERSATION_PROJECTION
 import com.shounakmulay.telephony.utils.Constants.DEFAULT_SMS_PROJECTION
 import com.shounakmulay.telephony.utils.Constants.FAILED_FETCH
@@ -23,6 +24,7 @@ import com.shounakmulay.telephony.utils.Constants.MESSAGE_BODY
 import com.shounakmulay.telephony.utils.Constants.PERMISSION_DENIED
 import com.shounakmulay.telephony.utils.Constants.PERMISSION_DENIED_MESSAGE
 import com.shounakmulay.telephony.utils.Constants.PERMISSION_REQUEST_CODE
+import com.shounakmulay.telephony.utils.Constants.PHONE_NUMBER
 import com.shounakmulay.telephony.utils.Constants.PROJECTION
 import com.shounakmulay.telephony.utils.Constants.SELECTION
 import com.shounakmulay.telephony.utils.Constants.SELECTION_ARGS
@@ -61,6 +63,8 @@ class SmsMethodCallHandler(private val context: Context, private val smsControll
 
   private var setupHandle: Long = -1
   private var backgroundHandle: Long = -1
+  
+  private lateinit var phoneNumber: String
 
   private var requestCode: Int = -1
 
@@ -117,6 +121,17 @@ class SmsMethodCallHandler(private val context: Context, private val smsControll
       }
       ActionType.GET -> handleMethod(action, GET_STATUS_REQUEST_CODE)
       ActionType.PERMISSION -> handleMethod(action, PERMISSION_REQUEST_CODE)
+      ActionType.CALL -> {
+        if (call.hasArgument(PHONE_NUMBER)) {
+          val phoneNumber = call.argument<String>(PHONE_NUMBER)
+          
+          if (!phoneNumber.isNullOrBlank()) {
+            this.phoneNumber = phoneNumber
+          }
+          
+          handleMethod(action, CALL_REQUEST_CODE)
+        }
+      }
     }
   }
 
@@ -139,6 +154,7 @@ class SmsMethodCallHandler(private val context: Context, private val smsControll
         ActionType.BACKGROUND -> handleBackgroundActions(smsAction)
         ActionType.GET -> handleGetActions(smsAction)
         ActionType.PERMISSION -> result.success(true)
+        ActionType.CALL -> handleCallActions(smsAction)
       }
     } catch (e: IllegalArgumentException) {
       result.error(ILLEGAL_ARGUMENT, WRONG_METHOD_TYPE, null)
@@ -235,6 +251,15 @@ class SmsMethodCallHandler(private val context: Context, private val smsControll
       result.success(value)
     }
   }
+  
+  @SuppressLint("MissingPermission")
+  private fun handleCallActions(smsAction: SmsAction) {
+    when (smsAction) {
+      SmsAction.OPEN_DIALER -> smsController.openDialer(phoneNumber)
+      SmsAction.DIAL_PHONE_NUMBER -> smsController.dialPhoneNumber(phoneNumber)
+      else -> throw IllegalArgumentException()
+    }
+  }
 
 
   /**
@@ -271,6 +296,8 @@ class SmsMethodCallHandler(private val context: Context, private val smsControll
         return checkOrRequestPermission(permissions, requestCode)
       }
       SmsAction.GET_DATA_NETWORK_TYPE,
+      SmsAction.OPEN_DIALER,
+      SmsAction.DIAL_PHONE_NUMBER,
       SmsAction.REQUEST_PHONE_PERMISSIONS -> {
         val permissions = PermissionsController.getPhonePermissions()
         return checkOrRequestPermission(permissions, requestCode)

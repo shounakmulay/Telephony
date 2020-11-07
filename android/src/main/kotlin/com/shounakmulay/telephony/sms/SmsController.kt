@@ -123,6 +123,30 @@ class SmsController(private val context: Context) {
     return SmsManager.getDefault()
   }
 
+  // PHONE
+  fun openDialer(phoneNumber: String) {
+    val dialerIntent = Intent(Intent.ACTION_DIAL).apply {
+      data = Uri.parse("tel:$phoneNumber")
+      flags = Intent.FLAG_ACTIVITY_NEW_TASK
+    }
+
+    if (dialerIntent.resolveActivity(context.packageManager) != null) {
+      context.startActivity(dialerIntent)
+    }
+  }
+
+  @RequiresPermission(allOf = [Manifest.permission.CALL_PHONE])
+  fun dialPhoneNumber(phoneNumber: String) {
+    val callIntent = Intent(Intent.ACTION_CALL).apply {
+      data = Uri.parse("tel:$phoneNumber")
+      flags = Intent.FLAG_ACTIVITY_NEW_TASK
+    }
+
+    if (callIntent.resolveActivity(context.packageManager) != null) {
+      context.applicationContext.startActivity(callIntent)
+    }
+  }
+
   // STATUS
   fun isSmsCapable(): Boolean {
     val telephonyManager = getTelephonyManager()

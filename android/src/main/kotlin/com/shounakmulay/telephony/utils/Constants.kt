@@ -17,7 +17,7 @@ object Constants {
 
   // Permissions
   val SMS_PERMISSIONS = listOf(Manifest.permission.READ_SMS, Manifest.permission.SEND_SMS, Manifest.permission.RECEIVE_SMS)
-  val PHONE_PERMISSIONS = listOf(Manifest.permission.READ_PHONE_STATE)
+  val PHONE_PERMISSIONS = listOf(Manifest.permission.READ_PHONE_STATE, Manifest.permission.CALL_PHONE)
   val SERVICE_STATE_PERMISSIONS = listOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.READ_PHONE_STATE)
 
   // Request Codes
@@ -28,6 +28,7 @@ object Constants {
   const val SMS_BACKGROUND_REQUEST_CODE = 31
   const val GET_STATUS_REQUEST_CODE = 41
   const val PERMISSION_REQUEST_CODE = 51
+  const val CALL_REQUEST_CODE = 61
 
   // Methods
   const val ON_MESSAGE = "onMessage"
@@ -54,6 +55,8 @@ object Constants {
 
   const val SETUP_HANDLE = "setupHandle"
   const val BACKGROUND_HANDLE = "backgroundHandle"
+
+  const val PHONE_NUMBER = "phoneNumber"
 
   // Projections
   val DEFAULT_SMS_PROJECTION = listOf(Telephony.Sms._ID, Telephony.Sms.ADDRESS, Telephony.Sms.BODY, Telephony.Sms.DATE)
