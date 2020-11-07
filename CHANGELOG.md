@@ -1,3 +1,8 @@
+## 0.0.4
+
+#### New Features:
+* Start phone calls from default dialer or directly from the app.
+
 ## 0.0.3
 
 #### Changes:
