@@ -8,19 +8,17 @@ A Flutter plugin to use telephony features such as
 - Query SMS Messages
 - Listen for incoming SMS
 - Retrieve various network parameters
+- Start phone calls
 
 This plugin tries to replicate some of the functionality provided by Android's [Telephony](https://developer.android.com/reference/android/provider/Telephony) class.
 
 Check the [Features section](#Features) to see the list of implemented and missing features.
 
-
-
+## Get Started
+### :bulb: View the **[entire documentation here](https://shounakmulay.gitbook.io/telephony/)**.
 
 ## Usage
 To use this plugin add `telephony` as a [dependency in your pubspec.yaml file](https://flutter.dev/docs/development/packages-and-plugins/using-packages).
-
-## Get Started
-### :bulb: View the entire documentation **[here](https://shounakmulay.gitbook.io/telephony/)**.
 
 
 ### Setup
@@ -254,7 +252,6 @@ Check out the [detailed documentation](https://shounakmulay.gitbook.io/telephony
 	 - [x] Network roaming
 	 - [x] Signal strength
 	 - [x] Service state
+ - [x] Start Phone Call
  - [ ] Schedule a SMS
  - [ ] SMS Retriever API
- - [ ] Start Phone Call
- - [ ] iOS support
