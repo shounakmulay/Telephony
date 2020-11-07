@@ -29,6 +29,8 @@ const GET_SERVICE_STATE = "getServiceState";
 const REQUEST_SMS_PERMISSION = "requestSmsPermissions";
 const REQUEST_PHONE_PERMISSION = "requestPhonePermissions";
 const REQUEST_PHONE_AND_SMS_PERMISSION = "requestPhoneAndSmsPermissions";
+const OPEN_DIALER = "openDialer";
+const DIAL_PHONE_NUMBER = "dialPhoneNumber";
 
 const ON_MESSAGE = "onMessage";
 const SMS_SENT = "smsSent";

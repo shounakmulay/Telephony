@@ -61,7 +61,15 @@ class _MyAppState extends State<MyApp> {
       appBar: AppBar(
         title: const Text('Plugin example app'),
       ),
-      body: Center(child: Text("Latest received SMS: $_message")),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Center(child: Text("Latest received SMS: $_message")),
+          FlatButton(onPressed: () async {
+            await telephony.openDialer('123456789');
+          }, child: Text('Open Dialer'))
+        ],
+      ),
     ));
   }
 }
