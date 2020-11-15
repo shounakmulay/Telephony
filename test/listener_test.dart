@@ -53,15 +53,14 @@ main() {
 
     test("incoming sms", () async {
       telephony.listenIncomingSms(
-        onNewMessage: (message) {
-          expect(message.body, mockIncomingMessage["message_body"]);
-          expect(message.address, mockIncomingMessage["originating_address"]);
-          expect(message.status, SmsStatus.STATUS_COMPLETE);
-        },
-        listenInBackground: false
-      );
+          onNewMessage: (message) {
+            expect(message.body, mockIncomingMessage["message_body"]);
+            expect(message.address, mockIncomingMessage["originating_address"]);
+            expect(message.status, SmsStatus.STATUS_COMPLETE);
+          },
+          listenInBackground: false);
 
-      methodChannel.invokeMethod(ON_MESSAGE, { "message": mockIncomingMessage });
+      methodChannel.invokeMethod(ON_MESSAGE, {"message": mockIncomingMessage});
     });
   });
 }

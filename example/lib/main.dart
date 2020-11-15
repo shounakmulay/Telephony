@@ -65,9 +65,11 @@ class _MyAppState extends State<MyApp> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Center(child: Text("Latest received SMS: $_message")),
-          FlatButton(onPressed: () async {
-            await telephony.openDialer('123456789');
-          }, child: Text('Open Dialer'))
+          FlatButton(
+              onPressed: () async {
+                await telephony.openDialer('123456789');
+              },
+              child: Text('Open Dialer'))
         ],
       ),
     ));

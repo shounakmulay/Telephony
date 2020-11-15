@@ -16,16 +16,8 @@ const mockMessages = [
 ];
 
 const mockConversations = [
-  {
-    "snippet": "message snippet",
-    "thread_id": "2",
-    "msg_count": "32"
-  },
-  {
-    "snippet": "snippet",
-    "thread_id": "5",
-    "msg_count": "20"
-  }
+  {"snippet": "message snippet", "thread_id": "2", "msg_count": "32"},
+  {"snippet": "snippet", "thread_id": "5", "msg_count": "20"}
 ];
 
 const mockIncomingMessage = {
@@ -34,4 +26,3 @@ const mockIncomingMessage = {
   "timestamp": "123422135",
   "status": "0"
 };
-
