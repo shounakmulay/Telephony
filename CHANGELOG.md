@@ -1,3 +1,6 @@
+## 0.0.5
+* Fix background execution error due to FlutterLoader.getInstance() deprecation.
+
 ## 0.0.4
 
 #### New Features:
