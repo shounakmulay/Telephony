@@ -22,6 +22,7 @@ import com.shounakmulay.telephony.utils.Constants.SHARED_PREFS_DISABLE_BACKGROUN
 import com.shounakmulay.telephony.utils.Constants.STATUS
 import com.shounakmulay.telephony.utils.Constants.TIMESTAMP
 import com.shounakmulay.telephony.utils.SmsAction
+import io.flutter.FlutterInjector
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.engine.FlutterJNI
 import io.flutter.embedding.engine.dart.DartExecutor
@@ -73,9 +74,8 @@ class IncomingSmsReceiver : BroadcastReceiver() {
 
   private fun processInBackground(context: Context, sms: SmsMessage) {
     IncomingSmsHandler.apply {
-      backgroundContext = context
-      flutterLoader.ensureInitializationComplete(context.applicationContext, null)
       if (!isIsolateRunning.get()) {
+        initialize(context)
         val preferences = backgroundContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
         val backgroundCallbackHandle = preferences.getLong(SHARED_PREFS_BACKGROUND_SETUP_HANDLE, 0)
         startBackgroundIsolate(backgroundContext, backgroundCallbackHandle)
@@ -113,12 +113,12 @@ fun SmsMessage.toMap(): HashMap<String, Any?> {
 object IncomingSmsHandler : MethodChannel.MethodCallHandler {
 
   internal val backgroundMessageQueue = Collections.synchronizedList(mutableListOf<SmsMessage>())
-  internal var flutterLoader = FlutterLoader.getInstance()
   internal var isIsolateRunning = AtomicBoolean(false)
 
   internal lateinit var backgroundContext: Context
   private lateinit var backgroundChannel: MethodChannel
   private lateinit var backgroundFlutterEngine: FlutterEngine
+  private lateinit var flutterLoader: FlutterLoader
 
   private var backgroundMessageHandle: Long? = null
 
@@ -129,7 +129,6 @@ object IncomingSmsHandler : MethodChannel.MethodCallHandler {
    * Also initializes the method channel on the android side
    */
   fun startBackgroundIsolate(context: Context, callbackHandle: Long) {
-    flutterLoader.ensureInitializationComplete(context, null)
     val appBundlePath = flutterLoader.findAppBundlePath()
     val flutterCallback = FlutterCallbackInformation.lookupCallbackInformation(callbackHandle)
 
@@ -148,7 +147,7 @@ object IncomingSmsHandler : MethodChannel.MethodCallHandler {
    * If any SMS were received during the background isolate was being initialized, it will process
    * all those messages.
    */
-  fun onInitialized() {
+  fun onChannelInitialized() {
     isIsolateRunning.set(true)
     synchronized(backgroundMessageQueue) {
 
@@ -178,6 +177,20 @@ object IncomingSmsHandler : MethodChannel.MethodCallHandler {
     args[HANDLE] = backgroundMessageHandle
     args[MESSAGE] = message
     backgroundChannel.invokeMethod(HANDLE_BACKGROUND_MESSAGE, args)
+  }
+
+  /**
+   * Gets an instance of FlutterLoader from the FlutterInjector, starts initialization and
+   * waits until initialization is complete.
+   *
+   * Should be called before invoking any other background methods.
+   */
+  internal fun initialize(context: Context) {
+    val flutterInjector = FlutterInjector.instance()
+    backgroundContext = context
+    flutterLoader = flutterInjector.flutterLoader()
+    flutterLoader.startInitialization(backgroundContext)
+    flutterLoader.ensureInitializationComplete(context.applicationContext, null)
   }
 
   fun setBackgroundMessageHandle(context: Context, handle: Long) {
@@ -224,7 +237,7 @@ object IncomingSmsHandler : MethodChannel.MethodCallHandler {
 
   override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
     if (SmsAction.fromMethod(call.method) == SmsAction.BACKGROUND_SERVICE_INITIALIZED) {
-      onInitialized()
+      onChannelInitialized()
     }
   }
 }

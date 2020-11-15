@@ -203,7 +203,7 @@ class SmsMethodCallHandler(private val context: Context, private val smsControll
         IncomingSmsHandler.setBackgroundMessageHandle(context, backgroundHandle)
       }
       SmsAction.BACKGROUND_SERVICE_INITIALIZED -> {
-        IncomingSmsHandler.onInitialized()
+        IncomingSmsHandler.onChannelInitialized()
       }
       SmsAction.DISABLE_BACKGROUND_SERVICE -> {
         val preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
