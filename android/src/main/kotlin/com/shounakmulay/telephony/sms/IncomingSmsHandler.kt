@@ -43,8 +43,9 @@ class IncomingSmsReceiver : BroadcastReceiver() {
 
   override fun onReceive(context: Context, intent: Intent?) {
     val smsList = Telephony.Sms.Intents.getMessagesFromIntent(intent)
-    smsList.forEach { sms ->
-      processIncomingSms(context, sms)
+    val messagesGroupedByOriginatingAddress = smsList.groupBy { it.originatingAddress }
+    messagesGroupedByOriginatingAddress.forEach { group ->
+      processIncomingSms(context, group.value)
     }
   }
 
@@ -58,21 +59,28 @@ class IncomingSmsReceiver : BroadcastReceiver() {
    * [IncomingSmsHandler.executeDartCallbackInBackgroundIsolate] with the SMS.
    *
    */
-  private fun processIncomingSms(context: Context, sms: SmsMessage) {
+  private fun processIncomingSms(context: Context, smsList: List<SmsMessage>) {
+    val messageMap = smsList.first().toMap()
+    smsList.forEachIndexed { index, smsMessage ->
+      if (index > 0) {
+        messageMap[MESSAGE_BODY] = (messageMap[MESSAGE_BODY] as String)
+            .plus(smsMessage.messageBody.trim())
+      }
+    }
     if (IncomingSmsHandler.isApplicationForeground(context)) {
       val args = HashMap<String, Any>()
-      args[MESSAGE] = sms.toMap()
+      args[MESSAGE] = messageMap
       foregroundSmsChannel?.invokeMethod(ON_MESSAGE, args)
     } else {
       val preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
       val disableBackground = preferences.getBoolean(SHARED_PREFS_DISABLE_BACKGROUND_EXE, false)
       if (!disableBackground) {
-        processInBackground(context, sms)
+        processInBackground(context, messageMap)
       }
     }
   }
 
-  private fun processInBackground(context: Context, sms: SmsMessage) {
+  private fun processInBackground(context: Context, sms: HashMap<String, Any?>) {
     IncomingSmsHandler.apply {
       if (!isIsolateRunning.get()) {
         initialize(context)
@@ -81,7 +89,7 @@ class IncomingSmsReceiver : BroadcastReceiver() {
         startBackgroundIsolate(backgroundContext, backgroundCallbackHandle)
         backgroundMessageQueue.add(sms)
       } else {
-        executeDartCallbackInBackgroundIsolate(context, sms.toMap())
+        executeDartCallbackInBackgroundIsolate(context, sms)
       }
     }
   }
@@ -112,7 +120,7 @@ fun SmsMessage.toMap(): HashMap<String, Any?> {
  */
 object IncomingSmsHandler : MethodChannel.MethodCallHandler {
 
-  internal val backgroundMessageQueue = Collections.synchronizedList(mutableListOf<SmsMessage>())
+  internal val backgroundMessageQueue = Collections.synchronizedList(mutableListOf<HashMap<String, Any?>>())
   internal var isIsolateRunning = AtomicBoolean(false)
 
   internal lateinit var backgroundContext: Context
@@ -155,7 +163,7 @@ object IncomingSmsHandler : MethodChannel.MethodCallHandler {
       // initialized, then clear the queue.
       val iterator = backgroundMessageQueue.iterator()
       while (iterator.hasNext()) {
-        executeDartCallbackInBackgroundIsolate(backgroundContext, iterator.next().toMap())
+        executeDartCallbackInBackgroundIsolate(backgroundContext, iterator.next())
       }
       backgroundMessageQueue.clear()
     }
