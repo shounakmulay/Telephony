@@ -1,3 +1,6 @@
+## 0.0.6
+* Multipart messages are grouped as one single SMS so that listenSms functions only get triggered once.
+
 ## 0.0.5
 * Fix background execution error due to FlutterLoader.getInstance() deprecation.
 
