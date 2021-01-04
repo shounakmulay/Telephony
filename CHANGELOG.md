@@ -1,3 +1,6 @@
+## 0.0.7
+* Fix build error when plugin included in iOS project.
+
 ## 0.0.6
 * Multipart messages are grouped as one single SMS so that listenSms functions only get triggered once.
 
