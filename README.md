@@ -20,6 +20,9 @@ Check the [Features section](#Features) to see the list of implemented and missi
 ## Usage
 To use this plugin add `telephony` as a [dependency in your pubspec.yaml file](https://flutter.dev/docs/development/packages-and-plugins/using-packages).
 
+##### Versions [0.0.9](https://pub.dev/packages/telephony/versions/0.0.9) and lower are not null safe.
+##### Versions [0.1.0](https://pub.dev/packages/telephony/versions/0.1.0) and above opt into null safety.
+
 
 ### Setup
 Import the `telephony` package
