@@ -113,3 +113,5 @@ app.*.symbols
 
 example/android/app/src/debug/gen/**
 example/ios/**
+
+local.properties
