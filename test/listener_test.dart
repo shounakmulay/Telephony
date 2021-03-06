@@ -7,8 +7,8 @@ import 'mocks/messages.dart';
 main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  MethodChannel methodChannel;
-  Telephony telephony;
+  late MethodChannel methodChannel;
+  late Telephony telephony;
   final List<MethodCall> log = <MethodCall>[];
   SmsSendStatusListener listener;
 

@@ -10,8 +10,8 @@ import 'mocks/messages.dart';
 main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  MockMethodChannel methodChannel;
-  Telephony telephony;
+  late MockMethodChannel methodChannel;
+  late Telephony telephony;
 
   setUp(() {
     methodChannel = MockMethodChannel();
@@ -227,7 +227,7 @@ main() {
 
       test("inbox with filters", () async {
         final columns = [SmsColumn.ID, SmsColumn.ADDRESS];
-        final filter = SmsFilter.where(SmsColumn.ID)
+        final SmsFilter filter = SmsFilter.where(SmsColumn.ID)
             .equals("3")
             .and(SmsColumn.ADDRESS)
             .like("mess");
@@ -277,7 +277,7 @@ main() {
 
       test("sent with filters", () async {
         final columns = [SmsColumn.ID, SmsColumn.ADDRESS];
-        final filter = SmsFilter.where(SmsColumn.ID)
+        final SmsFilter filter = SmsFilter.where(SmsColumn.ID)
             .equals("4")
             .and(SmsColumn.DATE)
             .greaterThan("12");
@@ -327,7 +327,7 @@ main() {
 
       test("draft with filters", () async {
         final columns = [SmsColumn.ID, SmsColumn.ADDRESS];
-        final filter = SmsFilter.where(SmsColumn.ID)
+        final SmsFilter filter = SmsFilter.where(SmsColumn.ID)
             .equals("4")
             .and(SmsColumn.DATE)
             .greaterThan("12");
@@ -377,7 +377,7 @@ main() {
       });
 
       test("conversations with filter", () async {
-        final filter = ConversationFilter.where(ConversationColumn.MSG_COUNT)
+        final ConversationFilter filter = ConversationFilter.where(ConversationColumn.MSG_COUNT)
             .equals("4")
             .and(ConversationColumn.THREAD_ID)
             .greaterThan("12");
@@ -414,7 +414,7 @@ main() {
 
     group("should generate", () {
       test("sms filter statement", () async {
-        final statement = SmsFilter.where(SmsColumn.ADDRESS)
+        final SmsFilter statement = SmsFilter.where(SmsColumn.ADDRESS)
             .greaterThan("1")
             .and(SmsColumn.ID)
             .greaterThanOrEqualTo("2")
@@ -435,7 +435,7 @@ main() {
       });
 
       test("conversation filter statement", () async {
-        final statement = ConversationFilter.where(ConversationColumn.THREAD_ID)
+        final ConversationFilter statement = ConversationFilter.where(ConversationColumn.THREAD_ID)
             .lessThanOrEqualTo("1")
             .or(ConversationColumn.MSG_COUNT)
             .notEqualTo("6")

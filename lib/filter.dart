@@ -90,8 +90,8 @@ class ConversationFilter
 
 abstract class FilterStatement<T extends Filter, K> {
   String _column;
-  String _previousFilter;
-  List<String> _previousFilterArgs;
+  String _previousFilter = "";
+  List<String> _previousFilterArgs = [];
 
   FilterStatement._(this._column);
 
@@ -200,10 +200,8 @@ class OrderBy {
   Sort _sort = Sort.DESC;
 
   /// Orders the query results by the provided column and [sort] value.
-  OrderBy(this._column, {Sort sort}) {
-    if (sort != null) {
-      _sort = sort;
-    }
+  OrderBy(this._column, {Sort sort = Sort.DESC}) {
+    _sort = sort;
   }
 
   String get _value => "${_column._name} ${_sort.value}";
