@@ -192,6 +192,7 @@ class SmsMethodCallHandler(private val context: Context, private val smsControll
       SmsAction.SEND_SMS_INTENT -> smsController.sendSmsIntent(address, messageBody)
       else -> throw IllegalArgumentException()
     }
+    result.success(null)
   }
 
   private fun handleBackgroundActions(smsAction: SmsAction) {
