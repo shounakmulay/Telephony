@@ -90,8 +90,8 @@ class ConversationFilter
 
 abstract class FilterStatement<T extends Filter, K> {
   String _column;
-  String _previousFilter;
-  List<String> _previousFilterArgs;
+  String _previousFilter = "";
+  List<String> _previousFilterArgs = [];
 
   FilterStatement._(this._column);
 
@@ -167,12 +167,8 @@ class SmsFilterStatement
 
   @override
   SmsFilter _createFilter(String value, String operator) {
-    if (_previousFilter != null) {
-      return SmsFilter._("$_previousFilter $_column $operator ?",
-          _previousFilterArgs..add(value));
-    } else {
-      return SmsFilter._("$_column $operator ?", [value]);
-    }
+    return SmsFilter._("$_previousFilter $_column $operator ?",
+        _previousFilterArgs..add(value));
   }
 }
 
@@ -186,12 +182,8 @@ class ConversationFilterStatement
 
   @override
   ConversationFilter _createFilter(String value, String operator) {
-    if (_previousFilter != null) {
-      return ConversationFilter._("$_previousFilter $_column $operator ?",
-          _previousFilterArgs..add(value));
-    } else {
-      return ConversationFilter._("$_column $operator ?", [value]);
-    }
+    return ConversationFilter._("$_previousFilter $_column $operator ?",
+        _previousFilterArgs..add(value));
   }
 }
 
@@ -200,10 +192,8 @@ class OrderBy {
   Sort _sort = Sort.DESC;
 
   /// Orders the query results by the provided column and [sort] value.
-  OrderBy(this._column, {Sort sort}) {
-    if (sort != null) {
-      _sort = sort;
-    }
+  OrderBy(this._column, {Sort sort = Sort.DESC}) {
+    _sort = sort;
   }
 
   String get _value => "${_column._name} ${_sort.value}";

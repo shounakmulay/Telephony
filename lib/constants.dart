@@ -171,10 +171,10 @@ enum SmsStatus { STATUS_COMPLETE, STATUS_FAILED, STATUS_NONE, STATUS_PENDING }
 enum DataState { DISCONNECTED, CONNECTING, CONNECTED, SUSPENDED, UNKNOWN }
 
 /// Represents state of cellular calls.
-enum CallState { IDLE, RINGING, OFFHOOK }
+enum CallState { IDLE, RINGING, OFFHOOK, UNKNOWN }
 
 /// Represents state of cellular network data activity.
-enum DataActivity { NONE, IN, OUT, INOUT, DORMANT }
+enum DataActivity { NONE, IN, OUT, INOUT, DORMANT, UNKNOWN }
 
 /// Represents types of networks for a device.
 enum NetworkType {
@@ -202,7 +202,7 @@ enum NetworkType {
 }
 
 /// Represents types of cellular technology supported by a device.
-enum PhoneType { NONE, GSM, CDMA, SIP }
+enum PhoneType { NONE, GSM, CDMA, SIP, UNKNOWN }
 
 /// Represents state of SIM.
 enum SimState {
@@ -221,7 +221,7 @@ enum SimState {
 }
 
 /// Represents state of cellular service.
-enum ServiceState { IN_SERVICE, OUT_OF_SERVICE, EMERGENCY_ONLY, POWER_OFF }
+enum ServiceState { IN_SERVICE, OUT_OF_SERVICE, EMERGENCY_ONLY, POWER_OFF, UNKNOWN }
 
 /// Represents the quality of cellular signal.
 enum SignalStrength { NONE_OR_UNKNOWN, POOR, MODERATE, GOOD, GREAT }
@@ -234,11 +234,9 @@ extension Value on Sort {
     switch (this) {
       case Sort.ASC:
         return "ASC";
-        break;
       case Sort.DESC:
       default:
         return "DESC";
-        break;
     }
   }
 }

@@ -1,3 +1,7 @@
+## 0.1.0
+* Feature equivalent of v0.0.9
+* Enabled null-safety
+
 ## 0.0.9
 * Fix sendSms Future never completes.
 
