@@ -167,12 +167,8 @@ class SmsFilterStatement
 
   @override
   SmsFilter _createFilter(String value, String operator) {
-    if (_previousFilter != null) {
-      return SmsFilter._("$_previousFilter $_column $operator ?",
-          _previousFilterArgs..add(value));
-    } else {
-      return SmsFilter._("$_column $operator ?", [value]);
-    }
+    return SmsFilter._("$_previousFilter $_column $operator ?",
+        _previousFilterArgs..add(value));
   }
 }
 
@@ -186,12 +182,8 @@ class ConversationFilterStatement
 
   @override
   ConversationFilter _createFilter(String value, String operator) {
-    if (_previousFilter != null) {
-      return ConversationFilter._("$_previousFilter $_column $operator ?",
-          _previousFilterArgs..add(value));
-    } else {
-      return ConversationFilter._("$_column $operator ?", [value]);
-    }
+    return ConversationFilter._("$_previousFilter $_column $operator ?",
+        _previousFilterArgs..add(value));
   }
 }
 

@@ -262,9 +262,7 @@ class Telephony {
       List<_TelephonyColumn> columns, Filter? filter, List<OrderBy>? sortOrder) {
     final Map<String, dynamic> args = {};
 
-    if (columns != null) {
-      args["projection"] = columns.map((c) => c._name).toList();
-    }
+    args["projection"] = columns.map((c) => c._name).toList();
 
     if (filter != null) {
       args["selection"] = filter.selection;
@@ -528,8 +526,8 @@ class Telephony {
   /// Opens the default dialer with the given phone number.
   ///
   Future<void> openDialer(String phoneNumber) async {
-    assert(phoneNumber != null && phoneNumber.isNotEmpty,
-        "phoneNumber cannot be null or empty");
+    assert(phoneNumber.isNotEmpty,
+        "phoneNumber cannot be empty");
     final Map<String, dynamic> args = {"phoneNumber": phoneNumber};
     await _foregroundChannel.invokeMethod(OPEN_DIALER, args);
   }
@@ -540,7 +538,7 @@ class Telephony {
   /// ### Requires permission CALL_PHONE
   ///
   Future<void> dialPhoneNumber(String phoneNumber) async {
-    assert(phoneNumber != null && phoneNumber.isNotEmpty,
+    assert(phoneNumber.isNotEmpty,
         "phoneNumber cannot be null or empty");
     final Map<String, dynamic> args = {"phoneNumber": phoneNumber};
     await _foregroundChannel.invokeMethod(DIAL_PHONE_NUMBER, args);

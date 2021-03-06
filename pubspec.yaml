@@ -1,5 +1,6 @@
 name: telephony
-description: A Flutter plugin to use telephony features such as fetch network info, start phone calls, send and receive SMS, and listen for incoming SMS.
+description: A Flutter plugin to use telephony features such as fetch network
+  info, start phone calls, send and receive SMS, and listen for incoming SMS.
 version: 0.0.9
 homepage: https://github.com/shounakmulay/Telephony
 repository: https://github.com/shounakmulay/Telephony
@@ -9,18 +10,18 @@ environment:
   flutter: ">=1.10.0"
 
 dependencies:
-  platform: ^3.0.0
   flutter:
     sdk: flutter
+  platform: ^3.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  mockito: ^5.0.0
+  build_runner: ^1.11.5
   collection: ^1.15.0
+  mockito: ^5.0.0
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
-
 # The following section is specific to Flutter.
 flutter:
   # This section identifies this Flutter project as a plugin project.
@@ -34,7 +35,6 @@ flutter:
         pluginClass: TelephonyPlugin
       ios:
         pluginClass: TelephonyPlugin
-
   # To add assets to your plugin package, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
@@ -45,7 +45,6 @@ flutter:
   #
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
-
   # To add custom fonts to your plugin package, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
   # "family" key with the font family name, and a "fonts" key with a

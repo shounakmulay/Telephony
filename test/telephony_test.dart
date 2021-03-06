@@ -1,16 +1,19 @@
 import "package:flutter/services.dart";
 import "package:flutter_test/flutter_test.dart";
+import 'package:mockito/annotations.dart';
 import "package:mockito/mockito.dart";
 import "package:platform/platform.dart";
 import "package:telephony/telephony.dart";
 import 'package:collection/collection.dart';
 
 import 'mocks/messages.dart';
+import 'telephony_test.mocks.dart';
 
+@GenerateMocks([MethodChannel])
 main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  late MockMethodChannel methodChannel;
+  MockMethodChannel methodChannel = MockMethodChannel();
   late Telephony telephony;
 
   setUp(() {
@@ -171,23 +174,31 @@ main() {
 
     group("should send", () {
       test("sms", () async {
-        telephony.sendSms(to: "0000000000", message: "Test message");
+        final String address = "0000000000";
+        final String body = "Test message";
+        when(methodChannel.invokeMethod(SEND_SMS, {
+          "address": address,
+          "message_body": body,
+          "listen_status": false
+        })).thenAnswer((realInvocation) => Future<void>.value());
+        telephony.sendSms(to: address, message: body);
         verify(methodChannel.invokeMethod(SEND_SMS, {
-          "address": "0000000000",
-          "message_body": "Test message",
+          "address": address,
+          "message_body": body,
           "listen_status": false
         })).called(1);
       });
 
       test("multipart message", () async {
-        telephony.sendSms(
-            to: "123456", message: "some long message", isMultipart: true);
-
         final args = {
           "address": "123456",
           "message_body": "some long message",
           "listen_status": false
         };
+        when(methodChannel.invokeMethod(SEND_MULTIPART_SMS, args))
+            .thenAnswer((realInvocation) => Future<void>.value());
+        telephony.sendSms(
+            to: "123456", message: "some long message", isMultipart: true);
 
         verifyNever(methodChannel.invokeMethod(SEND_SMS, args));
 
@@ -195,10 +206,16 @@ main() {
       });
 
       test("sms by default app", () async {
-        telephony.sendSmsByDefaultApp(to: "123456", message: "message");
+        final String address = "123456";
+        final String body = "message";
+        when(methodChannel.invokeMethod(SEND_SMS_INTENT, {
+          "address": address,
+          "message_body": body
+        })).thenAnswer((realInvocation) => Future<void>.value());
+        telephony.sendSmsByDefaultApp(to: address, message: body);
 
         verify(methodChannel.invokeMethod(SEND_SMS_INTENT,
-            {"address": "123456", "message_body": "message"})).called(1);
+            {"address": address, "message_body": body})).called(1);
       });
     });
 
@@ -235,7 +252,7 @@ main() {
 
         final args = {
           "projection": ["_id", "address"],
-          "selection": "_id = ?  AND address LIKE ?",
+          "selection": " _id = ?  AND address LIKE ?",
           "selection_args": ["3", "mess"],
           "sort_order": "_id ASC"
         };
@@ -285,7 +302,7 @@ main() {
 
         final args = {
           "projection": ["_id", "address"],
-          "selection": "_id = ?  AND date > ?",
+          "selection": " _id = ?  AND date > ?",
           "selection_args": ["4", "12"],
           "sort_order": "_id ASC"
         };
@@ -335,7 +352,7 @@ main() {
 
         final args = {
           "projection": ["_id", "address"],
-          "selection": "_id = ?  AND date > ?",
+          "selection": " _id = ?  AND date > ?",
           "selection_args": ["4", "12"],
           "sort_order": "_id ASC"
         };
@@ -377,17 +394,18 @@ main() {
       });
 
       test("conversations with filter", () async {
-        final ConversationFilter filter = ConversationFilter.where(ConversationColumn.MSG_COUNT)
-            .equals("4")
-            .and(ConversationColumn.THREAD_ID)
-            .greaterThan("12");
+        final ConversationFilter filter =
+            ConversationFilter.where(ConversationColumn.MSG_COUNT)
+                .equals("4")
+                .and(ConversationColumn.THREAD_ID)
+                .greaterThan("12");
         final sortOrder = [
           OrderBy(ConversationColumn.THREAD_ID, sort: Sort.ASC)
         ];
 
         final args = {
           "projection": ["snippet", "thread_id", "msg_count"],
-          "selection": "msg_count = ?  AND thread_id > ?",
+          "selection": " msg_count = ?  AND thread_id > ?",
           "selection_args": ["4", "12"],
           "sort_order": "thread_id ASC"
         };
@@ -427,7 +445,7 @@ main() {
         expect(
             statement.selection,
             equals(
-                "address > ?  AND _id >= ?  OR date BETWEEN ?  OR NOT type LIKE ?"));
+                " address > ?  AND _id >= ?  OR date BETWEEN ?  OR NOT type LIKE ?"));
         expect(
             ListEquality()
                 .equals(statement.selectionArgs, ["1", "2", "3 AND 4", "5"]),
@@ -435,16 +453,17 @@ main() {
       });
 
       test("conversation filter statement", () async {
-        final ConversationFilter statement = ConversationFilter.where(ConversationColumn.THREAD_ID)
-            .lessThanOrEqualTo("1")
-            .or(ConversationColumn.MSG_COUNT)
-            .notEqualTo("6")
-            .and(ConversationColumn.SNIPPET)
-            .not
-            .notEqualTo("7");
+        final ConversationFilter statement =
+            ConversationFilter.where(ConversationColumn.THREAD_ID)
+                .lessThanOrEqualTo("1")
+                .or(ConversationColumn.MSG_COUNT)
+                .notEqualTo("6")
+                .and(ConversationColumn.SNIPPET)
+                .not
+                .notEqualTo("7");
 
         expect(statement.selection,
-            "thread_id <= ?  OR msg_count != ?  AND NOT snippet != ?");
+            " thread_id <= ?  OR msg_count != ?  AND NOT snippet != ?");
         expect(ListEquality().equals(statement.selectionArgs, ["1", "6", "7"]),
             isTrue);
       });
@@ -473,5 +492,3 @@ main() {
     });
   });
 }
-
-class MockMethodChannel extends Mock implements MethodChannel {}
