@@ -1,3 +1,6 @@
+## 0.0.9
+* Fix sendSms Future never completes.
+
 ## 0.0.8
 * Upgrade platform version.
 
