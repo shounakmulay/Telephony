@@ -67,7 +67,7 @@ class _MyAppState extends State<MyApp> {
           Center(child: Text("Latest received SMS: $_message")),
           TextButton(
               onPressed: () async {
-                await telephony.openDialer('123456789');
+                await telephony.openDialer("123413453");
               },
               child: Text('Open Dialer'))
         ],

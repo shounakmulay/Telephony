@@ -221,7 +221,13 @@ enum SimState {
 }
 
 /// Represents state of cellular service.
-enum ServiceState { IN_SERVICE, OUT_OF_SERVICE, EMERGENCY_ONLY, POWER_OFF, UNKNOWN }
+enum ServiceState {
+  IN_SERVICE,
+  OUT_OF_SERVICE,
+  EMERGENCY_ONLY,
+  POWER_OFF,
+  UNKNOWN
+}
 
 /// Represents the quality of cellular signal.
 enum SignalStrength { NONE_OR_UNKNOWN, POOR, MODERATE, GOOD, GREAT }

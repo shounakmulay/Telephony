@@ -1,6 +1,7 @@
 package com.shounakmulay.telephony.sms
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -45,8 +46,14 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.PluginRegistry
 
 
-class SmsMethodCallHandler(private val context: Context, private val smsController: SmsController)
-  : PluginRegistry.RequestPermissionsResultListener, MethodChannel.MethodCallHandler, BroadcastReceiver() {
+class SmsMethodCallHandler(
+    private val context: Context,
+    private val smsController: SmsController,
+    private val permissionsController: PermissionsController,
+    private val activity: Activity? = null
+) : PluginRegistry.RequestPermissionsResultListener,
+    MethodChannel.MethodCallHandler,
+    BroadcastReceiver() {
 
   private lateinit var result: MethodChannel.Result
   private lateinit var action: SmsAction
@@ -63,7 +70,7 @@ class SmsMethodCallHandler(private val context: Context, private val smsControll
 
   private var setupHandle: Long = -1
   private var backgroundHandle: Long = -1
-  
+
   private lateinit var phoneNumber: String
 
   private var requestCode: Int = -1
@@ -124,11 +131,11 @@ class SmsMethodCallHandler(private val context: Context, private val smsControll
       ActionType.CALL -> {
         if (call.hasArgument(PHONE_NUMBER)) {
           val phoneNumber = call.argument<String>(PHONE_NUMBER)
-          
+
           if (!phoneNumber.isNullOrBlank()) {
             this.phoneNumber = phoneNumber
           }
-          
+
           handleMethod(action, CALL_REQUEST_CODE)
         }
       }
@@ -252,7 +259,7 @@ class SmsMethodCallHandler(private val context: Context, private val smsControll
       result.success(value)
     }
   }
-  
+
   @SuppressLint("MissingPermission")
   private fun handleCallActions(smsAction: SmsAction) {
     when (smsAction) {
@@ -293,22 +300,22 @@ class SmsMethodCallHandler(private val context: Context, private val smsControll
       SmsAction.BACKGROUND_SERVICE_INITIALIZED,
       SmsAction.DISABLE_BACKGROUND_SERVICE,
       SmsAction.REQUEST_SMS_PERMISSIONS -> {
-        val permissions = PermissionsController.getSmsPermissions()
+        val permissions = permissionsController.getSmsPermissions()
         return checkOrRequestPermission(permissions, requestCode)
       }
       SmsAction.GET_DATA_NETWORK_TYPE,
       SmsAction.OPEN_DIALER,
       SmsAction.DIAL_PHONE_NUMBER,
       SmsAction.REQUEST_PHONE_PERMISSIONS -> {
-        val permissions = PermissionsController.getPhonePermissions()
+        val permissions = permissionsController.getPhonePermissions()
         return checkOrRequestPermission(permissions, requestCode)
       }
       SmsAction.GET_SERVICE_STATE -> {
-        val permissions = PermissionsController.getServiceStatePermissions()
+        val permissions = permissionsController.getServiceStatePermissions()
         return checkOrRequestPermission(permissions, requestCode)
       }
       SmsAction.REQUEST_PHONE_AND_SMS_PERMISSIONS -> {
-        val permissions = listOf(PermissionsController.getSmsPermissions(), PermissionsController.getPhonePermissions()).flatten()
+        val permissions = listOf(permissionsController.getSmsPermissions(), permissionsController.getPhonePermissions()).flatten()
         return checkOrRequestPermission(permissions, requestCode)
       }
       SmsAction.IS_SMS_CAPABLE,
@@ -329,9 +336,14 @@ class SmsMethodCallHandler(private val context: Context, private val smsControll
 
   @RequiresApi(Build.VERSION_CODES.M)
   private fun checkOrRequestPermission(permissions: List<String>, requestCode: Int): Boolean {
-    PermissionsController.apply {
+    permissionsController.apply {
+      
+      if (activity == null) {
+        return hasRequiredPermissions(permissions)
+      }
+      
       if (!hasRequiredPermissions(permissions)) {
-        requestPermissions(permissions, requestCode)
+        requestPermissions(activity, permissions, requestCode)
         return false
       }
       return true
@@ -340,7 +352,7 @@ class SmsMethodCallHandler(private val context: Context, private val smsControll
 
   override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>?, grantResults: IntArray?): Boolean {
 
-    PermissionsController.isRequestingPermission = false
+    permissionsController.isRequestingPermission = false
 
     val deniedPermissions = mutableListOf<String>()
     if (requestCode != this.requestCode && !this::action.isInitialized) {

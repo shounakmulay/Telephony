@@ -1,5 +1,6 @@
 package com.shounakmulay.telephony
 
+import android.app.Activity
 import android.content.Context
 import androidx.annotation.NonNull
 import com.shounakmulay.telephony.sms.IncomingSmsHandler
@@ -23,10 +24,16 @@ class TelephonyPlugin : FlutterPlugin, ActivityAware {
 
   private lateinit var binaryMessenger: BinaryMessenger
 
+  private lateinit var permissionsController: PermissionsController
+
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-    val isInForeground = IncomingSmsHandler.isApplicationForeground(flutterPluginBinding.applicationContext);
-    if (!this::binaryMessenger.isInitialized && isInForeground) {
+    val isInForeground = IncomingSmsHandler.isApplicationForeground(flutterPluginBinding.applicationContext)
+    if (!this::binaryMessenger.isInitialized) {
       binaryMessenger = flutterPluginBinding.binaryMessenger
+    }
+
+    if (!isInForeground) {
+      setupPlugin(flutterPluginBinding.applicationContext, binaryMessenger)
     }
   }
 
@@ -43,8 +50,7 @@ class TelephonyPlugin : FlutterPlugin, ActivityAware {
   }
 
   override fun onAttachedToActivity(binding: ActivityPluginBinding) {
-    setupPlugin(binding.activity.applicationContext, binaryMessenger)
-    PermissionsController.setActivity(binding.activity)
+    setupPlugin(binding.activity.applicationContext, binaryMessenger, binding.activity)
     binding.addRequestPermissionsResultListener(smsMethodCallHandler)
   }
 
@@ -52,15 +58,16 @@ class TelephonyPlugin : FlutterPlugin, ActivityAware {
     onDetachedFromActivity()
   }
 
-  private fun setupPlugin(context: Context, messenger: BinaryMessenger) {
+  private fun setupPlugin(context: Context, messenger: BinaryMessenger, activity: Activity? = null) {
     smsController = SmsController(context)
-    smsMethodCallHandler = SmsMethodCallHandler(context, smsController)
+    permissionsController = PermissionsController(context)
+    smsMethodCallHandler = SmsMethodCallHandler(context, smsController, permissionsController, activity)
 
     smsChannel = MethodChannel(messenger, CHANNEL_SMS)
     smsChannel.setMethodCallHandler(smsMethodCallHandler)
     smsMethodCallHandler.setForegroundChannel(smsChannel)
-
-    IncomingSmsReceiver.foregroundSmsChannel = smsChannel
+    val isInForeground = IncomingSmsHandler.isApplicationForeground(context)
+    if (isInForeground) IncomingSmsReceiver.foregroundSmsChannel = smsChannel
   }
 
   private fun tearDownPlugin() {
