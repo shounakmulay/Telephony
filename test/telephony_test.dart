@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import "package:flutter/services.dart";
 import "package:flutter_test/flutter_test.dart";
 import 'package:mockito/annotations.dart';
@@ -225,8 +227,8 @@ main() {
           "projection": ["_id", "address", "body", "date"],
         };
 
-        when(methodChannel.invokeMethod(GET_ALL_INBOX_SMS, args))
-            .thenAnswer((_) => Future<List>.value(mockMessages));
+        when(methodChannel.invokeMethod<List<LinkedHashMap>>(GET_ALL_INBOX_SMS, args))
+            .thenAnswer((_) => Future.value(mockMessages));
 
         final inbox = await telephony.getInboxSms();
 
@@ -257,8 +259,8 @@ main() {
           "sort_order": "_id ASC"
         };
 
-        when(methodChannel.invokeMethod(GET_ALL_INBOX_SMS, args))
-            .thenAnswer((_) => Future<List>.value(mockMessages));
+        when(methodChannel.invokeMethod<List<LinkedHashMap>>(GET_ALL_INBOX_SMS, args))
+            .thenAnswer((_) => Future.value(mockMessages));
 
         final inbox = await telephony.getInboxSms(
             columns: columns, filter: filter, sortOrder: sortOrder);
@@ -275,8 +277,8 @@ main() {
           "projection": ["_id", "address", "body", "date"],
         };
 
-        when(methodChannel.invokeMethod(GET_ALL_SENT_SMS, args))
-            .thenAnswer((_) => Future<List>.value(mockMessages));
+        when(methodChannel.invokeMethod<List<LinkedHashMap>>(GET_ALL_SENT_SMS, args))
+            .thenAnswer((_) => Future.value(mockMessages));
 
         final sent = await telephony.getSentSms();
 
@@ -307,8 +309,8 @@ main() {
           "sort_order": "_id ASC"
         };
 
-        when(methodChannel.invokeMethod(GET_ALL_SENT_SMS, args))
-            .thenAnswer((_) => Future<List>.value(mockMessages));
+        when(methodChannel.invokeMethod<List<LinkedHashMap>>(GET_ALL_SENT_SMS, args))
+            .thenAnswer((_) => Future.value(mockMessages));
 
         final sent = await telephony.getSentSms(
             columns: columns, filter: filter, sortOrder: sortOrder);
@@ -325,8 +327,8 @@ main() {
           "projection": ["_id", "address", "body", "date"],
         };
 
-        when(methodChannel.invokeMethod(GET_ALL_DRAFT_SMS, args))
-            .thenAnswer((_) => Future<List>.value(mockMessages));
+        when(methodChannel.invokeMethod<List<LinkedHashMap>>(GET_ALL_DRAFT_SMS, args))
+            .thenAnswer((_) => Future.value(mockMessages));
 
         final drafts = await telephony.getDraftSms();
 
@@ -357,8 +359,8 @@ main() {
           "sort_order": "_id ASC"
         };
 
-        when(methodChannel.invokeMethod(GET_ALL_DRAFT_SMS, args))
-            .thenAnswer((_) => Future<List>.value(mockMessages));
+        when(methodChannel.invokeMethod<List<LinkedHashMap>>(GET_ALL_DRAFT_SMS, args))
+            .thenAnswer((_) => Future.value(mockMessages));
 
         final drafts = await telephony.getDraftSms(
             columns: columns, filter: filter, sortOrder: sortOrder);
@@ -375,9 +377,9 @@ main() {
           "projection": ["snippet", "thread_id", "msg_count"]
         };
 
-        when(methodChannel.invokeMethod(GET_ALL_CONVERSATIONS, args))
+        when(methodChannel.invokeMethod<List<LinkedHashMap>>(GET_ALL_CONVERSATIONS, args))
             .thenAnswer(
-                (realInvocation) => Future<List>.value(mockConversations));
+                (realInvocation) => Future.value(mockConversations));
 
         final conversations = await telephony.getConversations();
 
@@ -410,9 +412,9 @@ main() {
           "sort_order": "thread_id ASC"
         };
 
-        when(methodChannel.invokeMethod(GET_ALL_CONVERSATIONS, args))
+        when(methodChannel.invokeMethod<List<LinkedHashMap>>(GET_ALL_CONVERSATIONS, args))
             .thenAnswer(
-                (realInvocation) => Future<List>.value(mockConversations));
+                (realInvocation) => Future.value(mockConversations));
 
         final conversations = await telephony.getConversations(
             filter: filter, sortOrder: sortOrder);
