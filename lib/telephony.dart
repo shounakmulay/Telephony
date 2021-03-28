@@ -62,6 +62,9 @@ class Telephony {
   ///
   static Telephony get instance => _instance;
 
+  ///
+  /// Gets a singleton instance of the [Telephony] class to be used in background execution context.
+  ///
   static Telephony get backgroundInstance => _backgroundInstance;
 
   /// ## Do not call this method. This method is visible only for testing.

@@ -1,7 +1,7 @@
 name: telephony
 description: A Flutter plugin to use telephony features such as fetch network
   info, start phone calls, send and receive SMS, and listen for incoming SMS.
-version: 0.1.0
+version: 0.1.1
 homepage: https://github.com/shounakmulay/Telephony
 repository: https://github.com/shounakmulay/Telephony
 

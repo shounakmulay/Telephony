@@ -1,3 +1,7 @@
+## 0.1.1
+* Added background instance for executing telephony methods in background.
+* Fix type cast issues.
+
 ## 0.1.0
 * Feature equivalent of v0.0.9
 * Enabled null-safety
