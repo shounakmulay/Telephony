@@ -16,7 +16,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _message;
+  String _message = "";
   final telephony = Telephony.instance;
 
   @override
@@ -27,7 +27,7 @@ class _MyAppState extends State<MyApp> {
 
   onMessage(SmsMessage message) async {
     setState(() {
-      _message = message.body;
+      _message = message.body ?? "Error reading message body.";
     });
   }
 
@@ -44,9 +44,9 @@ class _MyAppState extends State<MyApp> {
     // message was in flight, we want to discard the reply rather than calling
     // setState to update our non-existent appearance.
 
-    final bool result = await telephony.requestPhoneAndSmsPermissions;
+    final bool? result = await telephony.requestPhoneAndSmsPermissions;
 
-    if (result) {
+    if (result != null && result) {
       telephony.listenIncomingSms(
           onNewMessage: onMessage, onBackgroundMessage: onBackgroundMessage);
     }
