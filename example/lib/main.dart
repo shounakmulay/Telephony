@@ -4,6 +4,7 @@ import 'package:telephony/telephony.dart';
 
 onBackgroundMessage(SmsMessage message) {
   debugPrint("onBackgroundMessage called");
+  // Telephony.instance.sendSms(to: "9004640268", message: "Test message");
 }
 
 void main() {
@@ -51,6 +52,8 @@ class _MyAppState extends State<MyApp> {
           onNewMessage: onMessage, onBackgroundMessage: onBackgroundMessage);
     }
 
+    var inbox = await telephony.getInboxSms();
+
     if (!mounted) return;
   }
 
@@ -67,7 +70,7 @@ class _MyAppState extends State<MyApp> {
           Center(child: Text("Latest received SMS: $_message")),
           TextButton(
               onPressed: () async {
-                await telephony.openDialer('123456789');
+                await telephony.openDialer("123413453");
               },
               child: Text('Open Dialer'))
         ],

@@ -130,9 +130,7 @@ class SmsController(private val context: Context) {
       flags = Intent.FLAG_ACTIVITY_NEW_TASK
     }
 
-    if (dialerIntent.resolveActivity(context.packageManager) != null) {
-      context.startActivity(dialerIntent)
-    }
+    context.startActivity(dialerIntent)
   }
 
   @RequiresPermission(allOf = [Manifest.permission.CALL_PHONE])

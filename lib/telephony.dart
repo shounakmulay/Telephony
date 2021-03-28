@@ -1,8 +1,9 @@
 import 'dart:async';
+import 'dart:collection';
 import 'dart:ui';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:platform/platform.dart';
 
 part 'constants.dart';
@@ -61,6 +62,8 @@ class Telephony {
   ///
   static Telephony get instance => _instance;
 
+  static Telephony get backgroundInstance => _backgroundInstance;
+
   /// ## Do not call this method. This method is visible only for testing.
   @visibleForTesting
   Telephony.private(MethodChannel methodChannel, Platform platform)
@@ -74,6 +77,8 @@ class Telephony {
   }
 
   static final Telephony _instance = Telephony._newInstance(
+      const MethodChannel(_FOREGROUND_CHANNEL), const LocalPlatform());
+  static final Telephony _backgroundInstance = Telephony._newInstance(
       const MethodChannel(_FOREGROUND_CHANNEL), const LocalPlatform());
 
   ///
@@ -166,12 +171,13 @@ class Telephony {
     assert(_platform.isAndroid == true, "Can only be called on Android.");
     final args = _getArguments(columns, filter, sortOrder);
 
-    final List<dynamic> messages =
-        await (_foregroundChannel.invokeMethod(GET_ALL_INBOX_SMS, args) as FutureOr<List<dynamic>>);
+    final messages = await _foregroundChannel.invokeMethod<List<LinkedHashMap>>(
+        GET_ALL_INBOX_SMS, args);
 
     return messages
-        .map((message) => SmsMessage.fromMap(message, columns))
-        .toList(growable: false);
+            ?.map((message) => SmsMessage.fromMap(message, columns))
+            .toList(growable: false) ??
+        List.empty();
   }
 
   ///
@@ -195,12 +201,13 @@ class Telephony {
     assert(_platform.isAndroid == true, "Can only be called on Android.");
     final args = _getArguments(columns, filter, sortOrder);
 
-    final List<dynamic> messages =
-        await (_foregroundChannel.invokeMethod(GET_ALL_SENT_SMS, args) as FutureOr<List<dynamic>>);
+    final messages = await _foregroundChannel.invokeMethod<List<LinkedHashMap>>(
+        GET_ALL_SENT_SMS, args);
 
     return messages
-        .map((message) => SmsMessage.fromMap(message, columns))
-        .toList(growable: false);
+            ?.map((message) => SmsMessage.fromMap(message, columns))
+            .toList(growable: false) ??
+        List.empty();
   }
 
   ///
@@ -224,12 +231,13 @@ class Telephony {
     assert(_platform.isAndroid == true, "Can only be called on Android.");
     final args = _getArguments(columns, filter, sortOrder);
 
-    final List<dynamic> messages =
-        await (_foregroundChannel.invokeMethod(GET_ALL_DRAFT_SMS, args) as FutureOr<List<dynamic>>);
+    final messages = await _foregroundChannel.invokeMethod<List<LinkedHashMap>>(
+        GET_ALL_DRAFT_SMS, args);
 
     return messages
-        .map((message) => SmsMessage.fromMap(message, columns))
-        .toList(growable: false);
+            ?.map((message) => SmsMessage.fromMap(message, columns))
+            .toList(growable: false) ??
+        List.empty();
   }
 
   ///
@@ -250,16 +258,17 @@ class Telephony {
     assert(_platform.isAndroid == true, "Can only be called on Android.");
     final args = _getArguments(DEFAULT_CONVERSATION_COLUMNS, filter, sortOrder);
 
-    final List<dynamic> conversations =
-        await (_foregroundChannel.invokeMethod(GET_ALL_CONVERSATIONS, args) as FutureOr<List<dynamic>>);
+    final conversations = await _foregroundChannel
+        .invokeMethod<List<LinkedHashMap>>(GET_ALL_CONVERSATIONS, args);
 
     return conversations
-        .map((conversation) => SmsConversation.fromMap(conversation))
-        .toList(growable: false);
+            ?.map((conversation) => SmsConversation.fromMap(conversation))
+            .toList(growable: false) ??
+        List.empty();
   }
 
-  Map<String, dynamic> _getArguments(
-      List<_TelephonyColumn> columns, Filter? filter, List<OrderBy>? sortOrder) {
+  Map<String, dynamic> _getArguments(List<_TelephonyColumn> columns,
+      Filter? filter, List<OrderBy>? sortOrder) {
     final Map<String, dynamic> args = {};
 
     args["projection"] = columns.map((c) => c._name).toList();
@@ -348,7 +357,7 @@ class Telephony {
   Future<DataState> get cellularDataState async {
     final int? dataState =
         await _foregroundChannel.invokeMethod<int>(GET_CELLULAR_DATA_STATE);
-    if ( dataState == null || dataState == -1) {
+    if (dataState == null || dataState == -1) {
       return DataState.UNKNOWN;
     } else {
       return DataState.values[dataState];
@@ -426,7 +435,8 @@ class Telephony {
   /// Returns a constant indicating the device phone type. This indicates the type of radio used to transmit voice calls.
   ///
   Future<PhoneType> get phoneType async {
-    final int? type = await _foregroundChannel.invokeMethod<int>(GET_PHONE_TYPE);
+    final int? type =
+        await _foregroundChannel.invokeMethod<int>(GET_PHONE_TYPE);
     if (type != null) {
       return PhoneType.values[type];
     } else {
@@ -455,13 +465,15 @@ class Telephony {
   ///
   /// [Future<SimState>]
   Future<SimState> get simState async {
-    final int? state = await _foregroundChannel.invokeMethod<int>(GET_SIM_STATE);
+    final int? state =
+        await _foregroundChannel.invokeMethod<int>(GET_SIM_STATE);
     if (state != null) {
       return SimState.values[state];
     } else {
       return SimState.UNKNOWN;
     }
   }
+
   ///
   /// Returns true if the device is considered roaming on the current network, for GSM purposes.
   ///
@@ -526,8 +538,7 @@ class Telephony {
   /// Opens the default dialer with the given phone number.
   ///
   Future<void> openDialer(String phoneNumber) async {
-    assert(phoneNumber.isNotEmpty,
-        "phoneNumber cannot be empty");
+    assert(phoneNumber.isNotEmpty, "phoneNumber cannot be empty");
     final Map<String, dynamic> args = {"phoneNumber": phoneNumber};
     await _foregroundChannel.invokeMethod(OPEN_DIALER, args);
   }
@@ -538,8 +549,7 @@ class Telephony {
   /// ### Requires permission CALL_PHONE
   ///
   Future<void> dialPhoneNumber(String phoneNumber) async {
-    assert(phoneNumber.isNotEmpty,
-        "phoneNumber cannot be null or empty");
+    assert(phoneNumber.isNotEmpty, "phoneNumber cannot be null or empty");
     final Map<String, dynamic> args = {"phoneNumber": phoneNumber};
     await _foregroundChannel.invokeMethod(DIAL_PHONE_NUMBER, args);
   }
