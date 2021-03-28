@@ -229,6 +229,62 @@ SimState simState = await telephony.simState;
 
 Check out the [detailed documentation](https://shounakmulay.gitbook.io/telephony/network-data-and-metrics) to know all possible metrics and their values.
 
+### Executing in background
+If you want to call the `telephony` methods in background, you can do in the following ways.
+
+#### 1. Using only `Telephony.instance`
+If you want to continue using `Telephony.insatnce` in the background, you will need to make sure that once the app comes back to the front, it again calls `Telephony.insatnce`.
+```dart
+backgrounMessageHandler(SmsMessage message) async {
+	// Handle background message
+	Telephony.insatnce.sendSms(to: "123456789", message: "Message from background")
+}
+
+void main() {
+  runApp(MyApp());
+}
+
+class _MyAppState extends State<MyApp> {
+  String _message;
+  // This will not work as the instance will be replaced by
+  // the one in background.
+  final telephony = Telephony.instance;
+  
+   @override
+  void initState() {
+    super.initState();
+    // You should make sure call to instance is made every time 
+    // app comes to foreground
+    final inbox = Telephony.insatnce.getInboxSms()
+  }
+
+```
+
+#### 2. Use `backgroundInstance`
+If you cannot make sure that the call to instance would be made every time app comes to foreground, or if you would prefer to maintain a separate background instance,
+you can use `Telephony.backgroundInstance` in the background execution context.
+```dart
+backgrounMessageHandler(SmsMessage message) async {
+	// Handle background message
+	Telephony.backgroundInstance.sendSms(to: "123456789", message: "Message from background")
+}
+
+void main() {
+  runApp(MyApp());
+}
+
+class _MyAppState extends State<MyApp> {
+  String _message;
+  final telephony = Telephony.instance;
+  
+   @override
+  void initState() {
+    super.initState();
+    final inbox = telephony.getInboxSms()
+  }
+
+```
+
 
 ## Features
 
