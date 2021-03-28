@@ -4,7 +4,6 @@ import 'package:telephony/telephony.dart';
 
 onBackgroundMessage(SmsMessage message) {
   debugPrint("onBackgroundMessage called");
-  // Telephony.instance.sendSms(to: "9004640268", message: "Test message");
 }
 
 void main() {
@@ -51,8 +50,6 @@ class _MyAppState extends State<MyApp> {
       telephony.listenIncomingSms(
           onNewMessage: onMessage, onBackgroundMessage: onBackgroundMessage);
     }
-
-    var inbox = await telephony.getInboxSms();
 
     if (!mounted) return;
   }

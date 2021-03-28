@@ -210,14 +210,14 @@ main() {
       test("sms by default app", () async {
         final String address = "123456";
         final String body = "message";
-        when(methodChannel.invokeMethod(SEND_SMS_INTENT, {
-          "address": address,
-          "message_body": body
-        })).thenAnswer((realInvocation) => Future<void>.value());
+        when(methodChannel.invokeMethod(
+                SEND_SMS_INTENT, {"address": address, "message_body": body}))
+            .thenAnswer((realInvocation) => Future<void>.value());
         telephony.sendSmsByDefaultApp(to: address, message: body);
 
-        verify(methodChannel.invokeMethod(SEND_SMS_INTENT,
-            {"address": address, "message_body": body})).called(1);
+        verify(methodChannel.invokeMethod(
+                SEND_SMS_INTENT, {"address": address, "message_body": body}))
+            .called(1);
       });
     });
 
@@ -227,7 +227,8 @@ main() {
           "projection": ["_id", "address", "body", "date"],
         };
 
-        when(methodChannel.invokeMethod<List<LinkedHashMap>>(GET_ALL_INBOX_SMS, args))
+        when(methodChannel.invokeMethod<List<LinkedHashMap>>(
+                GET_ALL_INBOX_SMS, args))
             .thenAnswer((_) => Future.value(mockMessages));
 
         final inbox = await telephony.getInboxSms();
@@ -259,7 +260,8 @@ main() {
           "sort_order": "_id ASC"
         };
 
-        when(methodChannel.invokeMethod<List<LinkedHashMap>>(GET_ALL_INBOX_SMS, args))
+        when(methodChannel.invokeMethod<List<LinkedHashMap>>(
+                GET_ALL_INBOX_SMS, args))
             .thenAnswer((_) => Future.value(mockMessages));
 
         final inbox = await telephony.getInboxSms(
@@ -277,7 +279,8 @@ main() {
           "projection": ["_id", "address", "body", "date"],
         };
 
-        when(methodChannel.invokeMethod<List<LinkedHashMap>>(GET_ALL_SENT_SMS, args))
+        when(methodChannel.invokeMethod<List<LinkedHashMap>>(
+                GET_ALL_SENT_SMS, args))
             .thenAnswer((_) => Future.value(mockMessages));
 
         final sent = await telephony.getSentSms();
@@ -309,7 +312,8 @@ main() {
           "sort_order": "_id ASC"
         };
 
-        when(methodChannel.invokeMethod<List<LinkedHashMap>>(GET_ALL_SENT_SMS, args))
+        when(methodChannel.invokeMethod<List<LinkedHashMap>>(
+                GET_ALL_SENT_SMS, args))
             .thenAnswer((_) => Future.value(mockMessages));
 
         final sent = await telephony.getSentSms(
@@ -327,7 +331,8 @@ main() {
           "projection": ["_id", "address", "body", "date"],
         };
 
-        when(methodChannel.invokeMethod<List<LinkedHashMap>>(GET_ALL_DRAFT_SMS, args))
+        when(methodChannel.invokeMethod<List<LinkedHashMap>>(
+                GET_ALL_DRAFT_SMS, args))
             .thenAnswer((_) => Future.value(mockMessages));
 
         final drafts = await telephony.getDraftSms();
@@ -359,7 +364,8 @@ main() {
           "sort_order": "_id ASC"
         };
 
-        when(methodChannel.invokeMethod<List<LinkedHashMap>>(GET_ALL_DRAFT_SMS, args))
+        when(methodChannel.invokeMethod<List<LinkedHashMap>>(
+                GET_ALL_DRAFT_SMS, args))
             .thenAnswer((_) => Future.value(mockMessages));
 
         final drafts = await telephony.getDraftSms(
@@ -377,9 +383,9 @@ main() {
           "projection": ["snippet", "thread_id", "msg_count"]
         };
 
-        when(methodChannel.invokeMethod<List<LinkedHashMap>>(GET_ALL_CONVERSATIONS, args))
-            .thenAnswer(
-                (realInvocation) => Future.value(mockConversations));
+        when(methodChannel.invokeMethod<List<LinkedHashMap>>(
+                GET_ALL_CONVERSATIONS, args))
+            .thenAnswer((realInvocation) => Future.value(mockConversations));
 
         final conversations = await telephony.getConversations();
 
@@ -412,9 +418,9 @@ main() {
           "sort_order": "thread_id ASC"
         };
 
-        when(methodChannel.invokeMethod<List<LinkedHashMap>>(GET_ALL_CONVERSATIONS, args))
-            .thenAnswer(
-                (realInvocation) => Future.value(mockConversations));
+        when(methodChannel.invokeMethod<List<LinkedHashMap>>(
+                GET_ALL_CONVERSATIONS, args))
+            .thenAnswer((realInvocation) => Future.value(mockConversations));
 
         final conversations = await telephony.getConversations(
             filter: filter, sortOrder: sortOrder);
