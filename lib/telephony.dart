@@ -174,7 +174,7 @@ class Telephony {
     assert(_platform.isAndroid == true, "Can only be called on Android.");
     final args = _getArguments(columns, filter, sortOrder);
 
-    final messages = await _foregroundChannel.invokeMethod<List<LinkedHashMap>>(
+    final messages = await _foregroundChannel.invokeMethod<List?>(
         GET_ALL_INBOX_SMS, args);
 
     return messages
@@ -204,7 +204,7 @@ class Telephony {
     assert(_platform.isAndroid == true, "Can only be called on Android.");
     final args = _getArguments(columns, filter, sortOrder);
 
-    final messages = await _foregroundChannel.invokeMethod<List<LinkedHashMap>>(
+    final messages = await _foregroundChannel.invokeMethod<List?>(
         GET_ALL_SENT_SMS, args);
 
     return messages
@@ -234,7 +234,7 @@ class Telephony {
     assert(_platform.isAndroid == true, "Can only be called on Android.");
     final args = _getArguments(columns, filter, sortOrder);
 
-    final messages = await _foregroundChannel.invokeMethod<List<LinkedHashMap>>(
+    final messages = await _foregroundChannel.invokeMethod<List?>(
         GET_ALL_DRAFT_SMS, args);
 
     return messages
@@ -262,7 +262,7 @@ class Telephony {
     final args = _getArguments(DEFAULT_CONVERSATION_COLUMNS, filter, sortOrder);
 
     final conversations = await _foregroundChannel
-        .invokeMethod<List<LinkedHashMap>>(GET_ALL_CONVERSATIONS, args);
+        .invokeMethod<List?>(GET_ALL_CONVERSATIONS, args);
 
     return conversations
             ?.map((conversation) => SmsConversation.fromMap(conversation))

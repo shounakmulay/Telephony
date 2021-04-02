@@ -1,3 +1,6 @@
+## 0.1.2
+* Change invokeMethod call type for getSms methods to List? (No change to telephony API)
+
 ## 0.1.1
 * Added background instance for executing telephony methods in background.
 * Fix type cast issues.
