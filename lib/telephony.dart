@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:collection';
 import 'dart:ui';
 
 import 'package:flutter/services.dart';
@@ -174,8 +173,8 @@ class Telephony {
     assert(_platform.isAndroid == true, "Can only be called on Android.");
     final args = _getArguments(columns, filter, sortOrder);
 
-    final messages = await _foregroundChannel.invokeMethod<List?>(
-        GET_ALL_INBOX_SMS, args);
+    final messages =
+        await _foregroundChannel.invokeMethod<List?>(GET_ALL_INBOX_SMS, args);
 
     return messages
             ?.map((message) => SmsMessage.fromMap(message, columns))
@@ -204,8 +203,8 @@ class Telephony {
     assert(_platform.isAndroid == true, "Can only be called on Android.");
     final args = _getArguments(columns, filter, sortOrder);
 
-    final messages = await _foregroundChannel.invokeMethod<List?>(
-        GET_ALL_SENT_SMS, args);
+    final messages =
+        await _foregroundChannel.invokeMethod<List?>(GET_ALL_SENT_SMS, args);
 
     return messages
             ?.map((message) => SmsMessage.fromMap(message, columns))
@@ -234,8 +233,8 @@ class Telephony {
     assert(_platform.isAndroid == true, "Can only be called on Android.");
     final args = _getArguments(columns, filter, sortOrder);
 
-    final messages = await _foregroundChannel.invokeMethod<List?>(
-        GET_ALL_DRAFT_SMS, args);
+    final messages =
+        await _foregroundChannel.invokeMethod<List?>(GET_ALL_DRAFT_SMS, args);
 
     return messages
             ?.map((message) => SmsMessage.fromMap(message, columns))
@@ -261,8 +260,8 @@ class Telephony {
     assert(_platform.isAndroid == true, "Can only be called on Android.");
     final args = _getArguments(DEFAULT_CONVERSATION_COLUMNS, filter, sortOrder);
 
-    final conversations = await _foregroundChannel
-        .invokeMethod<List?>(GET_ALL_CONVERSATIONS, args);
+    final conversations = await _foregroundChannel.invokeMethod<List?>(
+        GET_ALL_CONVERSATIONS, args);
 
     return conversations
             ?.map((conversation) => SmsConversation.fromMap(conversation))
