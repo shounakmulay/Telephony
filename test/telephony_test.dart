@@ -176,7 +176,7 @@ main() {
 
     group("should send", () {
       test("sms", () async {
-        final String address = "0000000000";
+        final List<String> address = ["0000000000"];
         final String body = "Test message";
         when(methodChannel.invokeMethod(SEND_SMS, {
           "address": address,
@@ -200,7 +200,7 @@ main() {
         when(methodChannel.invokeMethod(SEND_MULTIPART_SMS, args))
             .thenAnswer((realInvocation) => Future<void>.value());
         telephony.sendSms(
-            to: "123456", message: "some long message", isMultipart: true);
+            to: ["123456"], message: "some long message", isMultipart: true);
 
         verifyNever(methodChannel.invokeMethod(SEND_SMS, args));
 
@@ -208,7 +208,7 @@ main() {
       });
 
       test("sms by default app", () async {
-        final String address = "123456";
+        final List<String> address = ["123456"];
         final String body = "message";
         when(methodChannel.invokeMethod(
                 SEND_SMS_INTENT, {"address": address, "message_body": body}))

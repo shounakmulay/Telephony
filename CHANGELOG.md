@@ -1,3 +1,7 @@
+## 0.1.3
+* Now you can add a list of addresses without using a semi-colon (;) to separate the addresses.
+
+
 ## 0.1.2
 * Change invokeMethod call type for getSms methods to List? (No change to telephony API)
 

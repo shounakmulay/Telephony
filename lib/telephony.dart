@@ -294,14 +294,14 @@ class Telephony {
   ///
   /// Parameters:
   ///
-  /// - [to] : Address to send the SMS to.
+  /// - [to] : List of addresses to send the SMS to.
   /// - [message] : Message to be sent. If message body is longer than standard SMS length limits set appropriate
   /// value for [isMultipart]
   /// - [statusListener] (optional) : Listen to the status of the sent SMS. Values can be one of [SmsStatus]
   /// - [isMultipart] (optional) : If message body is longer than standard SMS limit of 160 characters, set this flag to
   /// send the SMS in multiple parts.
   Future<void> sendSms({
-    required String to,
+    required List<String> to,
     required String message,
     SmsSendStatusListener? statusListener,
     bool isMultipart = false,
@@ -328,11 +328,11 @@ class Telephony {
   ///
   /// Parameters:
   ///
-  /// - [to] : Address to send the SMS to.
+  /// - [to] : List of addresses to send the SMS to.
   /// - [message] : Message to be sent.
   ///
   Future<void> sendSmsByDefaultApp({
-    required String to,
+    required List<String> to,
     required String message,
   }) async {
     final Map<String, dynamic> args = {

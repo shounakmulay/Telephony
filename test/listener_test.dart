@@ -40,7 +40,9 @@ main() {
       };
 
       telephony.sendSms(
-          to: "0000000000", message: "Test message", statusListener: listener);
+          to: ["0000000000"],
+          message: "Test message",
+          statusListener: listener);
 
       expect(log, [isMethodCall(SEND_SMS, arguments: args)]);
 
