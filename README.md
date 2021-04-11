@@ -1,3 +1,8 @@
+![Pub Version](https://img.shields.io/pub/v/telephony)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/shounakmulay/telephony)
+![example branch parameter](https://github.com/shounakmulay/telephony/actions/workflows/Telephony_CI.yml/badge.svg?branch=develop)
+
+
 # Telephony
 |:exclamation: This plugin currently only works on Android Platform|
 |------------------------------------------------------------------|
