@@ -1,6 +1,11 @@
-![Pub Version](https://img.shields.io/pub/v/telephony)
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/shounakmulay/telephony)
-![example branch parameter](https://github.com/shounakmulay/telephony/actions/workflows/Telephony_CI.yml/badge.svg?branch=develop)
+<p align="center">
+    <a href="https://pub.dev/packages/telephony" alt="Pub">
+        <img src="https://img.shields.io/pub/v/telephony" /></a>
+    <a href="https://github.com/shounakmulay/Telephony/releases" alt="Release">
+        <img src="https://img.shields.io/github/v/release/shounakmulay/telephony" /></a>
+    <a href="https://github.com/shounakmulay/Telephony/actions/workflows/Telephony_CI.yml?query=branch%3Adevelop" alt="Build">
+        <img src="https://github.com/shounakmulay/telephony/actions/workflows/Telephony_CI.yml/badge.svg?branch=develop" /></a>
+</p>
 
 
 # Telephony
