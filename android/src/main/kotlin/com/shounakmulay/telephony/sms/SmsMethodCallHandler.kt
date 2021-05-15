@@ -50,7 +50,6 @@ class SmsMethodCallHandler(
     private val context: Context,
     private val smsController: SmsController,
     private val permissionsController: PermissionsController,
-    private val activity: Activity? = null
 ) : PluginRegistry.RequestPermissionsResultListener,
     MethodChannel.MethodCallHandler,
     BroadcastReceiver() {
@@ -58,6 +57,7 @@ class SmsMethodCallHandler(
   private lateinit var result: MethodChannel.Result
   private lateinit var action: SmsAction
   private lateinit var foregroundChannel: MethodChannel
+  private lateinit var activity: Activity
 
   private var projection: List<String>? = null
   private var selection: String? = null
@@ -334,11 +334,15 @@ class SmsMethodCallHandler(
     }
   }
 
+  fun setActivity(activity: Activity) {
+    this.activity = activity
+  }
+
   @RequiresApi(Build.VERSION_CODES.M)
   private fun checkOrRequestPermission(permissions: List<String>, requestCode: Int): Boolean {
     permissionsController.apply {
       
-      if (activity == null) {
+      if (!::activity.isInitialized) {
         return hasRequiredPermissions(permissions)
       }
       
