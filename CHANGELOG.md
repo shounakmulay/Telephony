@@ -1,3 +1,6 @@
+## 0.1.3
+* Fix background execution (Contributor: https://github.com/meomap)
+
 ## 0.1.2
 * Change invokeMethod call type for getSms methods to List? (No change to telephony API)
 
