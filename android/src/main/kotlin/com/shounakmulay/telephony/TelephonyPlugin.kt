@@ -1,6 +1,5 @@
 package com.shounakmulay.telephony
 
-import android.app.Activity
 import android.content.Context
 import androidx.annotation.NonNull
 import com.shounakmulay.telephony.sms.IncomingSmsHandler
@@ -27,7 +26,6 @@ class TelephonyPlugin : FlutterPlugin, ActivityAware {
   private lateinit var permissionsController: PermissionsController
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-    val isInForeground = IncomingSmsHandler.isApplicationForeground(flutterPluginBinding.applicationContext)
     if (!this::binaryMessenger.isInitialized) {
       binaryMessenger = flutterPluginBinding.binaryMessenger
     }
