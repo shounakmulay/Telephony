@@ -632,7 +632,7 @@ class SmsMessage {
           this.threadId = int.tryParse(value);
           break;
         case _SmsProjections.TYPE:
-          this.type = SmsType.values[value];
+          this.type = SmsType.values[int.parse(value)];
           break;
       }
     }
