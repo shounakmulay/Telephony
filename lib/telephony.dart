@@ -632,7 +632,8 @@ class SmsMessage {
           this.threadId = int.tryParse(value);
           break;
         case _SmsProjections.TYPE:
-          this.type = SmsType.values[value];
+          var smsTypeIndex = int.tryParse(value);
+          this.type = smsTypeIndex != null ? SmsType.values[smsTypeIndex] : null;
           break;
       }
     }
