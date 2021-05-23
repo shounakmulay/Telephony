@@ -221,6 +221,26 @@ main() {
       });
     });
 
+    group("smsMessage fromMap should", () {
+      test("correctly parse SmsType", () {
+        final columns = DEFAULT_SMS_COLUMNS.toList();
+        columns.add(SmsColumn.TYPE);
+        final message = mockMessageWithSmsType;
+        final sms = SmsMessage.fromMap(message, columns);
+
+        expect(sms.type, equals(SmsType.MESSAGE_TYPE_INBOX));
+      });
+
+      test("correctly parse SmsType when tryParse returns null", () {
+        final columns = DEFAULT_SMS_COLUMNS.toList();
+        columns.add(SmsColumn.TYPE);
+        final message = mockMessageWithInvalidSmsType;
+        final sms = SmsMessage.fromMap(message, columns);
+
+        expect(sms.type, equals(null));
+      });
+    });
+
     group("should query", () {
       test("inbox", () async {
         final args = {

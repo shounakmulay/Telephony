@@ -49,7 +49,7 @@ import io.flutter.plugin.common.PluginRegistry
 class SmsMethodCallHandler(
     private val context: Context,
     private val smsController: SmsController,
-    private val permissionsController: PermissionsController,
+    private val permissionsController: PermissionsController
 ) : PluginRegistry.RequestPermissionsResultListener,
     MethodChannel.MethodCallHandler,
     BroadcastReceiver() {
