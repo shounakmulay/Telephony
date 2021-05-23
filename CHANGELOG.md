@@ -1,4 +1,8 @@
 ## 0.1.3
+* Fix SmsType parsing (Contributor: https://github.com/Mabsten)
+* Remove SmsMethodCallHandler trailing comma.
+
+## 0.1.3
 * Fix background execution (Contributor: https://github.com/meomap)
 
 ## 0.1.2
