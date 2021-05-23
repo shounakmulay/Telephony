@@ -17,6 +17,24 @@ final mockMessages = [
   })
 ];
 
+final mockMessageWithSmsType =  LinkedHashMap.from({
+    "_id": "1",
+    "address": "123456",
+    "body": "message body",
+    "date": "1595056125597",
+    "thread_id": "3",
+    "type": "1"
+  });
+
+  final mockMessageWithInvalidSmsType =  LinkedHashMap.from({
+    "_id": "1",
+    "address": "123456",
+    "body": "message body",
+    "date": "1595056125597",
+    "thread_id": "3",
+    "type": "type"
+  });
+
 final mockConversations = [
   LinkedHashMap.from(
       {"snippet": "message snippet", "thread_id": "2", "msg_count": "32"}),
