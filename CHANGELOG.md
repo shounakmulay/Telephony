@@ -1,4 +1,4 @@
-## 0.1.3
+## 0.1.4
 * Fix SmsType parsing (Contributor: https://github.com/Mabsten)
 * Remove SmsMethodCallHandler trailing comma.
 
