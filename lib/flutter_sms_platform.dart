@@ -4,9 +4,6 @@ import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
-import 'package:url_launcher/url_launcher.dart';
-
-import 'user_agent/io.dart' if (dart.library.html) 'user_agent/web.dart';
 
 const MethodChannel _channel =
     MethodChannel('plugins.shounakmulay.com/background_sms_channel');
@@ -52,34 +49,4 @@ class FlutterSmsPlatform extends PlatformInterface {
           .then((value) => value ?? 'Error sending sms');
     }
   }
-
-  Future<bool> canSendSMS() {
-    return _channel
-        .invokeMethod<bool>('canSendSMS')
-        .then((value) => value ?? false);
-  }
-
-  Future<bool> launchSmsMulti(List<String> numbers, [String? body]) {
-    if (numbers.length == 1) {
-      return launchSms(numbers.first, body);
-    }
-    String _phones = numbers.join(';');
-    if (body != null) {
-      final _body = Uri.encodeComponent(body);
-      return launch('sms:/open?addresses=$_phones${separator}body=$_body');
-    }
-    return launch('sms:/open?addresses=$_phones');
-  }
-
-  Future<bool> launchSms(String? number, [String? body]) {
-    // ignore: parameter_assignments
-    number ??= '';
-    if (body != null) {
-      final _body = Uri.encodeComponent(body);
-      return launch('sms:/$number${separator}body=$_body');
-    }
-    return launch('sms:/$number');
-  }
-
-  String get separator => isCupertino() ? '&' : '?';
 }
