@@ -8,24 +8,24 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 const MethodChannel _channel =
     MethodChannel('plugins.shounakmulay.com/background_sms_channel');
 
-class FlutterSmsPlatform extends PlatformInterface {
+class FlutterSmsPlatformiOS extends PlatformInterface {
   /// Constructs a FlutterSmsPlatform.
-  FlutterSmsPlatform() : super(token: _token);
+  FlutterSmsPlatformiOS() : super(token: _token);
 
   static final Object _token = Object();
 
-  static FlutterSmsPlatform _instance = FlutterSmsPlatform();
+  static FlutterSmsPlatformiOS _instance = FlutterSmsPlatformiOS();
 
   /// The default instance of [FlutterSmsPlatform] to use.
   ///
   /// Defaults to [MethodChannelFlutterSmsPlatform].
-  static FlutterSmsPlatform get instance => _instance;
+  static FlutterSmsPlatformiOS get instance => _instance;
 
   /// Platform-specific plugins should set this with their own platform-specific
   /// class that extends [FlutterSmsPlatform] when they register themselves.
   // TODO(amirh): Extract common platform interface logic.
   // https://github.com/flutter/flutter/issues/43368
-  static set instance(FlutterSmsPlatform instance) {
+  static set instance(FlutterSmsPlatformiOS instance) {
     PlatformInterface.verifyToken(instance, _token);
     _instance = instance;
   }
