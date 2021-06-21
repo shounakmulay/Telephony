@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:telephony/flutter_sms_platform_ios.dart';
 import 'dart:async';
 import 'package:telephony/telephony.dart';
 
@@ -18,6 +21,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   String _message = "";
   final telephony = Telephony.instance;
+  List<String> people = [];
 
   @override
   void initState() {
@@ -67,11 +71,27 @@ class _MyAppState extends State<MyApp> {
           Center(child: Text("Latest received SMS: $_message")),
           TextButton(
               onPressed: () async {
-                await telephony.openDialer("123413453");
+                if (Platform.isIOS) {
+                  people.add('123478236');
+                  _sendSMS(people);
+                } else {
+                  await telephony.openDialer("123478236");
+                }
               },
               child: Text('Open Dialer'))
         ],
       ),
     ));
+  }
+
+  Future<void> _sendSMS(List<String> recipients) async {
+    try {
+      String _result = await FlutterSmsPlatformiOS.instance
+          .sendSMS(message: 'test', recipients: recipients);
+
+      setState(() => _message = _result);
+    } catch (error) {
+      setState(() => _message = error.toString());
+    }
   }
 }
