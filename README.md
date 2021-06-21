@@ -184,7 +184,7 @@ List<SmsConversation> messages = await telephony.getConversations(
 	:warning: Avoid heavy computations in the background handler as Android system may kill long running operations in the background.
 
 ```dart
-backgrounMessageHandler(SmsMessage message) async {
+backgroundMessageHandler(SmsMessage message) async {
 	//Handle background message	
 }
 
