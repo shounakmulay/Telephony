@@ -355,28 +355,30 @@ class SmsMethodCallHandler(
   }
 
   override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>?, grantResults: IntArray?): Boolean {
+    if(permissionsController.isRequestingPermission == true) {
+      permissionsController.isRequestingPermission = false
 
-    permissionsController.isRequestingPermission = false
-
-    val deniedPermissions = mutableListOf<String>()
-    if (requestCode != this.requestCode && !this::action.isInitialized) {
-      return false
-    }
-
-    val allPermissionGranted = grantResults?.foldIndexed(true) { i, acc, result ->
-      if (result == PackageManager.PERMISSION_DENIED) {
-        permissions?.let { deniedPermissions.add(it[i]) }
+      val deniedPermissions = mutableListOf<String>()
+      if (requestCode != this.requestCode && !this::action.isInitialized) {
+        return false
       }
-      return@foldIndexed acc && result == PackageManager.PERMISSION_GRANTED
-    } ?: false
 
-    return if (allPermissionGranted) {
-      execute(action)
-      true
-    } else {
-      onPermissionDenied(deniedPermissions)
-      false
+      val allPermissionGranted = grantResults?.foldIndexed(true) { i, acc, result ->
+        if (result == PackageManager.PERMISSION_DENIED) {
+          permissions?.let { deniedPermissions.add(it[i]) }
+        }
+        return@foldIndexed acc && result == PackageManager.PERMISSION_GRANTED
+      } ?: false
+
+      return if (allPermissionGranted) {
+        execute(action)
+        true
+      } else {
+        onPermissionDenied(deniedPermissions)
+        false
+      }
     }
+    return false
   }
 
   private fun onPermissionDenied(deniedPermissions: List<String>) {
