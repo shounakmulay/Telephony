@@ -243,11 +243,11 @@ Check out the [detailed documentation](https://shounakmulay.gitbook.io/telephony
 If you want to call the `telephony` methods in background, you can do in the following ways.
 
 #### 1. Using only `Telephony.instance`
-If you want to continue using `Telephony.insatnce` in the background, you will need to make sure that once the app comes back to the front, it again calls `Telephony.insatnce`.
+If you want to continue using `Telephony.instance` in the background, you will need to make sure that once the app comes back to the front, it again calls `Telephony.instance`.
 ```dart
 backgrounMessageHandler(SmsMessage message) async {
 	// Handle background message
-	Telephony.insatnce.sendSms(to: "123456789", message: "Message from background")
+	Telephony.instance.sendSms(to: "123456789", message: "Message from background")
 }
 
 void main() {
@@ -265,7 +265,7 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     // You should make sure call to instance is made every time 
     // app comes to foreground
-    final inbox = Telephony.insatnce.getInboxSms()
+    final inbox = Telephony.instance.getInboxSms()
   }
 
 ```
