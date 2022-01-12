@@ -102,13 +102,13 @@ class SmsController(private val context: Context) {
       `package` = context.applicationContext.packageName
       flags = Intent.FLAG_RECEIVER_REGISTERED_ONLY
     }
-    val sentPendingIntent = PendingIntent.getBroadcast(context, SMS_SENT_BROADCAST_REQUEST_CODE, sentIntent, PendingIntent.FLAG_ONE_SHOT)
+    val sentPendingIntent = PendingIntent.getBroadcast(context, SMS_SENT_BROADCAST_REQUEST_CODE, sentIntent, PendingIntent.FLAG_MUTABLE)
 
     val deliveredIntent = Intent(ACTION_SMS_DELIVERED).apply {
       `package` = context.applicationContext.packageName
       flags = Intent.FLAG_RECEIVER_REGISTERED_ONLY
     }
-    val deliveredPendingIntent = PendingIntent.getBroadcast(context, SMS_DELIVERED_BROADCAST_REQUEST_CODE, deliveredIntent, PendingIntent.FLAG_ONE_SHOT)
+    val deliveredPendingIntent = PendingIntent.getBroadcast(context, SMS_DELIVERED_BROADCAST_REQUEST_CODE, deliveredIntent, PendingIntent.FLAG_MUTABLE)
 
     return Pair(sentPendingIntent, deliveredPendingIntent)
   }
