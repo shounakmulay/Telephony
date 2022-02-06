@@ -25,7 +25,7 @@ This plugin tries to replicate some of the functionality provided by Android's [
 Check the [Features section](#Features) to see the list of implemented and missing features.
 
 ## Get Started
-### :bulb: View the **[entire documentation here](https://shounakmulay.gitbook.io/telephony/)**.
+### :bulb: View the **[entire documentation here](https://telephony.shounakmulay.dev/)**.
 
 ## Usage
 To use this plugin add `telephony` as a [dependency in your pubspec.yaml file](https://flutter.dev/docs/development/packages-and-plugins/using-packages).
