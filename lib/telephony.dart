@@ -573,12 +573,14 @@ class SmsMessage {
   int? threadId;
   SmsType? type;
   SmsStatus? status;
+  String? serviceCenterAddress;
 
   /// ## Do not call this method. This method is visible only for testing.
   @visibleForTesting
   SmsMessage.fromMap(Map rawMessage, List<SmsColumn> columns) {
     final message = Map.castFrom<dynamic, dynamic, String, dynamic>(rawMessage);
     for (var column in columns) {
+      debugPrint('Column is ${column._columnName}');
       final value = message[column._columnName];
       switch (column._columnName) {
         case _SmsProjections.ID:
@@ -633,7 +635,11 @@ class SmsMessage {
           break;
         case _SmsProjections.TYPE:
           var smsTypeIndex = int.tryParse(value);
-          this.type = smsTypeIndex != null ? SmsType.values[smsTypeIndex] : null;
+          this.type =
+              smsTypeIndex != null ? SmsType.values[smsTypeIndex] : null;
+          break;
+        case _SmsProjections.SERVICE_CENTER_ADDRESS:
+          this.serviceCenterAddress = value;
           break;
       }
     }
