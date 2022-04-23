@@ -45,6 +45,7 @@ class _SmsProjections {
   static const String ADDRESS = "address";
   static const String MESSAGE_BODY = "message_body";
   static const String BODY = "body";
+  static const String SERVICE_CENTER_ADDRESS = "service_center";
 
 //  static const String CREATOR = "creator";
   static const String TIMESTAMP = "timestamp";
@@ -102,6 +103,8 @@ class SmsColumn extends _TelephonyColumn {
 
   static const ID = SmsColumn._(_SmsProjections.ID);
   static const ADDRESS = SmsColumn._(_SmsProjections.ADDRESS);
+  static const SERVICE_CENTER_ADDRESS =
+      SmsColumn._(_SmsProjections.SERVICE_CENTER_ADDRESS);
   static const BODY = SmsColumn._(_SmsProjections.BODY);
   static const DATE = SmsColumn._(_SmsProjections.DATE);
   static const DATE_SENT = SmsColumn._(_SmsProjections.DATE_SENT);
@@ -144,6 +147,7 @@ const INCOMING_SMS_COLUMNS = [
   SmsColumn._(_SmsProjections.ORIGINATING_ADDRESS),
   SmsColumn._(_SmsProjections.MESSAGE_BODY),
   SmsColumn._(_SmsProjections.TIMESTAMP),
+  SmsColumn._(_SmsProjections.SERVICE_CENTER_ADDRESS),
   SmsColumn.STATUS
 ];
 
