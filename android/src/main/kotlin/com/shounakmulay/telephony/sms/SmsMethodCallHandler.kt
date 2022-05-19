@@ -211,7 +211,7 @@ class SmsMethodCallHandler(
         IncomingSmsHandler.setBackgroundMessageHandle(context, backgroundHandle)
       }
       SmsAction.BACKGROUND_SERVICE_INITIALIZED -> {
-        IncomingSmsHandler.onChannelInitialized()
+        IncomingSmsHandler.onChannelInitialized(context.applicationContext)
       }
       SmsAction.DISABLE_BACKGROUND_SERVICE -> {
         val preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
@@ -354,7 +354,7 @@ class SmsMethodCallHandler(
     }
   }
 
-  override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>?, grantResults: IntArray?): Boolean {
+  override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray): Boolean {
 
     permissionsController.isRequestingPermission = false
 
@@ -363,12 +363,12 @@ class SmsMethodCallHandler(
       return false
     }
 
-    val allPermissionGranted = grantResults?.foldIndexed(true) { i, acc, result ->
+    val allPermissionGranted = grantResults.foldIndexed(true) { i, acc, result ->
       if (result == PackageManager.PERMISSION_DENIED) {
-        permissions?.let { deniedPermissions.add(it[i]) }
+        permissions.let { deniedPermissions.add(it[i]) }
       }
       return@foldIndexed acc && result == PackageManager.PERMISSION_GRANTED
-    } ?: false
+    }
 
     return if (allPermissionGranted) {
       execute(action)

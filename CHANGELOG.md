@@ -1,3 +1,9 @@
+## 0.2.0
+* Upgrade `minSdk` to 23
+* Upgrade `targetSdk` to 31
+* Upgrade min dart sdk to 2.15.1
+* Fix SmsMethodCallHandler error.
+
 ## 0.1.4
 * Fix SmsType parsing (Contributor: https://github.com/Mabsten)
 * Remove SmsMethodCallHandler trailing comma.
