@@ -15,6 +15,7 @@ import com.shounakmulay.telephony.utils.Constants.MESSAGE
 import com.shounakmulay.telephony.utils.Constants.MESSAGE_BODY
 import com.shounakmulay.telephony.utils.Constants.ON_MESSAGE
 import com.shounakmulay.telephony.utils.Constants.ORIGINATING_ADDRESS
+import com.shounakmulay.telephony.utils.Constants.SERVICE_CENTER_ADDRESS
 import com.shounakmulay.telephony.utils.Constants.SHARED_PREFERENCES_NAME
 import com.shounakmulay.telephony.utils.Constants.SHARED_PREFS_BACKGROUND_MESSAGE_HANDLE
 import com.shounakmulay.telephony.utils.Constants.SHARED_PREFS_BACKGROUND_SETUP_HANDLE
@@ -110,6 +111,7 @@ fun SmsMessage.toMap(): HashMap<String, Any?> {
         smsMap[TIMESTAMP] = timestampMillis.toString()
         smsMap[ORIGINATING_ADDRESS] = originatingAddress
         smsMap[STATUS] = status.toString()
+        smsMap[SERVICE_CENTER_ADDRESS] = serviceCenterAddress
     }
     return smsMap
 }
