@@ -48,6 +48,7 @@ object Constants {
   const val MESSAGE_BODY = "message_body"
   const val ADDRESS = "address"
   const val LISTEN_STATUS = "listen_status"
+  const val SERVICE_CENTER_ADDRESS = "service_center"
 
   const val TIMESTAMP = "timestamp"
   const val ORIGINATING_ADDRESS = "originating_address"
