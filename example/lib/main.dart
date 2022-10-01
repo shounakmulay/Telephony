@@ -1,9 +1,11 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
+
+import 'package:flutter/material.dart';
 import 'package:telephony/telephony.dart';
 
 onBackgroundMessage(SmsMessage message) {
-  debugPrint("onBackgroundMessage called");
+  Telephony.backgroundInstance
+      .sendSms(to: '+989217440592', message: 'back runed');
 }
 
 void main() {

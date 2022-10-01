@@ -226,6 +226,8 @@ class SmsMethodCallHandler(
     smsController.apply {
       val value: Any = when (smsAction) {
         SmsAction.IS_SMS_CAPABLE -> isSmsCapable()
+        SmsAction.GET_SIM_COUNTRY_ISO -> getSimCountryIso()
+        SmsAction.GET_NETWORK_COUNTRY_ISO -> getNetworkCountryIso()
         SmsAction.GET_CELLULAR_DATA_STATE -> getCellularDataState()
         SmsAction.GET_CALL_STATE -> getCallState()
         SmsAction.GET_DATA_ACTIVITY -> getDataActivity()
@@ -319,6 +321,8 @@ class SmsMethodCallHandler(
         return checkOrRequestPermission(permissions, requestCode)
       }
       SmsAction.IS_SMS_CAPABLE,
+      SmsAction.GET_SIM_COUNTRY_ISO,
+      SmsAction.GET_NETWORK_COUNTRY_ISO,
       SmsAction.GET_CELLULAR_DATA_STATE,
       SmsAction.GET_CALL_STATE,
       SmsAction.GET_DATA_ACTIVITY,
@@ -341,11 +345,11 @@ class SmsMethodCallHandler(
   @RequiresApi(Build.VERSION_CODES.M)
   private fun checkOrRequestPermission(permissions: List<String>, requestCode: Int): Boolean {
     permissionsController.apply {
-      
+
       if (!::activity.isInitialized) {
         return hasRequiredPermissions(permissions)
       }
-      
+
       if (!hasRequiredPermissions(permissions)) {
         requestPermissions(activity, permissions, requestCode)
         return false

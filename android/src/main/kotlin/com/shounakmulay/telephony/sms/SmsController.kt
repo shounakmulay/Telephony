@@ -176,6 +176,16 @@ class SmsController(private val context: Context) {
     }
 
     // STATUS
+    fun getSimCountryIso(): String {
+        val telephonyManager = getTelephonyManager()
+        return telephonyManager.simCountryIso
+    }
+
+    fun getNetworkCountryIso(): String {
+        val telephonyManager = getTelephonyManager()
+        return telephonyManager.networkCountryIso
+    }
+
     fun isSmsCapable(): Boolean {
         val telephonyManager = getTelephonyManager()
         return telephonyManager.isSmsCapable
@@ -262,4 +272,5 @@ class SmsController(private val context: Context) {
             telephonyManager
         }
     }
+
 }
