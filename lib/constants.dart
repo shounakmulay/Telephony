@@ -23,6 +23,8 @@ const GET_PHONE_TYPE = "getPhoneType";
 const GET_SIM_OPERATOR = "getSimOperator";
 const GET_SIM_OPERATOR_NAME = "getSimOperatorName";
 const GET_SIM_STATE = "getSimState";
+const GET_SIM_COUNTRY_ISO = 'getSimCountryIso';
+const GET_NETWORK_COUNTRY_ISO = 'getNetworkCountryIso';
 const IS_NETWORK_ROAMING = "isNetworkRoaming";
 const GET_SIGNAL_STRENGTH = "getSignalStrength";
 const GET_SERVICE_STATE = "getServiceState";
@@ -31,6 +33,7 @@ const REQUEST_PHONE_PERMISSION = "requestPhonePermissions";
 const REQUEST_PHONE_AND_SMS_PERMISSION = "requestPhoneAndSmsPermissions";
 const OPEN_DIALER = "openDialer";
 const DIAL_PHONE_NUMBER = "dialPhoneNumber";
+
 
 const ON_MESSAGE = "onMessage";
 const SMS_SENT = "smsSent";

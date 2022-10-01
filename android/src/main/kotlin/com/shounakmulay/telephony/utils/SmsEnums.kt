@@ -34,6 +34,8 @@ enum class SmsAction(private val methodName: String) {
   OPEN_DIALER("openDialer"),
   DIAL_PHONE_NUMBER("dialPhoneNumber"),
   NO_SUCH_METHOD("noSuchMethod");
+  GET_NETWORK_COUNTRY_ISO("getNetworkCountryIso"),
+  GET_SIM_COUNTRY_ISO("getSimCountryIso"),
 
   companion object {
     fun fromMethod(method: String): SmsAction {

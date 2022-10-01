@@ -262,4 +262,15 @@ class SmsController(private val context: Context) {
             telephonyManager
         }
     }
+
+    fun getSimCountryIso(): String {
+        val telephonyManager = getTelephonyManager()
+        return telephonyManager.simCountryIso
+    }
+
+    fun getNetworkCountryIso(): String {
+        val telephonyManager = getTelephonyManager()
+        return telephonyManager.networkCountryIso
+    }
+
 }
