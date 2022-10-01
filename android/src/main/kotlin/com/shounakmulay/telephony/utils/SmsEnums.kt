@@ -15,6 +15,8 @@ enum class SmsAction(private val methodName: String) {
   DISABLE_BACKGROUND_SERVICE("disableBackgroundService"),
   BACKGROUND_SERVICE_INITIALIZED("backgroundServiceInitialized"),
   IS_SMS_CAPABLE("isSmsCapable"),
+  GET_NETWORK_COUNTRY_ISO("getNetworkCountryIso"),
+  GET_SIM_COUNTRY_ISO("getSimCountryIso"),
   GET_CELLULAR_DATA_STATE("getCellularDataState"),
   GET_CALL_STATE("getCallState"),
   GET_DATA_ACTIVITY("getDataActivity"),
@@ -60,6 +62,8 @@ enum class SmsAction(private val methodName: String) {
       DISABLE_BACKGROUND_SERVICE,
       BACKGROUND_SERVICE_INITIALIZED -> ActionType.BACKGROUND
       IS_SMS_CAPABLE,
+      GET_NETWORK_COUNTRY_ISO,
+      GET_SIM_COUNTRY_ISO,
       GET_CELLULAR_DATA_STATE,
       GET_CALL_STATE,
       GET_DATA_ACTIVITY,
