@@ -237,6 +237,8 @@ class SmsMethodCallHandler(
         SmsAction.GET_SIM_OPERATOR_NAME -> getSimOperatorName()
         SmsAction.GET_SIM_STATE -> getSimState()
         SmsAction.IS_NETWORK_ROAMING -> isNetworkRoaming()
+        SmsAction.GET_SIM_COUNTRY_ISO -> getSimCountryIso()
+        SmsAction.GET_NETWORK_COUNTRY_ISO -> getNetworkCountryIso()
         SmsAction.GET_SIGNAL_STRENGTH -> {
           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             getSignalStrength()
