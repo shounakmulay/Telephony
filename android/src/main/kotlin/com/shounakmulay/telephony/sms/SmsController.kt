@@ -141,8 +141,17 @@ class SmsController(private val context: Context) {
 
     private fun getSmsManager(): SmsManager {
         val subscriptionId = SmsManager.getDefaultSmsSubscriptionId()
-        val smsManager = getSystemService(context, SmsManager::class.java)
-            ?: throw RuntimeException("Flutter Telephony: Error getting SmsManager")
+        val smsManager : SmsManager?
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            smsManager = getSystemService(context, SmsManager::class.java)
+        } else {
+            smsManager = SmsManager.getDefault()
+        }
+
+        if(smsManager == null) {
+            throw RuntimeException("Flutter Telephony: Error getting SmsManager")
+        }
+
         if (subscriptionId != SubscriptionManager.INVALID_SUBSCRIPTION_ID) {
             return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 smsManager.createForSubscriptionId(subscriptionId)
