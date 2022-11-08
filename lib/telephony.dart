@@ -351,6 +351,25 @@ class Telephony {
       _foregroundChannel.invokeMethod<bool>(IS_SMS_CAPABLE);
 
   ///
+  /// Returns the ISO-3166-1 alpha-2 country code equivalent for the SIM provider's country code.
+  ///
+  /// Returns:
+  /// 
+  /// [Future<String?>]
+  Future<String?> get simCountryIso =>
+      _foregroundChannel.invokeMethod<String?>(GET_SIM_COUNTRY_ISO);
+
+  ///
+  /// Returns the ISO-3166-1 alpha-2 country code equivalent of 
+  /// the MCC (Mobile Country Code) of the current registered operator or the cell nearby, if available.
+  /// 
+  /// Returns:
+  /// 
+  /// Future<String?>
+  Future<String?> get networkCountryIso =>
+      _foregroundChannel.invokeMethod<String?>(GET_NETWORK_COUNTRY_ISO);
+
+  ///
   /// Returns a constant indicating the current data connection state (cellular).
   ///
   /// Returns:

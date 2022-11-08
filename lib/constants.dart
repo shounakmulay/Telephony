@@ -31,6 +31,8 @@ const REQUEST_PHONE_PERMISSION = "requestPhonePermissions";
 const REQUEST_PHONE_AND_SMS_PERMISSION = "requestPhoneAndSmsPermissions";
 const OPEN_DIALER = "openDialer";
 const DIAL_PHONE_NUMBER = "dialPhoneNumber";
+const GET_SIM_COUNTRY_ISO = 'getSimCountryIso';
+const GET_NETWORK_COUNTRY_ISO = 'getNetworkCountryIso';
 
 const ON_MESSAGE = "onMessage";
 const SMS_SENT = "smsSent";
