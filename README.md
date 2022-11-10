@@ -9,6 +9,9 @@
 
 
 # Telephony
+
+## Thank you for checking out the Telephony plugin. Unfortunately, this plugin is no longer actively maintained.
+
 |:exclamation: This plugin currently only works on Android Platform|
 |------------------------------------------------------------------|
 
