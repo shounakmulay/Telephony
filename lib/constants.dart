@@ -253,4 +253,4 @@ extension Value on Sort {
 }
 
 /// Represents the status of a sms message sent from the device.
-enum SendStatus { SENT, DELIVERED }
+enum SendStatus { SENT, DELIVERED, FAIL }
