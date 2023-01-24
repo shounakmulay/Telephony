@@ -149,6 +149,8 @@ class Telephony {
         return _statusListener(SendStatus.SENT);
       case SMS_DELIVERED:
         return _statusListener(SendStatus.DELIVERED);
+      case SMS_FAIL:
+        return _statusListener(SendStatus.FAIL);
     }
   }
 

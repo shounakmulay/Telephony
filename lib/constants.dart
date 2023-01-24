@@ -35,6 +35,7 @@ const DIAL_PHONE_NUMBER = "dialPhoneNumber";
 const ON_MESSAGE = "onMessage";
 const SMS_SENT = "smsSent";
 const SMS_DELIVERED = "smsDelivered";
+const SMS_FAIL = "smsFail";
 
 ///
 /// Possible parameters that can be fetched during a SMS query operation.
@@ -252,4 +253,4 @@ extension Value on Sort {
 }
 
 /// Represents the status of a sms message sent from the device.
-enum SendStatus { SENT, DELIVERED }
+enum SendStatus { SENT, DELIVERED, FAIL }

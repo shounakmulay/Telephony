@@ -34,6 +34,7 @@ import com.shounakmulay.telephony.utils.Constants.SHARED_PREFERENCES_NAME
 import com.shounakmulay.telephony.utils.Constants.SHARED_PREFS_DISABLE_BACKGROUND_EXE
 import com.shounakmulay.telephony.utils.Constants.SMS_BACKGROUND_REQUEST_CODE
 import com.shounakmulay.telephony.utils.Constants.SMS_DELIVERED
+import com.shounakmulay.telephony.utils.Constants.SMS_FAIL
 import com.shounakmulay.telephony.utils.Constants.SMS_QUERY_REQUEST_CODE
 import com.shounakmulay.telephony.utils.Constants.SMS_SEND_REQUEST_CODE
 import com.shounakmulay.telephony.utils.Constants.SMS_SENT
@@ -390,9 +391,21 @@ class SmsMethodCallHandler(
   override fun onReceive(ctx: Context?, intent: Intent?) {
     if (intent != null) {
       when (intent.action) {
-        Constants.ACTION_SMS_SENT -> foregroundChannel.invokeMethod(SMS_SENT, null)
+        Constants.ACTION_SMS_SENT -> {
+          when(resultCode) {
+            Activity.RESULT_OK -> foregroundChannel.invokeMethod(SMS_SENT, null)
+            SmsManager.RESULT_ERROR_GENERIC_FAILURE -> foregroundChannel.invokeMethod(SMS_FAIL, null)
+            SmsManager.RESULT_ERROR_NO_SERVICE -> foregroundChannel.invokeMethod(SMS_FAIL, null)
+            SmsManager.RESULT_ERROR_NULL_PDU -> foregroundChannel.invokeMethod(SMS_FAIL, null)
+            SmsManager.RESULT_ERROR_RADIO_OFF -> foregroundChannel.invokeMethod(SMS_FAIL, null)
+
+          }
+          }
         Constants.ACTION_SMS_DELIVERED -> {
-          foregroundChannel.invokeMethod(SMS_DELIVERED, null)
+          when (resultCode) {
+            Activity.RESULT_OK -> foregroundChannel.invokeMethod(SMS_DELIVERED, null)
+            Activity.RESULT_CANCELED -> foregroundChannel.invokeMethod(SMS_FAIL, null)
+          }
           context.unregisterReceiver(this)
         }
       }
