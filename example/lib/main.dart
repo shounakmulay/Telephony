@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:telephony/telephony.dart';
 
+@pragma('vm:entry-point')
 onBackgroundMessage(SmsMessage message) {
   debugPrint("onBackgroundMessage called");
 }
