@@ -187,6 +187,7 @@ List<SmsConversation> messages = await telephony.getConversations(
 	:warning: Avoid heavy computations in the background handler as Android system may kill long running operations in the background.
 
 ```dart
+@pragma('vm:entry-point')
 backgroundMessageHandler(SmsMessage message) async {
 	//Handle background message	
 }
@@ -220,6 +221,7 @@ telephony.listenIncomingSms(
 ```
 5. As of the `1.12` release of Flutter, plugins are automatically registered. This will allow you to use plugins as you normally do even in the background execution context. 
 ```dart
+@pragma('vm:entry-point')
 backgroundMessageHandler(SmsMessage message) async {
 		// Handle background message
 		
@@ -248,6 +250,7 @@ If you want to call the `telephony` methods in background, you can do in the fol
 #### 1. Using only `Telephony.instance`
 If you want to continue using `Telephony.instance` in the background, you will need to make sure that once the app comes back to the front, it again calls `Telephony.instance`.
 ```dart
+@pragma('vm:entry-point')
 backgroundMessageHandler(SmsMessage message) async {
 	// Handle background message
 	Telephony.instance.sendSms(to: "123456789", message: "Message from background")
@@ -277,6 +280,7 @@ class _MyAppState extends State<MyApp> {
 If you cannot make sure that the call to instance would be made every time app comes to foreground, or if you would prefer to maintain a separate background instance,
 you can use `Telephony.backgroundInstance` in the background execution context.
 ```dart
+@pragma('vm:entry-point')
 backgroundMessageHandler(SmsMessage message) async {
 	// Handle background message
 	Telephony.backgroundInstance.sendSms(to: "123456789", message: "Message from background")
